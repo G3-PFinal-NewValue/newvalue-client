@@ -66,6 +66,14 @@ export default function LoginPage() {
               Regístrate
             </Link>
           </div>
+          <div className="text-sm text-center mt-4">
+            <Link
+              to="/"
+              className="inline-block text-indigo-600 hover:underline font-semibold"
+            >
+              Ir a Home
+            </Link>
+          </div>
         </form>
       </div>
     </div>

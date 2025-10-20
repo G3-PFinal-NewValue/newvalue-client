@@ -13,8 +13,10 @@ export default function Navbar() {
   };
 
   const navItemClass = ({ isActive }) =>
-    "px-3 py-2 rounded-md text-sm font-medium " +
-    (isActive ? "bg-indigo-100 text-indigo-700" : "text-gray-700 hover:bg-gray-100");
+    "px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 " +
+    (isActive
+      ? "bg-indigo-600 text-white"
+      : "text-gray-700 hover:bg-indigo-100 hover:text-indigo-700");
 
   return (
     <nav className="border-b bg-white">
@@ -22,34 +24,26 @@ export default function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            
             <div className="h-8 w-8 rounded bg-indigo-600" />
             <span className="font-bold text-lg">Coramind</span>
           </Link>
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-4">
-            <NavLink to="/" className={navItemClass}>Home</NavLink>
-            
+            <NavLink to="/" className={navItemClass}>
+              Home
+            </NavLink>
           </div>
 
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-3">
             {!user ? (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 hover:bg-gray-50"
-                >
-                  Iniciar sesión
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-4 py-2 text-sm font-semibold rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  Registrarse
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 hover:bg-gray-50"
+              >
+                Iniciar sesión
+              </Link>
             ) : (
               <>
                 <span className="text-sm text-gray-600">Hola, {user.name}</span>
@@ -66,7 +60,7 @@ export default function Navbar() {
           {/* Mobile button */}
           <button
             className="md:hidden inline-flex items-center justify-center p-2 rounded-md border"
-            onClick={() => setOpen(o => !o)}
+            onClick={() => setOpen((o) => !o)}
             aria-label="Open menu"
           >
             ☰
@@ -76,32 +70,30 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t">
+        <div className="md:hidden border-t animate-fadeIn">
           <div className="px-4 py-3 flex flex-col gap-2">
-            <NavLink to="/" className={navItemClass} onClick={() => setOpen(false)}>
+            <NavLink
+              to="/"
+              className={navItemClass}
+              onClick={() => setOpen(false)}
+            >
               Home
             </NavLink>
 
             {!user ? (
-              <>
-                <Link
-                  to="/login"
-                  className="px-3 py-2 rounded-md text-sm font-semibold border border-gray-300"
-                  onClick={() => setOpen(false)}
-                >
-                  Iniciar sesión
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-3 py-2 rounded-md text-sm font-semibold bg-indigo-600 text-white"
-                  onClick={() => setOpen(false)}
-                >
-                  Registrarse
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="px-3 py-2 rounded-md text-sm font-semibold border border-gray-300 text-left"
+                onClick={() => setOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
             ) : (
               <button
-                onClick={() => { setOpen(false); handleLogout(); }}
+                onClick={() => {
+                  setOpen(false);
+                  handleLogout();
+                }}
                 className="px-3 py-2 rounded-md text-sm font-semibold border border-gray-300 text-left"
               >
                 Cerrar sesión
