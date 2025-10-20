@@ -14,21 +14,26 @@ const schema = z.object({
 });
 
 export default function LoginPage() {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } =
-    useForm({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
-const { login } = useAuth();
-const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "", password: "" },
+  });
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-
-const onSubmit = async (values) => {
-  try {
-    const user = await loginRequest(values); 
-    login(user);                             // guarda en contexto
-    navigate("/");                           // entra al home
-  } catch (e) {
-    alert("Login failed");
-  }
-};
+  const onSubmit = async (values) => {
+    try {
+      const user = await loginRequest(values);
+      login(user); // guarda en contexto
+      navigate("/"); // entra al home
+    } catch (e) {
+      alert("Login failed");
+    }
+  };
   return (
     <div className="min-h-screen grid place-items-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-8">
@@ -36,21 +41,30 @@ const onSubmit = async (values) => {
         <p className="text-sm text-gray-600 mb-6">Coramind</p>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <TextInput label="Email" placeholder="you@example.com"
-            error={errors.email?.message} {...register("email")} />
-          <PasswordInput label="Password"
-            error={errors.password?.message} {...register("password")} />
+          <TextInput
+            label="Email"
+            placeholder="you@example.com"
+            error={errors.email?.message}
+            {...register("email")}
+          />
+          <PasswordInput
+            label="Password"
+            error={errors.password?.message}
+            {...register("password")}
+          />
 
-<button
-  type="submit"
-  disabled={isSubmitting}
-  className="w-full rounded-md px-4 py-2 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
->
-  {isSubmitting ? "Loading..." : "Sign in"}
-</button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-md px-4 py-2 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
+          >
+            {isSubmitting ? "Loading..." : "Sign in"}
+          </button>
           <div className="text-sm text-center text-gray-600">
             ¿No tienes cuenta?{" "}
-            <Link to="/register" className="text-indigo-600">Regístrate</Link>
+            <Link to="/register" className="text-indigo-600">
+              Regístrate
+            </Link>
           </div>
         </form>
       </div>
