@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { loginRequest } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import AuthTabs from "../../components/auth/AuthTabs.jsx"; // ajusta la ruta si difiere
+
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -35,8 +37,10 @@ export default function LoginPage() {
     }
   };
   return (
+    
     <div className="min-h-screen grid place-items-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-8">
+        <AuthTabs />
         <h1 className="text-2xl font-bold mb-2">Iniciar sesión</h1>
         <p className="text-sm text-gray-600 mb-6">Coramind</p>
 
