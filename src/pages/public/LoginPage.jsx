@@ -6,6 +6,7 @@ import PasswordInput from "../../components/common/PasswordInput";
 import { Link } from "react-router-dom";
 import { loginRequest } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -16,17 +17,18 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
 const { login } = useAuth();
+const navigate = useNavigate();
+
 
 const onSubmit = async (values) => {
   try {
-    const user = await loginRequest(values); // stub
-    login(user);
-    window.location.href = "/"; // entra a la protegida
+    const user = await loginRequest(values); 
+    login(user);                             // guarda en contexto
+    navigate("/");                           // entra al home
   } catch (e) {
     alert("Login failed");
   }
 };
-
   return (
     <div className="min-h-screen grid place-items-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-8">

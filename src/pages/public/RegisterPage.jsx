@@ -6,6 +6,8 @@ import PasswordInput from "../../components/common/PasswordInput";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { registerRequest } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
+
 
 const schema = z.object({
   name: z.string().min(2, "Name too short"),
@@ -27,13 +29,13 @@ export default function RegisterPage() {
 
   const role = watch("role");
   const { login } = useAuth();
-
+  const navigate = useNavigate();
 
 const onSubmit = async (values) => {
   try {
     const user = await registerRequest(values); // stub
     login(user);
-    window.location.href = "/";
+    navigate("/");
   } catch {
     alert("Registration failed");
   }
