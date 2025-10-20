@@ -1,22 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "../components/layout/Layout";
+
+// Páginas públicas
+import HomePage from "../pages/public/HomePage";
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
+
+// Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "../context/AuthContext";
 
-function Home() {
-  const { user, logout } = useAuth();
+// Demo privada (temporal)
+function PrivateHome() {
+  const { user } = useAuth();
   return (
-    <div className="min-h-screen grid place-items-center bg-gray-100">
-      <div className="bg-white rounded-2xl shadow p-8 w-full max-w-md text-center">
-        <h1 className="text-2xl font-bold mb-2">Hola, {user?.name}</h1>
-        <p className="text-gray-600 mb-6">Estás dentro 🎉</p>
-        <div className="flex gap-3 justify-center">
-          <button onClick={logout} className="px-4 py-2 rounded bg-gray-200">Logout</button>
-          <Link to="/login" className="px-4 py-2 rounded bg-indigo-600 text-white">Ir a Login</Link>
-        </div>
-      </div>
-    </div>
+    <section className="grid gap-4">
+      <h1 className="text-2xl font-bold">Área privada</h1>
+      <p className="text-gray-700">Hola, {user?.name}. Esta vista requiere estar autenticado.</p>
+    </section>
   );
 }
 
@@ -24,18 +25,27 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* públicas */}
-        <Route path="/login" element={<LoginPage/>} />
-        <Route path="/register" element={<RegisterPage/>} />
+        {/* Rutas públicas con Layout (Navbar visible) */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage/>} />
+          <Route path="/register" element={<RegisterPage/>} />
+        </Route>
 
-        {/* protegida */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        } />
+        {/* Rutas privadas con Layout (Navbar visible) */}
+        <Route element={<Layout />}>
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <PrivateHome />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
