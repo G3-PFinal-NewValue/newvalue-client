@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TextInput from "../components/common/TextInput";
-import PasswordInput from "../components/common/PasswordInput";
+import TextInput from "../../components/common/TextInput";
+import PasswordInput from "../../components/common/PasswordInput";
 import { Link } from "react-router-dom";
+import { loginRequest } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -13,12 +15,17 @@ const schema = z.object({
 export default function LoginPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
+const { login } = useAuth();
 
-  const onSubmit = async (values) => {
-    // TODO: integrar con BACKEND!!!
-    console.log("LOGIN submit:", values);
-    alert("Login OK (mock). Luego conectamos API.");
-  };
+const onSubmit = async (values) => {
+  try {
+    const user = await loginRequest(values); // stub
+    login(user);
+    window.location.href = "/"; // entra a la protegida
+  } catch (e) {
+    alert("Login failed");
+  }
+};
 
   return (
     <div className="min-h-screen grid place-items-center bg-gray-100">
@@ -32,8 +39,13 @@ export default function LoginPage() {
           <PasswordInput label="Password"
             error={errors.password?.message} {...register("password")} />
 
-          <Button type="submit" loading={isSubmitting}>Sign in</Button>
-
+<button
+  type="submit"
+  disabled={isSubmitting}
+  className="w-full rounded-md px-4 py-2 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
+>
+  {isSubmitting ? "Loading..." : "Sign in"}
+</button>
           <div className="text-sm text-center text-gray-600">
             ¿No tienes cuenta?{" "}
             <Link to="/register" className="text-indigo-600">Regístrate</Link>

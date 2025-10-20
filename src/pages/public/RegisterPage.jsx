@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TextInput from "../components/common/TextInput";
-import PasswordInput from "../components/common/PasswordInput";
+import TextInput from "../../components/common/TextInput";
+import PasswordInput from "../../components/common/PasswordInput";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { registerRequest } from "../../services/authService";
 
 const schema = z.object({
   name: z.string().min(2, "Name too short"),
@@ -24,12 +26,18 @@ export default function RegisterPage() {
     });
 
   const role = watch("role");
+  const { login } = useAuth();
 
-  const onSubmit = async (values) => {
-    // TODO: integrar con API real
-    console.log("REGISTER submit:", values);
-    alert(`Register OK (mock). Rol: ${values.role}`);
-  };
+
+const onSubmit = async (values) => {
+  try {
+    const user = await registerRequest(values); // stub
+    login(user);
+    window.location.href = "/";
+  } catch {
+    alert("Registration failed");
+  }
+};
 
   return (
     <div className="min-h-screen grid place-items-center bg-gray-100">
@@ -70,11 +78,16 @@ export default function RegisterPage() {
             {errors.role && <p className="text-xs text-red-600">{errors.role.message}</p>}
           </div>
 
-          <Button type="submit" loading={isSubmitting}>Create account</Button>
-
+<button
+  type="submit"
+  disabled={isSubmitting}
+  className="w-full rounded-md px-4 py-2 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
+>
+  {isSubmitting ? "Loading..." : "Sign in"}
+</button>
           <div className="text-sm text-center text-gray-600">
             ¿Ya tienes cuenta?{" "}
-            <Link to="/login" className="text-indigo-600">Inicia sesión</Link>
+            <Link to="/login" className="text-indigo-600">Crea tu cuenta</Link>
           </div>
         </form>
       </div>
