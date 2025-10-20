@@ -30,9 +30,14 @@ export default function Navbar() {
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-4">
-            <NavLink to="/" className={navItemClass}>
-              Home
-            </NavLink>
+            <div className="hidden md:flex items-center gap-4">
+              <NavLink to="/" className={navItemClass}>
+                Home
+              </NavLink>
+              <NavLink to="/blog" className={navItemClass}>
+                Blog
+              </NavLink>
+            </div>
           </div>
 
           {/* Right actions */}
@@ -78,6 +83,13 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
             >
               Home
+            </NavLink>
+            <NavLink
+              to="/blog"
+              className={navItemClass}
+              onClick={() => setOpen(false)}
+            >
+              Blog
             </NavLink>
 
             {!user ? (

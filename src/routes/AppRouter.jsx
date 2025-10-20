@@ -5,6 +5,8 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/public/HomePage";
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
+import BlogListPage from "../pages/public/BlogListPage";
+import BlogArticlePage from "../pages/public/BlogArticlePage";
 
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
@@ -16,7 +18,9 @@ function PrivateHome() {
   return (
     <section className="grid gap-4">
       <h1 className="text-2xl font-bold">Área privada</h1>
-      <p className="text-gray-700">Hola, {user?.name}. Esta vista requiere estar autenticado.</p>
+      <p className="text-gray-700">
+        Hola, {user?.name}. Esta vista requiere estar autenticado.
+      </p>
     </section>
   );
 }
@@ -28,8 +32,10 @@ export default function AppRouter() {
         {/* Rutas públicas con Layout (Navbar visible) */}
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage/>} />
-          <Route path="/register" element={<RegisterPage/>} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:id" element={<BlogArticlePage />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
