@@ -40,25 +40,22 @@
   gap: 14px;
 }
 
-/* ---- Roles ---- */
+/* ---- Selector de rol ---- */
 .roleGroup {
   display: grid;
   gap: var(--space-2);
   margin-top: var(--space-2);
 }
-
 .label {
   font-weight: 600;
   font-size: var(--fs-detail);
   color: var(--color-text);
 }
-
 .roleButtons {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
 }
-
 .roleButton {
   border: 2px solid transparent;
   border-radius: 10px;
@@ -70,24 +67,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-.roleButton:hover {
-  background: var(--color-surface);
-  border-color: var(--color-brand-primary);
-}
-
-.roleActive {
-  background: var(--color-brand-primary);
-  color: #fff;
-  border-color: var(--color-brand-primary);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.errorText {
-  color: #dc2626;
-  font-size: 12px;
-  margin-top: 4px;
-}
+.roleButton:hover { background: var(--color-surface); border-color: var(--color-brand-primary); }
+.roleActive { background: var(--color-brand-primary); color:#fff; border-color: var(--color-brand-primary); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.errorText { color: #dc2626; font-size: 12px; margin-top: 4px; }
 
 /* ---- Botón submit ---- */
 .submitButton {
@@ -102,33 +84,34 @@
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
-
-.submitButton:hover:not(:disabled) {
-  background: var(--color-brand-secondary);
-}
-
-.submitButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.submitButton:active:not(:disabled) {
-  transform: scale(0.98);
-}
+.submitButton:hover:not(:disabled) { background: var(--color-brand-secondary); }
+.submitButton:disabled { opacity: .7; cursor: not-allowed; }
+.submitButton:active:not(:disabled) { transform: scale(.98); }
 
 /* ---- Footer ---- */
-.footerLink {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 15px;
+.footerLink { text-align: center; margin-top: 12px; font-size: 15px; }
+.footerLink a { color: var(--color-brand-primary); text-decoration: none; font-weight: 600; }
+.footerLink a:hover { text-decoration: underline; }
+
+/* ====== Breakpoints ====== */
+
+/* Small phones */
+@media (max-width: 360px) {
+  .wrap { max-width: 100%; }
+  .card { padding: 16px; }
+  .title { font-size: 28px; }
+  .subtitle { font-size: 14px; }
+  .roleButtons { grid-template-columns: 1fr; } /* apila los botones de rol */
 }
 
-.footerLink a {
-  color: var(--color-brand-primary);
-  text-decoration: none;
-  font-weight: 600;
+/* Tablet */
+@media (min-width: var(--bp-md)) {
+  .card { padding: 28px; }
+  .title { font-size: 40px; }
+  .subtitle { font-size: 18px; }
 }
 
-.footerLink a:hover {
-  text-decoration: underline;
+/* Desktop grande */
+@media (min-width: var(--bp-lg)) {
+  .wrap { max-width: 520px; }
 }

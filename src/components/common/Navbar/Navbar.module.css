@@ -1,0 +1,101 @@
+.navbar {
+  width: 100%;
+  background: var(--color-surface);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---- LOGO ---- */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logoImg {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ---- NAV LINKS ---- */
+.navLinks {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.link {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--color-brand-primary);
+}
+
+/* ---- BOTONES ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.primaryBtn {
+  background: var(--color-brand-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.primaryBtn:hover {
+  background: var(--color-brand-secondary);
+}
+
+.secondaryBtn {
+  background: transparent;
+  border: 2px solid var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryBtn:hover {
+  background: var(--color-brand-primary);
+  color: #fff;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navLinks {
+    gap: 16px;
+  }
+}

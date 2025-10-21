@@ -1,11 +1,11 @@
 :root{
   /* Base */
   --color-bg: #f4f1e8;         /* Fondo */
-  --color-surface: #ffffff;    /* Tarjetas/superficies */
+  --color-surface: #ede3d2;    /* Tarjetas/superficies */
   --color-text: #333333;       /* Texto principal */
 
   /* Marca */
-  --color-brand-title: #ee9271;  /* Títulos (marca) */
+  --color-brand-title: #295b6e;  /* Títulos (marca) */
   --color-brand-primary: #8fbbb0;/* Botón primario */
   --color-brand-secondary: #295b6e; /* Botón secundario / acentos */
   --color-bg-alt: #ede3d2;       /* Fondo alterno suave */
@@ -28,6 +28,11 @@
   /* Espaciado */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
   --space-4: 16px; --space-5: 20px; --space-6: 24px;
+
+  /* Responsive */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
 }
 
 /* Texto base con fuentes de marca */

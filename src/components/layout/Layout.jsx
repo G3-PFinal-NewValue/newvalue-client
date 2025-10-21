@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Navbar from "../common/Navbar";
+import Navbar from "../../components/common/Navbar/Navbar";
 
 
 export default function Layout() {

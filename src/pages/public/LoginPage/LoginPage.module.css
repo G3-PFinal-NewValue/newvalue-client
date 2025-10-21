@@ -3,102 +3,44 @@
   display: grid;
   place-items: center;
   background: var(--color-bg);
+  padding: 24px 12px;
 }
 
 .wrap {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
 }
 
 .card {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: var(--space-6);
+  padding: 22px;
 }
 
 .title {
   font-family: var(--font-title);
   font-size: var(--fs-title-lg);
   font-weight: 700;
-  margin: 0 0 var(--space-2);
+  margin: 0 0 6px;
   color: var(--color-brand-title);
 }
 
 .subtitle {
   font-family: var(--font-body);
-  margin: 0 0 var(--space-6);
+  margin: 0 0 18px;
   color: var(--color-text);
   opacity: 0.8;
-  font-size: var(--fs-subtitle);
+  font-size: 16px;
   line-height: 1.4;
 }
 
 .form {
   display: grid;
-  gap: var(--space-4);
+  gap: 14px;
 }
 
-/* ---- Roles ---- */
-.roleGroup {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.label {
-  font-weight: 600;
-  font-size: var(--fs-detail);
-  color: var(--color-text);
-}
-
-.roleButtons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.roleButton {
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.roleButton:hover {
-  background: var(--color-bg-alt);
-}
-
-.roleActive {
-  background: var(--color-brand-primary);
-  color: #fff;
-  border-color: var(--color-brand-primary);
-}
-
-.errorText {
-  color: #dc2626;
-  font-size: 12px;
-}
-
-/* ---- Footer ---- */
-.footerLink {
-  text-align: center;
-  margin-top: var(--space-4);
-  font-size: var(--fs-detail);
-}
-
-.footerLink a {
-  color: var(--color-brand-primary);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.footerLink a:hover {
-  text-decoration: underline;
-}
-
+/* Botón submit (ya lo tenías) */
 .submitButton {
   width: 100%;
   padding: 12px;
@@ -111,16 +53,32 @@
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
+.submitButton:hover:not(:disabled) { background: var(--color-brand-secondary); }
+.submitButton:disabled { opacity: 0.7; cursor: not-allowed; }
+.submitButton:active:not(:disabled) { transform: scale(0.98); }
 
-.submitButton:hover:not(:disabled) {
-  background: var(--color-brand-secondary);
+.footerLink { text-align: center; margin-top: 12px; font-size: 15px; }
+.footerLink a { color: var(--color-brand-primary); text-decoration: none; font-weight: 600; }
+.footerLink a:hover { text-decoration: underline; }
+
+/* ====== Breakpoints ====== */
+
+/* Small phones */
+@media (max-width: 360px) {
+  .wrap { max-width: 100%; }
+  .card { padding: 16px; }
+  .title { font-size: 28px; }
+  .subtitle { font-size: 14px; }
 }
 
-.submitButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+/* Tablet */
+@media (min-width: var(--bp-md)) {
+  .card { padding: 28px; }
+  .title { font-size: 40px; }
+  .subtitle { font-size: 18px; }
 }
 
-.submitButton:active:not(:disabled) {
-  transform: scale(0.98);
+/* Desktop grande */
+@media (min-width: var(--bp-lg)) {
+  .wrap { max-width: 520px; }
 }
