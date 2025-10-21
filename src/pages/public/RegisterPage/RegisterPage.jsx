@@ -38,10 +38,12 @@ export default function RegisterPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      last_name: "",
       email: "",
       password: "",
       confirm: "",
       role: "patient",
+      phone_number:""
     },
   });
 
@@ -68,10 +70,17 @@ export default function RegisterPage() {
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <TextInput
-              label="Nombre completo"
-              placeholder="Tu nombre"
+              label="Nombre"
+              placeholder="Nombre"
               error={errors.name?.message}
               {...register("name")}
+            />
+
+            <TextInput
+              label="Apellido"
+              placeholder="Apellido"
+              error={errors.last_name?.message}
+              {...register("last_name")}
             />
 
             <TextInput
@@ -79,6 +88,13 @@ export default function RegisterPage() {
               placeholder="tucorreo@ejemplo.com"
               error={errors.email?.message}
               {...register("email")}
+            />
+
+            <TextInput
+              label="Teléfono de Contacto"
+              placeholder=""
+              error={errors.phone_number?.message}
+              {...register("phone_number")}
             />
 
             <PasswordInput

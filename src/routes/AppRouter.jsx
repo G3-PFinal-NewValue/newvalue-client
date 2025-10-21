@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 
 // Páginas públicas
-import HomePage from "../pages/public/HomePage";
+import HomePage from "../pages/public/HomePage/HomePage.jsx";
 import LoginPage from "../pages/public/LoginPage/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
 import BlogListPage from "../pages/public/BlogListPage";
@@ -10,6 +10,8 @@ import BlogArticlePage from "../pages/public/BlogArticlePage";
 
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
+import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
+
 import { useAuth } from "../context/AuthContext";
 
 // Demo privada (temporal)
@@ -45,6 +47,16 @@ export default function AppRouter() {
             element={
               <ProtectedRoute>
                 <PrivateHome />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+        <Route element={<Layout />}>
+          <Route
+            path="/app/profile"
+            element={
+              <ProtectedRoute>
+                <PsychologistProfileSetup />
               </ProtectedRoute>
             }
           />
