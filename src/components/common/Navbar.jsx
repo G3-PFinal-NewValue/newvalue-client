@@ -32,23 +32,21 @@ export default function Navbar() {
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4">
-              {pathname !== "/" && (
-                <NavLink to="/" className={navItemClass}>
-                  Home
-                </NavLink>
-              )}
-
-              {pathname !== "/blog" && (
-                <NavLink to="/blog" className={navItemClass}>
-                  Blog
-                </NavLink>
-              )}
-            </div>
+            <div className="hidden md:flex items-center gap-4"></div>
           </div>
 
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-3">
+            {pathname !== "/" && (
+              <NavLink to="/" className={navItemClass}>
+                Home
+              </NavLink>
+            )}
+            {pathname !== "/blog" && (
+              <NavLink to="/blog" className={navItemClass}>
+                Blog
+              </NavLink>
+            )}
             {!user ? (
               <Link
                 to="/login"
