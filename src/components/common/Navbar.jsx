@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
@@ -18,6 +18,8 @@ export default function Navbar() {
       ? "bg-indigo-600 text-white"
       : "text-gray-700 hover:bg-indigo-100 hover:text-indigo-700");
 
+  const { pathname } = useLocation();
+
   return (
     <nav className="border-b bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -31,12 +33,17 @@ export default function Navbar() {
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4">
-              <NavLink to="/" className={navItemClass}>
-                Home
-              </NavLink>
-              <NavLink to="/blog" className={navItemClass}>
-                Blog
-              </NavLink>
+              {pathname !== "/" && (
+                <NavLink to="/" className={navItemClass}>
+                  Home
+                </NavLink>
+              )}
+
+              {pathname !== "/blog" && (
+                <NavLink to="/blog" className={navItemClass}>
+                  Blog
+                </NavLink>
+              )}
             </div>
           </div>
 
