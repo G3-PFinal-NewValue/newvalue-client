@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,9 +9,8 @@ import TextInput from "../../../components/common/TextInput/TextInput.jsx";
 import styles from "./PsychologistProfileSetup.module.css";
 import { createPsychologistProfile } from "../../../services/psychologistsService";
 
-// ----- Schema (según tablas backend) -----
 const availabilitySchema = z.object({
-  weekday: z.number().min(0).max(6), // 0 = domingo ... 6 = sábado
+  weekday: z.number().min(0).max(6),
   start_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:MM"),
   end_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:MM"),
 }).refine(a => a.start_time < a.end_time, {
@@ -38,8 +38,12 @@ const SPECIALTIES = [
 ];
 
 export default function PsychologistProfileSetup() {
-  const { user } = useAuth(); // asumimos user.id disponible
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // 👇 Foto local (sin Cloudinary): guardamos Data URL en el mock
+  const [photoPreview, setPhotoPreview] = useState(null); // string | null
+  const [photoDataUrl, setPhotoDataUrl] = useState(null); // string | null
 
   const { register, handleSubmit, control, formState: { errors, isSubmitting }, setValue } = useForm({
     resolver: zodResolver(schema),
@@ -51,24 +55,33 @@ export default function PsychologistProfileSetup() {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "availabilities",
-  });
+  const { fields, append, remove } = useFieldArray({ control, name: "availabilities" });
+
+  const onPhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Preview
+    const previewUrl = URL.createObjectURL(file);
+    setPhotoPreview(previewUrl);
+    // Data URL (persistible en localStorage)
+    const reader = new FileReader();
+    reader.onload = () => setPhotoDataUrl(reader.result);
+    reader.readAsDataURL(file);
+  };
 
   const onSubmit = async (values) => {
     try {
-      // mock: enviamos user_id + payload
       await createPsychologistProfile({
         user_id: user?.id ?? 1,
         license_number: values.license_number,
         specialty: values.specialty,
-        validated: false, // lo hará admin/back
+        validated: false,
         professional_description: values.professional_description,
         availabilities: values.availabilities,
+        photo_url: photoDataUrl || null, // 👈 guardamos dataURL en el mock
       });
-      alert("Perfil creado (mock). Cuando esté el backend, conectamos.");
-      navigate("/app"); // o donde quieras aterrizar
+      alert("Perfil creado (mock con foto local). Luego sustituimos por Cloudinary.");
+      navigate("/app");
     } catch (e) {
       console.error(e);
       alert("No se pudo guardar el perfil.");
@@ -81,8 +94,21 @@ export default function PsychologistProfileSetup() {
         <div className={styles.card}>
           <h1 className={styles.title}>Crear perfil profesional</h1>
           <p className={styles.subtitle}>
-            Comparte tu número de licencia, especialidad, descripción y horarios disponibles.
+            Sube tu foto, añade tu información profesional y tus horarios disponibles.
           </p>
+
+          {/* Foto (local) */}
+          <div className={styles.photoSection}>
+            <label className={styles.photoLabel}>
+              {photoPreview ? (
+                <img src={photoPreview} alt="Preview" className={styles.photoPreview} />
+              ) : (
+                <span>Seleccionar foto</span>
+              )}
+              <input type="file" accept="image/*" onChange={onPhotoChange} hidden />
+            </label>
+            <p className={styles.photoHint}>PNG/JPG/WebP · Máx ~2MB (recomendado)</p>
+          </div>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <TextInput
@@ -92,7 +118,6 @@ export default function PsychologistProfileSetup() {
               {...register("license_number")}
             />
 
-            {/* Especialidad (select + campo 'Otro') */}
             <div className={styles.group}>
               <label className={styles.label}>Especialidad</label>
               <select
@@ -172,7 +197,6 @@ export default function PsychologistProfileSetup() {
                     ✕
                   </button>
 
-                  {/* errores por fila */}
                   <div className={styles.rowErrors}>
                     {errors.availabilities?.[idx]?.start_time && (
                       <span className={styles.error}>

@@ -1,25 +1,29 @@
 import api from "./apiClient";
 
-// ⚠️ Stubs: dejarán token en localStorage pero NO llaman backend aún.
+// Login
 export async function loginRequest({ email, password }) {
-  // TODO: reemplazar por api.post("/auth/login", { email, password })
-  const mockUser = { id: 1, name: "Camila", email, role: "patient" };
-  const mockToken = "dev-token";
-  localStorage.setItem("token", mockToken);
-  return mockUser;
+  const { data } = await api.post("/auth/login", { email, password });
+  // data: { user: {...}, token: "..." }
+  localStorage.setItem("cm_auth", JSON.stringify({ token: data.token, user: data.user }));
+  return data.user;
 }
 
-export async function registerRequest(payload) {
-  // TODO: reemplazar por api.post("/auth/register", payload)
-  const mockUser = { id: 2, name: payload.name, email: payload.email, role: payload.role };
-  const mockToken = "dev-token";
-  localStorage.setItem("token", mockToken);
-  return mockUser;
+// Register (alta user básica)
+export async function registerRequest({ name, email, password, role }) {
+  const { data } = await api.post("/auth/register", { name, email, password, role });
+  // opcional: autologin
+  localStorage.setItem("cm_auth", JSON.stringify({ token: data.token, user: data.user }));
+  return data.user;
 }
 
+// Perfil actual
 export async function getMe() {
-  // TODO: reemplazar por api.get("/auth/me")
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("No token");
-  return { id: 1, name: "Camila", email: "me@example.com", role: "patient" };
+  const { data } = await api.get("/auth/me");
+  return data;
+}
+
+// Logout
+export async function logoutRequest() {
+  localStorage.removeItem("cm_auth");
+  try { await api.post("/auth/logout"); } catch {}
 }
