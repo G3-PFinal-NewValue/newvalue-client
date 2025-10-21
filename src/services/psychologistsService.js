@@ -10,3 +10,15 @@ export async function createPsychologistProfile(payload) {
   await new Promise(r => setTimeout(r, 500));
   return data;
 }
+
+const KEY = "cm_psychologist_profiles";
+
+export function getAllPsychologistProfiles() {
+  return JSON.parse(localStorage.getItem(KEY) || "[]");
+}
+
+export function getPsychologistProfileById(id) {
+  const all = getAllPsychologistProfiles();
+  const numId = typeof id === "string" ? Number(id) : id;
+  return all.find(p => p.id === numId) || null;
+}
