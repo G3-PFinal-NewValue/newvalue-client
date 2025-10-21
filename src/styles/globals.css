@@ -1,33 +1,39 @@
-:root{
+:root {
   /* Base */
-  --color-bg: #f4f1e8;         /* Fondo */
-  --color-surface: #ede3d2;    /* Tarjetas/superficies */
-  --color-text: #333333;       /* Texto principal */
+  --color-bg: #f4f1e8; /* Fondo */
+  --color-surface: #ede3d2; /* Tarjetas/superficies */
+  --color-text: #333333; /* Texto principal */
 
   /* Marca */
-  --color-brand-title: #295b6e;  /* Títulos (marca) */
-  --color-brand-primary: #8fbbb0;/* Botón primario */
-  --color-brand-secondary: #295b6e; /* Botón secundario / acentos */
-  --color-bg-alt: #ede3d2;       /* Fondo alterno suave */
+  --color-brand-title: #295b6e; /* Títulos (marca) */
+  --color-brand-primary: #ee9271; /* Botón primario (Manual de Marca) */
+  --color-brand-secondary: #8fbbb0; /* Botón secundario (Manual de Marca) */
+  --color-bg-alt: #ede3d2; /* Fondo alterno suave */
 
   /* Tipografía */
-  --font-title: "Opun", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-body: "Visby", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-title: "Opun", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  --font-body: "Visby", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
 
   /* Tamaños sugeridos (manual) */
   --fs-title-xl: 48px; /* 36–48 */
   --fs-title-lg: 36px;
   --fs-subtitle: 24px;
-  --fs-body: 17px;     /* 16–18 */
+  --fs-body: 17px; /* 16–18 */
   --fs-detail: 18px;
 
   /* Radios y sombra */
   --radius-xl: 16px;
-  --shadow-1: 0 10px 25px rgba(0,0,0,.08);
+  --shadow-1: 0 10px 25px rgba(0, 0, 0, 0.08);
 
   /* Espaciado */
-  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
-  --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
 
   /* Responsive */
   --bp-sm: 480px;
@@ -43,4 +49,9 @@ body {
   font-size: var(--fs-body);
   line-height: 1.55;
 }
-h1, h2, h3 { font-family: var(--font-title); color: var(--color-brand-title); }
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  color: var(--color-brand-title);
+}

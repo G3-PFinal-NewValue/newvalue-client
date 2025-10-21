@@ -8,9 +8,8 @@ export async function loginRequest({ email, password }) {
   return data.user;
 }
 
-// Register (alta user básica)
-export async function registerRequest({ name, email, password, role }) {
-  const { data } = await api.post("/auth/register", { name, email, password, role });
+export async function registerRequest({ first_name, last_name, email, password, role, phone_number }) { 
+  const { data } = await api.post("/auth/register", { first_name, last_name, email, password, role, phone_number }); 
   // opcional: autologin
   localStorage.setItem("cm_auth", JSON.stringify({ token: data.token, user: data.user }));
   return data.user;

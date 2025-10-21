@@ -7,9 +7,19 @@ const api = axios.create({
 // ⬇️ Adjunta token si usáis JWT
 api.interceptors.request.use((config) => {
   const raw = localStorage.getItem("cm_auth");
+  
+  // AÑADIMOS UN TRY...CATCH
+  // Esto evita que la app crashee si 'raw' es un JSON inválido (ej: "undefined" o null)
   if (raw) {
-    const { token } = JSON.parse(raw);
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const { token } = JSON.parse(raw);
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (e) {
+      // Si falla el parseo, simplemente no adjuntes el token
+      console.error("Error parsing auth token from localStorage", e);
+    }
   }
   return config;
 });

@@ -11,7 +11,7 @@ export default function AuthTabs() {
       {/* Cabecera (logo/nombre + tagline) */}
       <div className={styles.header}>
         <div className={styles.logo} >
-          <img className={styles.logo} src="public/images/LongLogo.png"></img>
+         <img className={styles.logo} src="/images/LongLogo.png" alt="Cora Mind Logo" />
           </div>
 
       </div>

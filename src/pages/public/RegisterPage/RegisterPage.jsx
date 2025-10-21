@@ -13,11 +13,17 @@ import styles from "./RegisterPage.module.css";
 
 const schema = z
   .object({
-    name: z.string().min(2, "El nombre es obligatorio"),
+    first_name: z.string().min(2, "El nombre es obligatorio"),
+    last_name: z.string().min(2, "El apellido es obligatorio"),
     email: z.string().email("Correo inválido"),
     password: z.string().min(6, "Mínimo 6 caracteres"),
     confirm: z.string().min(6, "Confirma tu contraseña"),
     role: z.enum(["patient", "psychologist"]),
+    phone_number: z
+      .string()
+      .min(8, "Teléfono inválido")
+      .optional()
+      .or(z.literal("")),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Las contraseñas no coinciden",
@@ -37,13 +43,13 @@ export default function RegisterPage() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
+      first_name: "",
       last_name: "",
       email: "",
       password: "",
       confirm: "",
       role: "patient",
-      phone_number:""
+      phone_number: "",
     },
   });
 
@@ -66,14 +72,16 @@ export default function RegisterPage() {
 
         <div className={styles.card}>
           <h1 className={styles.title}>Crear cuenta</h1>
-          <p className={styles.subtitle}>Únete a Cora Mind y comienza tu camino</p>
+          <p className={styles.subtitle}>
+            Únete a Cora Mind y comienza tu camino
+          </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <TextInput
               label="Nombre"
               placeholder="Nombre"
-              error={errors.name?.message}
-              {...register("name")}
+              error={errors.first_name?.message} // <-- CAMBIADO
+              {...register("first_name")} // <-- CAMBIADO
             />
 
             <TextInput
@@ -115,7 +123,9 @@ export default function RegisterPage() {
               <div className={styles.roleButtons}>
                 <button
                   type="button"
-                  onClick={() => setValue("role", "patient", { shouldValidate: true })}
+                  onClick={() =>
+                    setValue("role", "patient", { shouldValidate: true })
+                  }
                   className={`${styles.roleButton} ${
                     role === "patient" ? styles.roleActive : ""
                   }`}
