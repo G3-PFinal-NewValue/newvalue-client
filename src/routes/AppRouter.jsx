@@ -3,8 +3,8 @@ import Layout from "../components/layout/Layout";
 
 // Páginas públicas
 import HomePage from "../pages/public/HomePage";
-import LoginPage from "../pages/public/LoginPage";
-import RegisterPage from "../pages/public/RegisterPage";
+import LoginPage from "../pages/public/LoginPage/LoginPage";
+import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
 import BlogListPage from "../pages/public/BlogListPage";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 

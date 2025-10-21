@@ -1,0 +1,134 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+  padding: 24px 12px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 440px;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: 22px;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg);
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--color-brand-title);
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  margin: 0 0 18px;
+  color: var(--color-text);
+  opacity: 0.8;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+/* ---- Roles ---- */
+.roleGroup {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.label {
+  font-weight: 600;
+  font-size: var(--fs-detail);
+  color: var(--color-text);
+}
+
+.roleButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.roleButton {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roleButton:hover {
+  background: var(--color-surface);
+  border-color: var(--color-brand-primary);
+}
+
+.roleActive {
+  background: var(--color-brand-primary);
+  color: #fff;
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ---- Botón submit ---- */
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: var(--fs-detail);
+  background: var(--color-brand-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--color-brand-secondary);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ---- Footer ---- */
+.footerLink {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.footerLink a {
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footerLink a:hover {
+  text-decoration: underline;
+}

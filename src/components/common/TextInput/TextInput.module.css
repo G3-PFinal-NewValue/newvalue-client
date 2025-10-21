@@ -1,0 +1,9 @@
+.group { display: grid; gap: var(--space-1); }
+.label { font-size: 14px; font-weight: 600; color: var(--color-muted); }
+.input {
+  width: 90%; padding: 10px 12px;
+  border: 1px solid #d1d5db; border-radius: 10px; outline: none;
+}
+.input:focus { border-color: var(--color-primary); }
+.error { color: #dc2626; font-size: 12px; }
+.inputError { border-color: #dc2626; }
