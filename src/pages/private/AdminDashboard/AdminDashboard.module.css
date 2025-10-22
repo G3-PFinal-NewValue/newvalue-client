@@ -1,0 +1,67 @@
+.page {
+  padding: var(--space-6); /* 24px */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.title {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-xl); /* 48px */
+  font-weight: 700;
+  margin: 0 0 var(--space-6); /* 24px */
+  color: var(--color-brand-title);
+  border-bottom: 1px solid var(--color-bg-alt);
+  padding-bottom: var(--space-4);
+}
+
+.section {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-5); /* 20px */
+  margin-bottom: var(--space-6); /* 24px */
+}
+
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  font-weight: 600;
+  color: var(--color-brand-title);
+  margin: 0 0 var(--space-4); /* 16px */
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-3); /* 12px */
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.actionButton {
+  /* Estilos como .primaryBtn pero más pequeños */
+  background: var(--color-brand-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.actionButton:hover { background: var(--color-brand-secondary); }
+
+.error { color: #dc2626; font-weight: 600; }

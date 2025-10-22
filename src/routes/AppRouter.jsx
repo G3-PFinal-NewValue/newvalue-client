@@ -13,7 +13,8 @@ import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
 import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
-import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; // <-- 1. Importar
+import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; 
+import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard"; 
 
 import { useAuth } from "../context/AuthContext";
 
@@ -79,6 +80,10 @@ export default function AppRouter() {
                 <MyPatientProfile />{" "}
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/admin/dashboard" 
+            element={ <ProtectedRoute allowedRoles={['admin']}> <AdminDashboard /> </ProtectedRoute> }
           />
         </Route>
 
