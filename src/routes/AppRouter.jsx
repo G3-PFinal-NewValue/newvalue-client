@@ -54,8 +54,6 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
-        </Route>
-        <Route element={<Layout />}>
           <Route
             path="/app/profile"
             element={
@@ -64,21 +62,25 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
-        </Route>
-
-        <Route
-          path="/app/profile-setup/patient"
-          element={
-            <ProtectedRoute>
-              {" "}
-              <PatientProfileSetup />{" "}
-            </ProtectedRoute>
-          }
-        />
-        <Route
-            path="/app/my-profile"
-            element={ <ProtectedRoute> <MyPatientProfile /> </ProtectedRoute> }
+          <Route
+            path="/app/profile-setup/patient"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <PatientProfileSetup />{" "}
+              </ProtectedRoute>
+            }
           />
+          <Route
+            path="/app/my-profile"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <MyPatientProfile />{" "}
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
