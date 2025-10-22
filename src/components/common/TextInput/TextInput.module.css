@@ -19,7 +19,6 @@
   border-color: var(--color-brand-primary);
 }
 
-/* 👇 3. El input ahora es transparente y sin borde 👇 */
 .input {
   width: 100%;
   padding: 10px 12px;

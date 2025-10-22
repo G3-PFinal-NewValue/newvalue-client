@@ -1,142 +1,172 @@
 .page {
-  min-height: 100vh;
+  min-height: calc(100vh - 60px); /* Adjust if Navbar height changes */
   background: var(--color-bg);
-  padding: 24px 12px;
+  padding: var(--space-6) var(--space-4); /* 24px top/bottom, 16px sides */
   display: grid;
   place-items: start center;
 }
-.wrap { width: 100%; max-width: 980px; }
+.wrap {
+  width: 100%;
+  max-width: 1100px; /* Wider for grid layout */
+  margin: 0 auto; /* Centered */
+}
 
+/* --- Cabecera --- */
 .headerCard {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: 20px;
+  padding: var(--space-5); /* 20px */
   display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  grid-template-columns: 110px 1fr; /* Avatar size + remaining space */
+  gap: var(--space-5); /* 20px gap */
+  margin-bottom: var(--space-6); /* 24px separation */
+  align-items: center; /* Vertically align avatar and info */
 }
 
 .avatar {
-  width: 96px; height: 96px; border-radius: 999px; overflow: hidden;
-  border: 3px solid var(--color-brand-primary);
-  background: #fff;
+  width: 110px; height: 110px;
+  border-radius: 999px; /* Circle */
+  overflow: hidden;
+  border: 4px solid var(--color-brand-primary); /* Thicker border */
+  background: #fff; /* Fallback bg */
+  flex-shrink: 0; /* Prevent shrinking */
 }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover; /* Cover the circle area */
+}
 .avatarFallback {
   width: 100%; height: 100%;
   display: grid; place-items: center;
-  color: #fff; background: var(--color-brand_primary, var(--color-brand-primary));
+  color: #fff; background: var(--color-brand-primary); /* Brand color */
   font-weight: 800;
+  font-size: 48px; /* Large initials */
 }
 
-.headerInfo { display: grid; align-content: center; gap: 6px; }
+.headerInfo { display: grid; gap: var(--space-2); /* 8px gap */ }
 .name {
   margin: 0;
   font-family: var(--font-title);
   color: var(--color-brand-title);
-  font-size: 28px;
+  font-size: var(--fs-title-lg); /* 36px */
+  font-weight: 700;
+  line-height: 1.3;
 }
-.specialty { margin: 0; color: var(--color-text); font-weight: 600; }
-.license { margin: 0; color: var(--color-text); opacity: .8; }
+.specialty {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 18px; /* Slightly larger specialty */
+}
+.license {
+  margin: 0;
+  color: var(--color-text);
+  opacity: .7; /* Less emphasis */
+  font-size: 15px; /* Slightly smaller */
+}
 
+/* --- Grid Layout --- */
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1.8fr; /* Description takes less space than calendar */
+  gap: var(--space-6); /* 24px separation */
 }
+
+/* --- Section Styling (shared) --- */
 .section {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: 20px;
+  padding: var(--space-5); /* 20px padding */
 }
 .sectionTitle {
-  margin: 0 0 10px;
-  font-weight: 800;
-  color: var(--color-text);
+  margin: 0 0 var(--space-4); /* 16px bottom margin */
+  font-family: var(--font-title);
+  font-weight: 600; /* Less bold than main title */
+  color: var(--color-brand-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  padding-bottom: var(--space-3); /* 12px bottom padding */
+  border-bottom: 1px solid var(--color-bg-alt); /* Separator line */
 }
-.description { margin: 0; color: var(--color-text); line-height: 1.6; }
-.muted { color: var(--color-text); opacity: .7; }
-
-.availList { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-.dayRow { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; }
-.dayName { font-weight: 700; color: var(--color-text); }
-.slots { display: flex; flex-wrap: wrap; gap: 8px; }
-.slot {
-  background: var(--color-bg-alt);
+.description {
+  margin: 0;
   color: var(--color-text);
-  border-radius: 10px;
-  padding: 6px 10px;
-  font-weight: 600;
-  font-size: 14px;
+  line-height: 1.7; /* More line spacing */
+  opacity: 0.9;
+}
+.muted {
+  color: var(--color-text);
+  opacity: .7;
+  font-style: italic; /* Indicate lack of content */
 }
 
+/* --- Footer Actions --- */
 .footerActions {
-  display: flex; gap: 10px; justify-content: flex-end;
-  margin-top: 16px;
+  display: flex; gap: var(--space-3); /* 12px gap */
+  justify-content: flex-start; /* Align button to the left */
+  margin-top: var(--space-6); /* 24px top margin */
 }
-.primaryBtn, .secondaryBtn {
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 700;
-  border-radius: 10px;
-  padding: 10px 14px;
-}
-.primaryBtn {
-  background: var(--color-brand-primary); color: #fff; border: 0;
-}
-.primaryBtn:hover { background: var(--color-brand-secondary); }
-.secondaryBtn {
-  background: transparent;
-  border: 2px solid var(--color-brand-primary);
-  color: var(--color-brand-primary);
-}
-.secondaryBtn:hover { background: var(--color-brand-primary); color: #fff; }
+/* Reusing button styles (ideally define globally or in common file) */
+ .primaryBtn, .secondaryBtn {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 14px; /* Standard button size */
+    font-size: 15px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: center;
+ }
+ .primaryBtn {
+    background: var(--color-brand-primary); color: #fff;
+    border: 2px solid var(--color-brand-primary);
+ }
+ .primaryBtn:hover {
+     background: var(--color-brand-secondary);
+     border-color: var(--color-brand-secondary);
+ }
+ .secondaryBtn {
+    background: transparent;
+    border: 2px solid var(--color-brand-primary);
+    color: var(--color-brand-primary);
+ }
+ .secondaryBtn:hover { background: var(--color-brand-primary); color: #fff; }
 
-/* Responsive */
-@media (max-width: 880px) {
-  .grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-  .headerCard { grid-template-columns: 72px 1fr; }
-  .avatar { width: 72px; height: 72px; }
-  .name { font-size: 24px; }
-  .dayRow { grid-template-columns: 1fr; }
-}
 
-/* --- Estilos personalizados para react-big-calendar --- */
-
-/* Contenedor principal y fuente base */
+/* --- Calendar Styles Refined --- */
+.calendarContainer { /* Wrapper div for height/spacing */
+  /* Height is set inline in the component */
+}
 .calendarContainer :global(.rbc-calendar) {
-  font-family: var(--font-body); /* Usa tu fuente base */
-  border: 1px solid var(--color-bg-alt); /* Borde suave */
-  border-radius: var(--radius-xl); /* Bordes redondeados */
-  overflow: hidden; /* Para que el radius funcione */
+  font-family: var(--font-body);
+  border: none; /* Remove default border */
+  border-radius: 0; /* Let .section handle rounding */
+  height: 100% !important; /* Force fill the container height */
 }
-
-/* Barra de herramientas (botones de navegación, título) */
 .calendarContainer :global(.rbc-toolbar) {
-  background-color: var(--color-surface); /* Fondo suave */
+  background-color: transparent; /* No background needed */
   border-bottom: 1px solid var(--color-bg-alt);
-  padding: 10px 15px;
+  padding: 0 0 var(--space-3); /* Only bottom padding */
+  margin-bottom: var(--space-3); /* Space below toolbar */
 }
-
 .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) {
-  font-family: var(--font-title); /* Fuente de títulos */
-  color: var(--color-brand-title); /* Color de títulos */
+  font-family: var(--font-title);
+  color: var(--color-brand-title);
   font-weight: 700;
-  font-size: var(--fs-subtitle); /* Tamaño subtítulo */
+  font-size: var(--fs-subtitle);
+  flex-grow: 0; /* Prevent label from taking too much space */
+  text-align: left; /* Align month/week text left */
 }
-
 .calendarContainer :global(.rbc-toolbar button) {
   background: transparent;
-  border: 1px solid var(--color-brand-primary); /* Borde con color primario */
+  border: 1px solid var(--color-brand-primary);
   color: var(--color-brand-primary);
-  padding: 6px 12px;
+  padding: 5px 10px; /* Slightly smaller buttons */
   border-radius: 8px;
   font-weight: 600;
+  font-size: 14px; /* Smaller font size */
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -151,18 +181,15 @@
    background: var(--color-brand-primary);
    color: #fff;
 }
-
-/* Cabecera de días (Lunes, Martes...) */
 .calendarContainer :global(.rbc-header) {
-  background-color: var(--color-bg-alt); /* Fondo alterno */
+  background-color: transparent; /* No background for headers */
   border-bottom: 1px solid var(--color-bg-alt);
   padding: 8px 0;
-  font-weight: 700;
+  font-weight: 600; /* Slightly less bold */
   color: var(--color-text);
   text-align: center;
+  font-size: 14px;
 }
-
-/* Celdas de día */
 .calendarContainer :global(.rbc-day-bg) {
    border-left: 1px solid var(--color-bg-alt);
 }
@@ -170,35 +197,43 @@
    border-left: none;
 }
 .calendarContainer :global(.rbc-today) {
-   background-color: #fdfae0; /* Resaltar día actual */
+   background-color: rgba(238, 146, 113, 0.1); /* Very light primary color tint for today */
 }
-
-/* Eventos (slots disponibles/reservados) */
+.calendarContainer :global(.rbc-time-gutter) {
+    /* Maybe slightly wider gutter if needed */
+}
+.calendarContainer :global(.rbc-time-slot) {
+    border-top: 1px dotted var(--color-bg-alt); /* Dotted lines for hours */
+}
 .calendarContainer :global(.rbc-event) {
-  border: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  padding: 4px 8px;
+  /* Styles applied via eventPropGetter in the component */
 }
-
-/* Usamos las props que ya tenías en eventPropGetter */
-/* Color para 'Disponible' (viene de eventPropGetter) */
-/* .calendarContainer :global(.rbc-event[style*="background-color: var(--color-brand-secondary)"]) { } */
-
-/* Color para 'Reservado' (viene de eventPropGetter) */
-.calendarContainer :global(.rbc-event[style*="background-color: rgb(204, 204, 204)"]) {
-   cursor: not-allowed;
-   color: #888; /* Texto más oscuro para gris */
-   font-style: italic;
-}
-
-/* Hora actual */
 .calendarContainer :global(.rbc-current-time-indicator) {
-   background-color: var(--color-brand-primary); /* Línea con color primario */
+   background-color: var(--color-brand-primary); /* Primary color line */
+   height: 2px; /* Thicker line? */
 }
 
-/* Ocultar vista 'Mes' y 'Agenda' si solo quieres Semana/Día */
-/* Descomenta si quieres ocultar botones específicos */
-/*
-.calendarContainer :global(.rbc-toolbar .rbc-btn-group button:nth-child(1)) { display: none; } // Oculta Mes
-.calendarContainer :global(.rbc-toolbar .rbc-btn-group button:nth-child(4)) { display: none; } // Oculta Agenda
-*/
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 980px) {
+  .wrap { max-width: 95%; }
+  .grid { grid-template-columns: 1fr; } /* Stack columns */
+  .headerCard { grid-template-columns: 90px 1fr; }
+  .avatar { width: 90px; height: 90px; border-width: 3px; }
+  .avatarFallback { font-size: 36px; }
+  .name { font-size: 28px; }
+  /* Ensure calendar section doesn't become too small */
+  .section:last-child { min-height: 500px; } /* Min height for calendar section */
+}
+@media (max-width: 480px) {
+  .page { padding: var(--space-4) var(--space-3); }
+  .headerCard { grid-template-columns: 72px 1fr; gap: var(--space-4); }
+  .avatar { width: 72px; height: 72px; }
+  .name { font-size: 24px; }
+  .specialty { font-size: 16px; }
+  .section { padding: var(--space-4); } /* Less padding */
+  .sectionTitle { font-size: 20px; }
+  .footerActions { justify-content: center; } /* Center button */
+  .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) { font-size: 20px; } /* Smaller title */
+  .calendarContainer :global(.rbc-toolbar button) { padding: 4px 8px; font-size: 13px; } /* Smaller buttons */
+}
