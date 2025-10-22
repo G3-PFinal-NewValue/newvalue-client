@@ -1,0 +1,18 @@
+.layout {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+.main {
+  /* Usamos 1200px para ser consistentes con tu Navbar.module.css */
+  max-width: 1200px; 
+  margin: 0 auto;
+  /* (24px arriba/abajo, 24px lados) */
+  padding: var(--space-6) var(--space-6); 
+}
+
+/* Hacemos el padding un poco más pequeño en móviles */
+@media (max-width: 768px) {
+  .main {
+    padding: var(--space-4); /* 16px */
+  }
+}

@@ -1,0 +1,16 @@
+.section {
+  display: grid;
+  gap: var(--space-4); /* 16px */
+}
+.title {
+  /* Usamos las variables globales que ya definiste */
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg); /* 36px */
+  font-weight: 700;
+  color: var(--color-brand-title);
+}
+.text {
+  color: var(--color-text);
+  opacity: 0.9;
+  line-height: 1.6;
+}
