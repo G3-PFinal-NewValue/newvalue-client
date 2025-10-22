@@ -12,7 +12,8 @@ import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
-import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup"; // <-- 1. Importar
+import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
+import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; // <-- 1. Importar
 
 import { useAuth } from "../context/AuthContext";
 
@@ -74,6 +75,10 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
+        <Route
+            path="/app/my-profile"
+            element={ <ProtectedRoute> <MyPatientProfile /> </ProtectedRoute> }
+          />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

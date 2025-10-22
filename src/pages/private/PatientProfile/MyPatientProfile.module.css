@@ -1,0 +1,107 @@
+.page {
+  min-height: calc(100vh - 60px); /* Ajustar si tu Navbar tiene otra altura */
+  background: var(--color-bg);
+  padding: var(--space-6); /* 24px */
+  display: grid;
+  place-items: start center; /* Centrado horizontal, arriba vertical */
+}
+.wrap {
+  width: 100%;
+  max-width: 768px; /* Ancho moderado */
+}
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-6); /* 24px */
+}
+.title {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg);
+  font-weight: 700;
+  margin: 0 0 var(--space-5); /* 20px */
+  color: var(--color-brand-title);
+  text-align: center;
+}
+
+/* Sección Cabecera (Foto + Nombre/Email) */
+.headerSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5); /* 20px */
+  margin-bottom: var(--space-6); /* 24px */
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+.avatar {
+  width: 80px; /* Tamaño avatar */
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-brand-secondary); /* Color de fondo si no hay foto */
+  flex-shrink: 0; /* Evita que se encoja */
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatarFallback {
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  color: #fff;
+  font-size: 36px;
+  font-weight: 700;
+}
+.userInfo { display: grid; gap: var(--space-1); }
+.name {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  font-weight: 600;
+  color: var(--color-text);
+}
+.email { margin: 0; color: var(--color-text); opacity: 0.8; }
+
+/* Sección Detalles */
+.detailsSection { display: grid; gap: var(--space-4); /* 16px */ }
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-brand-title);
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+.detailItem { display: grid; gap: var(--space-1); }
+.detailLabel { font-weight: 600; color: var(--color-text); opacity: 0.9; font-size: 15px; }
+.detailValue { color: var(--color-text); }
+.detailValueBlock { /* Para textareas */
+  color: var(--color-text);
+  line-height: 1.6;
+  white-space: pre-wrap; /* Respeta saltos de línea */
+  margin: 0;
+}
+
+.error { color: #dc2626; font-weight: 600; }
+
+/* Botón Editar (opcional) */
+.editButton {
+  margin-top: var(--space-5);
+  /* Estilos similares a .primaryBtn de otros módulos */
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--color-brand-primary); color: #fff; border: 0;
+  cursor: pointer;
+}
+.editButton:hover { background: var(--color-brand-secondary); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .headerSection { flex-direction: column; align-items: center; text-align: center; }
+  .avatar { width: 100px; height: 100px; margin-bottom: var(--space-3); }
+  .avatarFallback { font-size: 48px; }
+  .title { font-size: 28px; }
+  .name { font-size: 22px; }
+  .card { padding: var(--space-4); }
+}
