@@ -1,17 +1,19 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../../components/common/Navbar/Navbar";
-
+import styles from "./Layout.module.css"; // <-- 1. Importar el módulo CSS
 
 export default function Layout() {
-const location = useLocation();
-const hideNavbar =
-  location.pathname === "/login" || location.pathname === "/register";
-return (
-  <div className="min-h-screen bg-gray-50">
-    {!hideNavbar && <Navbar />}
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-      <Outlet />
-    </main>
-  </div>
-);
+  const location = useLocation();
+  const hideNavbar =
+    location.pathname === "/login" || location.pathname === "/register";
+  return (
+    // 👇 2. Usar la clase del módulo
+    <div className={styles.layout}> 
+      {!hideNavbar && <Navbar />}
+      {/* 👇 3. Usar la clase del módulo */}
+      <main className={styles.main}>
+        <Outlet />
+      </main>
+    </div>
+  );
 }
