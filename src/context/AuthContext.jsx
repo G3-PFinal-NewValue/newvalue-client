@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getMe } from "../services/authService";
 
-// ... (imports)
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    // 2. Parsear el JSON y extraer el token
+    // 2. Parsear el JSON y extraer el token (de forma segura)
     let token;
     try {
       const authData = JSON.parse(rawAuth);
@@ -26,13 +26,14 @@ export function AuthProvider({ children }) {
 
     // 3. Validar que el token exista
     if (!token) {
+      localStorage.removeItem("cm_auth"); // Limpia si está corrupto
       setBooting(false);
       return;
     }
 
     (async () => {
       try {
-        // getMe() ya usa el token gracias al apiClient
+        // getMe() ya usa el token gracias al apiClient (que arreglamos en Paso 1)
         const me = await getMe();
         setUser(me);
       } catch {
@@ -58,5 +59,4 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
 export const useAuth = () => useContext(AuthContext);

@@ -4,7 +4,6 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-// ⬇️ Adjunta token si usáis JWT
 api.interceptors.request.use((config) => {
   const raw = localStorage.getItem("cm_auth");
   
