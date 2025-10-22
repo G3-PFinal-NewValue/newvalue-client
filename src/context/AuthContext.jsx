@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getMe } from "../services/authService";
+// 👇 Importamos el servicio de logout (que ahora está simulado)
+import { logoutRequest } from "../services/authService";
 
 const AuthContext = createContext(null);
 
@@ -7,49 +8,36 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
 
+  // useEffect SIMPLIFICADO para mocks
   useEffect(() => {
-    // 1. Buscar la clave correcta: "cm_auth"
+    // 1. Buscar la clave "cm_auth"
     const rawAuth = localStorage.getItem("cm_auth");
-    if (!rawAuth) {
-      setBooting(false);
-      return;
-    }
-
-    // 2. Parsear el JSON y extraer el token (de forma segura)
-    let token;
-    try {
-      const authData = JSON.parse(rawAuth);
-      token = authData?.token;
-    } catch (e) {
-      token = null;
-    }
-
-    // 3. Validar que el token exista
-    if (!token) {
-      localStorage.removeItem("cm_auth"); // Limpia si está corrupto
-      setBooting(false);
-      return;
-    }
-
-    (async () => {
+    
+    if (rawAuth) {
       try {
-        // getMe() ya usa el token gracias al apiClient (que arreglamos en Paso 1)
-        const me = await getMe();
-        setUser(me);
-      } catch {
-        // 4. Limpiar la clave correcta en caso de error
+        // 2. Si existe, confiamos en el usuario guardado
+        const authData = JSON.parse(rawAuth);
+        if (authData?.user) {
+          setUser(authData.user);
+        }
+      } catch (e) {
+        // Si está corrupto, lo limpiamos
         localStorage.removeItem("cm_auth");
-        setUser(null);
-      } finally {
-        setBooting(false);
       }
-    })();
-  }, []);
+    }
+    // 3. Dejamos de "bootear"
+    setBooting(false);
+  }, []); // Se ejecuta solo una vez al cargar la app
 
-  const login = (userData) => setUser(userData);
+  const login = (userData) => {
+    setUser(userData);
+    // El servicio loginRequest (ahora simulado) ya guardó en localStorage
+  };
   
-  // 5. Asegurarse que logout elimine la clave correcta
-  const logout = () => { localStorage.removeItem("cm_auth"); setUser(null); };
+  const logout = async () => {
+    await logoutRequest(); // Llama al servicio simulado (que limpia localStorage)
+    setUser(null); // Quita el usuario del estado
+  };
 
   if (booting) return null; // evita parpadeo
 
@@ -59,4 +47,5 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
 export const useAuth = () => useContext(AuthContext);

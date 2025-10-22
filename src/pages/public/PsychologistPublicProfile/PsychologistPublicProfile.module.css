@@ -105,3 +105,100 @@
   .name { font-size: 24px; }
   .dayRow { grid-template-columns: 1fr; }
 }
+
+/* --- Estilos personalizados para react-big-calendar --- */
+
+/* Contenedor principal y fuente base */
+.calendarContainer :global(.rbc-calendar) {
+  font-family: var(--font-body); /* Usa tu fuente base */
+  border: 1px solid var(--color-bg-alt); /* Borde suave */
+  border-radius: var(--radius-xl); /* Bordes redondeados */
+  overflow: hidden; /* Para que el radius funcione */
+}
+
+/* Barra de herramientas (botones de navegación, título) */
+.calendarContainer :global(.rbc-toolbar) {
+  background-color: var(--color-surface); /* Fondo suave */
+  border-bottom: 1px solid var(--color-bg-alt);
+  padding: 10px 15px;
+}
+
+.calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) {
+  font-family: var(--font-title); /* Fuente de títulos */
+  color: var(--color-brand-title); /* Color de títulos */
+  font-weight: 700;
+  font-size: var(--fs-subtitle); /* Tamaño subtítulo */
+}
+
+.calendarContainer :global(.rbc-toolbar button) {
+  background: transparent;
+  border: 1px solid var(--color-brand-primary); /* Borde con color primario */
+  color: var(--color-brand-primary);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.calendarContainer :global(.rbc-toolbar button:hover:not(:disabled)) {
+  background: var(--color-brand-primary);
+  color: #fff;
+}
+.calendarContainer :global(.rbc-toolbar button:active:not(:disabled)) {
+   transform: scale(0.95);
+}
+.calendarContainer :global(.rbc-btn-group .rbc-active) {
+   background: var(--color-brand-primary);
+   color: #fff;
+}
+
+/* Cabecera de días (Lunes, Martes...) */
+.calendarContainer :global(.rbc-header) {
+  background-color: var(--color-bg-alt); /* Fondo alterno */
+  border-bottom: 1px solid var(--color-bg-alt);
+  padding: 8px 0;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Celdas de día */
+.calendarContainer :global(.rbc-day-bg) {
+   border-left: 1px solid var(--color-bg-alt);
+}
+.calendarContainer :global(.rbc-day-bg:first-child) {
+   border-left: none;
+}
+.calendarContainer :global(.rbc-today) {
+   background-color: #fdfae0; /* Resaltar día actual */
+}
+
+/* Eventos (slots disponibles/reservados) */
+.calendarContainer :global(.rbc-event) {
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 4px 8px;
+}
+
+/* Usamos las props que ya tenías en eventPropGetter */
+/* Color para 'Disponible' (viene de eventPropGetter) */
+/* .calendarContainer :global(.rbc-event[style*="background-color: var(--color-brand-secondary)"]) { } */
+
+/* Color para 'Reservado' (viene de eventPropGetter) */
+.calendarContainer :global(.rbc-event[style*="background-color: rgb(204, 204, 204)"]) {
+   cursor: not-allowed;
+   color: #888; /* Texto más oscuro para gris */
+   font-style: italic;
+}
+
+/* Hora actual */
+.calendarContainer :global(.rbc-current-time-indicator) {
+   background-color: var(--color-brand-primary); /* Línea con color primario */
+}
+
+/* Ocultar vista 'Mes' y 'Agenda' si solo quieres Semana/Día */
+/* Descomenta si quieres ocultar botones específicos */
+/*
+.calendarContainer :global(.rbc-toolbar .rbc-btn-group button:nth-child(1)) { display: none; } // Oculta Mes
+.calendarContainer :global(.rbc-toolbar .rbc-btn-group button:nth-child(4)) { display: none; } // Oculta Agenda
+*/
