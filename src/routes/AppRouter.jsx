@@ -12,7 +12,8 @@ import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
-import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup"; // <-- 1. Importar
+import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
+import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; // <-- 1. Importar
 
 import { useAuth } from "../context/AuthContext";
 
@@ -53,8 +54,6 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
-        </Route>
-        <Route element={<Layout />}>
           <Route
             path="/app/profile"
             element={
@@ -63,17 +62,25 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/app/profile-setup/patient"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <PatientProfileSetup />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/my-profile"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <MyPatientProfile />{" "}
+              </ProtectedRoute>
+            }
+          />
         </Route>
-
-        <Route
-          path="/app/profile-setup/patient"
-          element={
-            <ProtectedRoute>
-              {" "}
-              <PatientProfileSetup />{" "}
-            </ProtectedRoute>
-          }
-        />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

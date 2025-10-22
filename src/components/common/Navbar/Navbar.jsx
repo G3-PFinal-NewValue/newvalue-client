@@ -24,7 +24,7 @@ export default function Navbar() {
         {/* LOGO */}
         <Link to="/" className={styles.logo} aria-label="Ir a inicio">
           <img
-            src="/images/LongLogo.png"
+            src="/images/CropLogo.png"
             alt="Cora Mind"
             className={styles.logoImg}
           />
