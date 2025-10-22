@@ -1,0 +1,36 @@
+import { Link, useLocation } from "react-router-dom";
+import styles from "./AuthTabs.module.css";
+
+export default function AuthTabs() {
+  const { pathname } = useLocation();
+  const isLogin = pathname === "/login";
+  const isRegister = pathname === "/register";
+
+  return (
+    <div className={styles.wrapper}>
+      {/* Cabecera (logo/nombre + tagline) */}
+      <div className={styles.header}>
+        <div className={styles.logo} >
+         <img className={styles.logo} src="/images/LongLogo.png" alt="Cora Mind Logo" />
+          </div>
+
+      </div>
+
+      {/* Tabs */}
+      <div className={styles.tabsBar}>
+        <Link
+          to="/login"
+          className={`${styles.tab} ${isLogin ? styles.active : ""}`}
+        >
+          Iniciar Sesión
+        </Link>
+        <Link
+          to="/register"
+          className={`${styles.tab} ${isRegister ? styles.active : ""}`}
+        >
+          Registrarse
+        </Link>
+      </div>
+    </div>
+  );
+}
