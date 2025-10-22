@@ -1,56 +1,59 @@
-.blockcard {
-  background: #faf9f6;
+.blogcard {
+  background: ede3d2;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   max-width: 380px;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
+  font-family: "Visby", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
 }
 
-.blockcard-image {
+.blogcard-image {
   position: relative;
   width: 100%;
   height: 170px;
   overflow: hidden;
 }
 
-.blockcard-image img {
+.blogcard-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.blockcard-label {
+.blogcard-label {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #e0e4ee;
-  color: #2d4f96;
+  background: #ee9271;
+  color: #333333;
   font-size: 0.87rem;
   border-radius: 10px;
   padding: 3px 12px;
   font-weight: 500;
 }
 
-.blockcard-content {
+.blogcard-content {
   padding: 20px;
 }
 
-.blockcard-title {
+.blogcard-title {
   font-size: 1.12rem;
   margin-bottom: 11px;
   margin-top: 0;
-  color: #214084;
+  color: #295b6e;
   font-weight: 600;
+  font-family: "Opun", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
 }
 
-.blockcard-desciption {
+.blogcard-desciption {
   font-size: 1rem;
-  color: #4b4b4b;
+  color: #333333;
   margin-bottom: 18px;
 }
 
 .blockcard-author {
   font-size: 0.95rem;
-  color: #7b92a4;
+  color: #333333;
 }
