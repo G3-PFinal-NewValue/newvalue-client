@@ -9,10 +9,10 @@ import BlogListPage from "../pages/public/BlogListPage";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
 
-
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
+import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup"; // <-- 1. Importar
 
 import { useAuth } from "../context/AuthContext";
 
@@ -41,7 +41,6 @@ export default function AppRouter() {
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:id" element={<BlogArticlePage />} />
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />
-
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
@@ -65,6 +64,16 @@ export default function AppRouter() {
             }
           />
         </Route>
+
+        <Route
+          path="/app/profile-setup/patient"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <PatientProfileSetup />{" "}
+            </ProtectedRoute>
+          }
+        />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
