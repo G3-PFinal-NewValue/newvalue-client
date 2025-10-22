@@ -1,14 +1,14 @@
+import { useState } from "react"; // Importar useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 // Crearemos este servicio en el siguiente paso
-// import { createPatientProfile } from "../../../services/patientService"; 
+// import { createPatientProfile } from "../../../services/patientService";
 
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
-// Necesitaremos un DateInput simple o podemos usar TextInput type="date"
-import styles from "./PatientProfileSetup.module.css"; // Crearemos este CSS después
+import styles from "./PatientProfileSetup.module.css"; // CSS que creamos antes
 
 // Esquema de validación con Zod
 const schema = z.object({
@@ -20,6 +20,10 @@ const schema = z.object({
 export default function PatientProfileSetup() {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Estados para la foto (igual que en PsychologistProfileSetup)
+  const [photoPreview, setPhotoPreview] = useState(null); // URL temporal para vista previa
+  const [photoDataUrl, setPhotoDataUrl] = useState(null); // Base64 para "guardar"
 
   const {
     register,
@@ -34,13 +38,31 @@ export default function PatientProfileSetup() {
     },
   });
 
+  // Manejador onPhotoChange (igual que en PsychologistProfileSetup)
+  const onPhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Preview temporal
+    const previewUrl = URL.createObjectURL(file);
+    setPhotoPreview(previewUrl);
+    // Convertir a Data URL (base64) para "guardar"
+    const reader = new FileReader();
+    reader.onload = () => setPhotoDataUrl(reader.result); // Guardar base64 en estado
+    reader.readAsDataURL(file);
+  };
+
+
   const onSubmit = async (values) => {
     try {
-      console.log("Datos a enviar (mock):", { user_id: user?.id, ...values });
-      // const profileData = await createPatientProfile({ user_id: user?.id, ...values }); // Descomentar cuando exista el servicio
-      alert("Perfil de paciente guardado (simulación).");
-      // Idealmente, redirigir a donde el paciente pueda ver psicólogos
-      navigate("/app"); // O a '/app/dashboard' o similar
+      // Incluir photoDataUrl en el objeto a enviar (o loggear)
+      console.log("Datos a enviar (mock):", {
+         user_id: user?.id,
+         ...values,
+         photo_url: photoDataUrl // <-- Foto añadida aquí
+        });
+      // const profileData = await createPatientProfile({ user_id: user?.id, ...values, photo_url: photoDataUrl }); // <-- Añadir photo_url si el backend lo soporta
+      alert("Perfil de paciente guardado (simulación con foto en consola).");
+      navigate("/app"); // O a donde corresponda
     } catch (e) {
       console.error(e);
       alert("No se pudo guardar el perfil del paciente.");
@@ -56,8 +78,27 @@ export default function PatientProfileSetup() {
             Ayúdanos a conocerte un poco mejor para encontrar al profesional adecuado para ti.
           </p>
 
+          {/* Sección de la foto */}
+          <div className={styles.photoSection}>
+            <label className={styles.photoLabel}>
+              {photoPreview ? (
+                <img src={photoPreview} alt="Vista previa" className={styles.photoPreview} />
+              ) : (
+                <span>Seleccionar foto</span>
+              )}
+              {/* Input oculto */}
+              <input
+                type="file"
+                accept="image/*" // Aceptar solo imágenes
+                onChange={onPhotoChange}
+                hidden // Ocultar el input por defecto
+              />
+            </label>
+            <p className={styles.photoHint}>Sube tu foto de perfil (opcional)</p>
+          </div>
+
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-            {/* Usaremos TextInput con type="date" por simplicidad */}
+            {/* Campo Fecha de Nacimiento */}
             <TextInput
               label="Fecha de Nacimiento"
               type="date"
@@ -65,7 +106,8 @@ export default function PatientProfileSetup() {
               {...register("birth_date")}
             />
 
-            <div className={styles.group}> {/* Similar al PsychologistProfileSetup */}
+            {/* Campo Objetivos de Terapia */}
+            <div className={styles.group}>
               <label className={styles.label}>Objetivos de Terapia</label>
               <textarea
                 rows={4}
@@ -78,6 +120,7 @@ export default function PatientProfileSetup() {
               )}
             </div>
 
+            {/* Campo Historial Médico */}
             <div className={styles.group}>
               <label className={styles.label}>Historial Médico Relevante (Opcional)</label>
               <textarea
@@ -91,6 +134,7 @@ export default function PatientProfileSetup() {
               )}
             </div>
 
+            {/* Botón de envío */}
             <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
               {isSubmitting ? "Guardando…" : "Guardar Perfil"}
             </button>
