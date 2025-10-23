@@ -1,0 +1,222 @@
+.pageContainer {
+  width: 100%;
+  max-width: 900px; /* Ancho adecuado para listas */
+  margin: 0 auto; /* Centrar contenido */
+  padding: var(--space-4) 0; 
+}
+
+.pageTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg); /* 36px */
+  font-weight: 700;
+  color: var(--color-brand-title);
+  text-align: center;
+  margin: 0 auto var(--space-6); /* 24px */
+  border-bottom: 1px solid var(--color-bg-alt);
+  padding-bottom: var(--space-4);
+}
+
+/* Estilos para mensajes (reutilizados de otras páginas) */
+.loadingMessage,
+.errorMessage,
+.noAppointmentsMessage {
+  text-align: center;
+  padding: var(--space-6) 0;
+  font-weight: 600;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.errorMessage {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  opacity: 1;
+}
+
+.noAppointmentsMessage {
+  font-style: italic;
+  opacity: 0.7;
+  padding: var(--space-4) 0; /* Menos padding que loading/error */
+}
+
+
+/* --- Estilo de Sección --- */
+.section {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-5); /* 20px */
+  margin-bottom: var(--space-6); /* 24px entre secciones */
+}
+
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  font-weight: 600;
+  color: var(--color-brand-title);
+  margin: 0 0 var(--space-4); /* 16px */
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+
+/* --- Lista de Citas --- */
+.appointmentsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4); /* 16px entre citas */
+}
+
+.appointmentItem {
+  /* 👇 Modificado: Info | Acciones */
+  display: grid;
+  grid-template-columns: 1fr auto; /* Columna flexible para info, auto para botones */
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg);
+  border-radius: 10px;
+  border: 1px solid var(--color-bg-alt);
+}
+
+.appointmentInfo {
+    display: grid;
+    /* Apila los elementos en pantallas pequeñas si es necesario */
+    grid-template-columns: repeat(auto-fit, minmax(150px, auto));
+    gap: var(--space-3); /* Espacio entre fecha, nombre, estado */
+    align-items: center;
+}
+
+/* Modificador para citas pasadas (más atenuadas) */
+.pastAppointment {
+  opacity: 0.75;
+  background-color: transparent; /* Fondo transparente o más suave */
+  border-style: dashed; /* Borde punteado para indicar pasado */
+}
+.pastAppointment:hover {
+   opacity: 1; /* Mostrar normal al hacer hover */
+}
+
+
+.dateTime {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.psychologistName {
+  font-size: 15px;
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+/* --- Badges de Estado --- */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px; /* Píldora */
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Colores específicos para estados (puedes añadir más) */
+.confirmada {
+  background-color: #d1fae5; /* Verde claro */
+  color: #065f46; /* Verde oscuro */
+}
+.completada {
+  background-color: #e5e7eb; /* Gris claro */
+  color: #4b5563; /* Gris oscuro */
+}
+.cancelada { /* Ejemplo */
+  background-color: #fee2e2; /* Rojo claro */
+  color: #991b1b; /* Rojo oscuro */
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2); /* 8px entre botones */
+  justify-self: end; /* Alinea el contenedor de botones a la derecha */
+}
+
+.actionButton {
+  /* Estilo base */
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  white-space: nowrap; /* Evita que el texto del botón se parta */
+}
+.actionButton:hover {
+  opacity: 0.8;
+  transform: scale(1.05); /* Efecto ligero al pasar el ratón */
+}
+
+/* Botón Reprogramar (estilo secundario) */
+.rescheduleButton {
+  background: transparent;
+  border: 2px solid var(--color-brand-secondary);
+  color: var(--color-brand-secondary);
+}
+.rescheduleButton:hover {
+  background: var(--color-brand-secondary);
+  color: #fff;
+}
+
+/* Botón Cancelar (estilo "peligro" suave) */
+.cancelButton {
+  background: #fee2e2; /* Fondo rojo muy suave */
+  color: #b91c1c; /* Rojo oscuro */
+  border: 1px solid #fca5a5; /* Borde rojo suave */
+}
+.cancelButton:hover {
+  background: #fecaca; /* Rojo un poco más intenso */
+  border-color: #ef4444;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .pageTitle { font-size: 30px; }
+  .sectionTitle { font-size: 20px; }
+  .section { padding: var(--space-4); } /* Menos padding */
+
+  .appointmentItem {
+    grid-template-columns: 1fr; /* Apilar todo */
+    gap: var(--space-2); /* Menos espacio */
+    text-align: center; /* Centrar texto */
+    padding: var(--space-3);
+  }
+  .dateTime { font-size: 14px; }
+  .psychologistName { font-size: 14px; }
+  .statusBadge {
+      /* Asegurar que el badge no ocupe todo el ancho */
+      margin: 0 auto; /* Centrar el badge */
+      width: fit-content; /* Ancho según contenido */
+  }
+  .appointmentInfo {
+      grid-template-columns: 1fr; /* Apilar fecha, nombre, estado */
+      gap: var(--space-1);
+      justify-items: center; /* Centrar elementos internos */
+  }
+  .dateTime, .psychologistName { font-size: 14px; }
+  .statusBadge {
+      margin: var(--space-1) auto 0; /* Centrar y añadir espacio arriba */
+      width: fit-content;
+  }
+
+  /* 👇 Ajustar contenedor de botones en móvil */
+  .actionButtons {
+      justify-self: center; /* Centrar el contenedor de botones */
+      width: 100%; /* Ocupar ancho para distribuir botones */
+      justify-content: space-evenly; /* Distribuir botones */
+  }
+}

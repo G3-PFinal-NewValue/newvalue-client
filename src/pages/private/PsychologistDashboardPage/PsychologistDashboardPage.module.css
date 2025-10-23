@@ -1,0 +1,165 @@
+/* src/pages/private/PsychologistDashboardPage/PsychologistDashboardPage.module.css */
+
+.pageContainer {
+  width: 100%;
+  max-width: 1100px; /* Ancho amplio para el dashboard */
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+}
+
+.pageTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg);
+  font-weight: 700;
+  color: var(--color-brand-title);
+  text-align: center;
+  margin: 0 auto var(--space-6);
+  border-bottom: 1px solid var(--color-bg-alt);
+  padding-bottom: var(--space-4);
+}
+
+/* --- Mensajes (reutilizados) --- */
+.loadingMessage,
+.errorMessage,
+.emptyMessage {
+  text-align: center;
+  padding: var(--space-6) 0;
+  font-weight: 600;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.errorMessage {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  opacity: 1;
+}
+
+.emptyMessage {
+  font-style: italic;
+  opacity: 0.7;
+  padding: var(--space-4) 0;
+}
+
+/* --- Layout del Dashboard (Grid) --- */
+.dashboardGrid {
+  display: grid;
+  /* Dos columnas, la agenda ocupa un poco más */
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-6); /* 24px de separación */
+}
+
+/* --- Estilo General de Sección --- */
+.section {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-5); /* 20px */
+  /* Altura mínima opcional para consistencia visual */
+  /* min-height: 400px; */
+}
+
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  font-weight: 600;
+  color: var(--color-brand-title);
+  margin: 0 0 var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-bg-alt);
+}
+
+/* --- Estilos Lista de Citas (similar a paciente) --- */
+.appointmentsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-3); /* 12px entre citas */
+}
+
+.appointmentItem {
+  display: grid;
+  grid-template-columns: 1fr auto; /* Fecha/Hora y Nombre | Botón (opcional) */
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) 0; /* Solo padding vertical, sin fondo extra */
+  border-bottom: 1px dashed var(--color-bg-alt); /* Separador punteado */
+}
+.appointmentItem:last-child {
+  border-bottom: none; /* Sin borde en el último */
+}
+
+.dateTime {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.patientName { /* Nombre del paciente en la cita */
+  font-size: 15px;
+  color: var(--color-text);
+  opacity: 0.9;
+  justify-self: start; /* Alinea a la izquierda en su celda */
+}
+
+/* --- Estilos Lista de Pacientes --- */
+.patientsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-3); /* 12px entre pacientes */
+}
+
+.patientItem {
+  display: flex; /* Simple flex para nombre y botón opcional */
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px dashed var(--color-bg-alt);
+}
+.patientItem:last-child {
+  border-bottom: none;
+}
+
+/* Estilo para nombre paciente en la lista */
+.patientItem .patientName {
+  font-weight: 600;
+  /* Reutiliza .patientName de la cita */
+}
+
+/* Botón de detalles (si se añade en el futuro) */
+/* .detailsButton { ... } */
+
+
+/* --- Responsive --- */
+@media (max-width: 980px) { /* Tablet */
+  .dashboardGrid {
+    grid-template-columns: 1fr; /* Apilar secciones */
+  }
+}
+
+@media (max-width: 768px) { /* Móvil */
+  .pageTitle { font-size: 30px; }
+  .sectionTitle { font-size: 20px; }
+  .section { padding: var(--space-4); }
+
+  .appointmentItem {
+    /* Podríamos apilar fecha y nombre si es necesario */
+     grid-template-columns: 1fr;
+     gap: var(--space-1);
+     text-align: center;
+  }
+  .dateTime, .patientName {
+     font-size: 14px;
+     justify-self: center; /* Centrar texto */
+  }
+  .patientItem {
+      flex-direction: column; /* Apilar nombre y botón */
+      gap: var(--space-2);
+      text-align: center;
+  }
+}
