@@ -8,6 +8,7 @@ import { GrArticle } from "react-icons/gr";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { ImProfile } from "react-icons/im";
 import { LuLayoutDashboard } from "react-icons/lu";
+import { MdOutlinePsychologyAlt } from "react-icons/md";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -21,9 +22,9 @@ export default function Navbar() {
   }, [pathname]);
 
   const isLoggedIn = !!user;
-  const isPatient = user?.role === 'patient';
-  const isPsychologist = user?.role === 'psychologist';
-  const isAdmin = user?.role === 'admin';
+  const isPatient = user?.role === "patient";
+  const isPsychologist = user?.role === "psychologist";
+  const isAdmin = user?.role === "admin";
 
   return (
     <header className={styles.navbar}>
@@ -43,6 +44,17 @@ export default function Navbar() {
             <Link to="/" className={styles.link}>
               <IoHomeOutline className={styles.icon} /> {/* Icono Inicio */}
               <span>Inicio</span>
+            </Link>
+          )}
+          {/* 👇 Añadir enlace a Psicólogos (Mobile) 👇 */}
+          {!pathname.startsWith("/psychologists") && (
+            <Link
+              to="/psychologists"
+              className={styles.link}
+              aria-label="Psicólogos" // <-- 3. Añadir aria-label
+            >
+              <MdOutlinePsychologyAlt size={24} className={styles.icon} /> 
+               <span>Psicólogos</span>{/* <-- 2. Usar icono */}
             </Link>
           )}
           {!pathname.startsWith("/blog") && (
@@ -65,7 +77,8 @@ export default function Navbar() {
           )}
           {isAdmin && pathname !== "/admin/dashboard" && (
             <Link to="/admin/dashboard" className={styles.link}>
-              <LuLayoutDashboard className={styles.icon} /> {/* Icono Dashboard */}
+              <LuLayoutDashboard className={styles.icon} />{" "}
+              {/* Icono Dashboard */}
               <span>Dashboard</span>
             </Link>
           )}
@@ -88,15 +101,21 @@ export default function Navbar() {
 
         {/* BOTÓN HAMBURGUESA (mobile) */}
         {/* ... (sin cambios aquí) ... */}
-         <button
+        <button
           className={styles.burger}
           aria-label="Abrir menú"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className={`${styles.line} ${open ? styles.lineTopOpen : ""}`} />
-          <span className={`${styles.line} ${open ? styles.lineMidOpen : ""}`} />
-          <span className={`${styles.line} ${open ? styles.lineBotOpen : ""}`} />
+          <span
+            className={`${styles.line} ${open ? styles.lineTopOpen : ""}`}
+          />
+          <span
+            className={`${styles.line} ${open ? styles.lineMidOpen : ""}`}
+          />
+          <span
+            className={`${styles.line} ${open ? styles.lineBotOpen : ""}`}
+          />
         </button>
       </div>
 
@@ -113,6 +132,11 @@ export default function Navbar() {
             <Link to="/" className={styles.mobileLink}>
               <IoHomeOutline className={styles.icon} />
               <span>Inicio</span>
+            </Link>
+          )}
+          {!pathname.startsWith("/psychologists") && (
+            <Link to="/psychologists" className={styles.mobileLink}>
+              Psicólogos
             </Link>
           )}
           {!pathname.startsWith("/blog") && (

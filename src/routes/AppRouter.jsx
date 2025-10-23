@@ -8,7 +8,7 @@ import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
 import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
-
+import PsychologistListPage from "../pages/public/PsychologistListPage/PsychologistListPage";
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
@@ -43,6 +43,7 @@ export default function AppRouter() {
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:id" element={<BlogArticlePage />} />
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />
+          <Route path="/psychologists" element={<PsychologistListPage />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
