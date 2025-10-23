@@ -3,27 +3,27 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import styles from "./Navbar.module.css";
 
+import { IoHomeOutline } from "react-icons/io5";
+import { GrArticle } from "react-icons/gr";
+import { CiLogin, CiLogout } from "react-icons/ci";
+import { ImProfile } from "react-icons/im";
+import { LuLayoutDashboard } from "react-icons/lu";
+
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Ocultar navbar en auth
   if (pathname === "/login" || pathname === "/register") return null;
 
-  // Cierra el menú al navegar
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   const isLoggedIn = !!user;
-  
-  // --- Lógica de Roles ---
-  // Verificamos el rol del usuario para los enlaces condicionales
   const isPatient = user?.role === 'patient';
   const isPsychologist = user?.role === 'psychologist';
   const isAdmin = user?.role === 'admin';
-  // --- Fin Lógica de Roles ---
 
   return (
     <header className={styles.navbar}>
@@ -39,39 +39,56 @@ export default function Navbar() {
 
         {/* LINKS (desktop) */}
         <nav className={styles.navLinks}>
-          {/* Links Públicos/Generales */}
           {pathname !== "/" && (
-            <Link to="/" className={styles.link}>Inicio</Link>
+            <Link to="/" className={styles.link}>
+              <IoHomeOutline className={styles.icon} /> {/* Icono Inicio */}
+              <span>Inicio</span>
+            </Link>
           )}
           {!pathname.startsWith("/blog") && (
-            <Link to="/blog" className={styles.link}>Blog</Link>
+            <Link to="/blog" className={styles.link}>
+              <GrArticle className={styles.icon} /> {/* Icono Blog */}
+              <span>Blog</span>
+            </Link>
           )}
-          
-          {/* --- Links Privados por Rol (Desktop) --- */}
           {isPatient && pathname !== "/app/my-profile" && (
-            <Link to="/app/my-profile" className={styles.link}>Mi Perfil</Link>
+            <Link to="/app/my-profile" className={styles.link}>
+              <ImProfile className={styles.icon} /> {/* Icono Perfil */}
+              <span>Mi Perfil</span>
+            </Link>
           )}
           {isPsychologist && pathname !== "/app/profile" && (
-            // (Asumiendo que /app/profile es el setup/dashboard del psicólogo)
-            <Link to="/app/profile" className={styles.link}>Mi Perfil Profesional</Link>
+            <Link to="/app/profile" className={styles.link}>
+              <ImProfile className={styles.icon} /> {/* Icono Perfil */}
+              <span>Mi Perfil Profesional</span>
+            </Link>
           )}
           {isAdmin && pathname !== "/admin/dashboard" && (
-            <Link to="/admin/dashboard" className={styles.link}>Dashboard</Link>
+            <Link to="/admin/dashboard" className={styles.link}>
+              <LuLayoutDashboard className={styles.icon} /> {/* Icono Dashboard */}
+              <span>Dashboard</span>
+            </Link>
           )}
-          {/* --- Fin Links Privados --- */}
         </nav>
 
         {/* ACCIONES (desktop) */}
         <div className={styles.actions}>
           {!isLoggedIn ? (
-            <Link to="/login" className={styles.primaryBtn}>Iniciar sesión</Link>
+            <Link to="/login" className={styles.primaryBtn}>
+              <CiLogin className={styles.icon} /> {/* Icono Login */}
+              <span>Iniciar sesión</span>
+            </Link>
           ) : (
-            <button onClick={logout} className={styles.secondaryBtn}>Cerrar sesión</button>
+            <button onClick={logout} className={styles.secondaryBtn}>
+              <CiLogout className={styles.icon} /> {/* Icono Logout */}
+              <span>Cerrar sesión</span>
+            </button>
           )}
         </div>
 
         {/* BOTÓN HAMBURGUESA (mobile) */}
-        <button
+        {/* ... (sin cambios aquí) ... */}
+         <button
           className={styles.burger}
           aria-label="Abrir menú"
           aria-expanded={open}
@@ -92,35 +109,48 @@ export default function Navbar() {
       {/* MENÚ MOBILE */}
       <div className={`${styles.mobileMenu} ${open ? styles.mobileOpen : ""}`}>
         <nav className={styles.mobileNav}>
-          {/* Links Públicos/Generales */}
           {pathname !== "/" && (
-            <Link to="/" className={styles.mobileLink}>Inicio</Link>
+            <Link to="/" className={styles.mobileLink}>
+              <IoHomeOutline className={styles.icon} />
+              <span>Inicio</span>
+            </Link>
           )}
           {!pathname.startsWith("/blog") && (
-            <Link to="/blog" className={styles.mobileLink}>Blog</Link>
+            <Link to="/blog" className={styles.mobileLink}>
+              <GrArticle className={styles.icon} />
+              <span>Blog</span>
+            </Link>
           )}
-
-          {/* --- Links Privados por Rol (Mobile) --- */}
           {isPatient && pathname !== "/app/my-profile" && (
-            <Link to="/app/my-profile" className={styles.mobileLink}>Mi Perfil</Link>
+            <Link to="/app/my-profile" className={styles.mobileLink}>
+              <ImProfile className={styles.icon} />
+              <span>Mi Perfil</span>
+            </Link>
           )}
           {isPsychologist && pathname !== "/app/profile" && (
-            <Link to="/app/profile" className={styles.mobileLink}>Mi Perfil Profesional</Link>
+            <Link to="/app/profile" className={styles.mobileLink}>
+              <ImProfile className={styles.icon} />
+              <span>Mi Perfil Profesional</span>
+            </Link>
           )}
           {isAdmin && pathname !== "/admin/dashboard" && (
-            <Link to="/admin/dashboard" className={styles.mobileLink}>Dashboard</Link>
+            <Link to="/admin/dashboard" className={styles.mobileLink}>
+              <LuLayoutDashboard className={styles.icon} />
+              <span>Dashboard</span>
+            </Link>
           )}
-          {/* --- Fin Links Privados --- */}
         </nav>
 
         <div className={styles.mobileActions}>
           {!isLoggedIn ? (
             <Link to="/login" className={styles.mobilePrimary}>
-              Iniciar sesión
+              <CiLogin className={styles.icon} />
+              <span>Iniciar sesión</span>
             </Link>
           ) : (
             <button onClick={logout} className={styles.mobileSecondary}>
-              Cerrar sesión
+              <CiLogout className={styles.icon} />
+              <span>Cerrar sesión</span>
             </button>
           )}
         </div>
