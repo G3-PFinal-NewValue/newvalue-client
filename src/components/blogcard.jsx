@@ -1,26 +1,26 @@
 import React from "react";
 import "./blogcard.css";
+import { Link } from "react-router-dom";
 
-function blogcard() {
+function BlogCard({ image, label, title, description, author, slug }) {
   return (
     <div className="blogcard">
       <div className="blogcard-image">
-        <img src="../images/mujer-reflexionando.png" alt="Mujer reflexionando" />
-        <span className="blogcard-label">Estrés</span>
+        <img src={image} alt={label} />
+        <span className="blogcard-label">{label}</span>
       </div>
       <div className="blogcard-content">
-        <h2 className="blogcard-title">
-          Guía: Respira y libera el estrés
-        </h2>
-        <p className="blogcard-description">
-          Date permiso para pausar. La calma no es ausencia de desafíos, sino la capacidad de manejarlos con serenidad.
-        </p>
-        <span className="blogcard-author">
-          Dra. Andrea Molina
-        </span>
+        <h2 className="blogcard-title">{title}</h2>
+        <p className="blogcard-description">{description}</p>
+        <div className="author-and-link">
+          <span className="blogcard-author">{author}</span>
+          <Link to={`/blog/${slug}`} className="see-more-link">
+            Ver más
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
 
-export default blogcard;
+export default BlogCard;
