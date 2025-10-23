@@ -1,10 +1,63 @@
+/* Contenedor principal de la página de blog */
+.blog-page {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Sidebar de categorías */
+.blog-sidebar {
+  width: 200px;
+  background: #f4f1eb;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(40, 78, 91, 0.08);
+  height: fit-content;
+}
+
+.blog-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #284e5b;
+}
+
+.blog-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blog-sidebar li {
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #284e5b;
+  transition: background 0.2s, color 0.2s;
+}
+
+.blog-sidebar li:hover {
+  background: #e99c80;
+  color: #fff;
+}
+
+.blog-sidebar li.active {
+  background: #e99c80;
+  color: #fff;
+}
+
+/* Lista de tarjetas de blog */
 .blogcard-list {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
   justify-content: flex-start;
+  flex: 1; /* Ocupa el espacio restante al lado del sidebar */
 }
 
+/* Tarjeta individual */
 .blogcard {
   background: #f4f1eb;
   border-radius: 12px;
