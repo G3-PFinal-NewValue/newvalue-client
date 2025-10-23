@@ -52,17 +52,20 @@ export default function PatientProfileSetup() {
   };
 
 
-  const onSubmit = async (values) => {
+const onSubmit = async (values) => {
     try {
-      // Incluir photoDataUrl en el objeto a enviar (o loggear)
       console.log("Datos a enviar (mock):", {
          user_id: user?.id,
          ...values,
-         photo_url: photoDataUrl // <-- Foto añadida aquí
+         photo_url: photoDataUrl 
         });
-      // const profileData = await createPatientProfile({ user_id: user?.id, ...values, photo_url: photoDataUrl }); // <-- Añadir photo_url si el backend lo soporta
+      // const profileData = await createPatientProfile(...); 
+      
       alert("Perfil de paciente guardado (simulación con foto en consola).");
-      navigate("/app"); // O a donde corresponda
+      
+      // 👇 CAMBIA ESTA LÍNEA
+      navigate("/app/my-profile"); // Ruta del perfil privado del paciente
+
     } catch (e) {
       console.error(e);
       alert("No se pudo guardar el perfil del paciente.");

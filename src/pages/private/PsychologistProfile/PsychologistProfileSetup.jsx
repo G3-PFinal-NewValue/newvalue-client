@@ -69,19 +69,24 @@ export default function PsychologistProfileSetup() {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = async (values) => {
+const onSubmit = async (values) => {
     try {
-      await createPsychologistProfile({
+      // 👇 1. Captura la respuesta de la función (que devuelve el perfil creado)
+      const newProfile = await createPsychologistProfile({
         user_id: user?.id ?? 1,
         license_number: values.license_number,
         specialty: values.specialty,
         validated: false,
         professional_description: values.professional_description,
         availabilities: values.availabilities,
-        photo_url: photoDataUrl || null, // 👈 guardamos dataURL en el mock
+        photo_url: photoDataUrl || null, 
       });
+
       alert("Perfil creado (mock con foto local). Luego sustituimos por Cloudinary.");
-      navigate("/app");
+      
+      // 👇 2. Redirige a la vista pública usando el ID del perfil recién creado
+      navigate(`/profile/${newProfile.id}`); 
+
     } catch (e) {
       console.error(e);
       alert("No se pudo guardar el perfil.");
