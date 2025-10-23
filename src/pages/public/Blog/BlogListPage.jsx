@@ -27,49 +27,75 @@ const articles = [
     author: "Dr. Oswaldo López",
     slug: "aprender-hablar-desde-la-escucha",
   },
-  // Más artículos...
 ];
 
 const categories = ["Todos", "Mindfulness", "Estrés", "Terapia", "Salud Mental", "Bienestar", "Ansiedad", "Comunicación"];
 
 export default function BlogCardList() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredArticles =
+  // Filtrado por categoría
+  const filteredByCategory =
     selectedCategory === "Todos"
       ? articles
       : articles.filter((a) => a.label.toLowerCase() === selectedCategory.toLowerCase());
 
-  return (
-    <div className="blog-page">
-      <div className="blog-sidebar">
-        <h3>Categorías</h3>
-        <ul>
-          {categories.map((cat, i) => (
-            <li
-              key={i}
-              className={selectedCategory === cat ? "active" : ""}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </li>
-          ))}
-        </ul>
-      </div>
+  // Filtrado por búsqueda
+  const filteredArticles = filteredByCategory.filter((a) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      a.title.toLowerCase().includes(term) ||
+      a.description.toLowerCase().includes(term) ||
+      a.author.toLowerCase().includes(term)
+    );
+  });
 
-      {/* Lista de artículos */}
-      <div className="blogcard-list">
-        {filteredArticles.map((a, i) => (
-          <BlogCard
-            key={i}
-            image={a.image}
-            label={a.label}
-            title={a.title}
-            description={a.description}
-            author={a.author}
-            slug={a.slug}
+  return (
+    <div className="blog-page-container">
+      <header className="blog-header-full">
+        <div className="header-content">
+          <h1>Blog y recursos</h1>
+          <p>Artículos, guías y recursos para tu bienestar mental</p>
+          <input
+            type="text"
+            placeholder="Buscar artículos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="blog-search"
           />
-        ))}
+        </div>
+      </header>
+
+      <div className="blog-main">
+        <aside className="blog-sidebar">
+          <h3>Categorías</h3>
+          <ul>
+            {categories.map((cat, i) => (
+              <li
+                key={i}
+                className={selectedCategory === cat ? "active" : ""}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <div className="blogcard-list">
+          {filteredArticles.map((a, i) => (
+            <BlogCard
+              key={i}
+              image={a.image}
+              label={a.label}
+              title={a.title}
+              description={a.description}
+              author={a.author}
+              slug={a.slug}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
