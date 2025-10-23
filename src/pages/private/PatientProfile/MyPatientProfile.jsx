@@ -1,89 +1,92 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Importar Link para el botón editar
 import { useAuth } from '../../../context/AuthContext';
-// Necesitaremos un servicio para obtener los datos del paciente (cuando exista el backend)
 // import { getMyPatientProfile } from '../../../services/patientService'; 
-import styles from './MyPatientProfile.module.css'; // Crearemos este CSS
+import styles from './MyPatientProfile.module.css'; 
 
 export default function MyPatientProfile() {
-  const { user } = useAuth(); // Obtenemos el usuario logueado
-  const [patientData, setPatientData] = useState(null); // Para guardar datos específicos del paciente
+  const { user } = useAuth(); 
+  const [patientData, setPatientData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // --- Simulación de carga de datos ---
-  // Cuando el backend esté listo, reemplazaremos esto con una llamada a API
   useEffect(() => {
     setLoading(true);
     setError(null);
-    // Simulación: Por ahora no tenemos dónde buscar los datos específicos
-    // (birth_date, goals, history). Mostraremos placeholders.
-    // Cuando exista el servicio, sería algo así:
-    /*
-    getMyPatientProfile()
-      .then(data => setPatientData(data))
-      .catch(err => setError("No se pudo cargar tu perfil."))
-      .finally(() => setLoading(false));
-    */
-
-    // Simulación simple (solo quitamos el loading)
+    // Simulación: Cargamos placeholders
     setTimeout(() => {
-       setPatientData({ // Datos simulados o placeholders
+       setPatientData({ 
          birth_date: "No añadido", 
          therapy_goals: "No añadidos",
          medical_history: "No añadido"
        });
        setLoading(false);
-    }, 500); // Simular 0.5s de carga
+    }, 500); 
 
-  }, [user]); // Depende del usuario por si cambia
+  }, [user]); 
 
   // --- Renderizado ---
   if (loading) {
-    return <div className={styles.page}><p>Cargando tu perfil...</p></div>;
+    return <div className={styles.page}><div className={styles.loadingCard}>Cargando tu perfil...</div></div>;
   }
   if (error) {
-     return <div className={styles.page}><p className={styles.error}>{error}</p></div>;
+     return <div className={styles.page}><div className={`${styles.card} ${styles.errorCard}`}>{error}</div></div>;
   }
+
+  // Fallback para iniciales si no hay nombre
+  const fallbackInitial = user?.first_name ? user.first_name[0].toUpperCase() : 'U';
 
   return (
     <div className={styles.page}>
       <div className={styles.wrap}>
+        {/* Tarjeta Principal */}
         <div className={styles.card}>
-          <h1 className={styles.title}>Mi Perfil</h1>
+          <h1 className={styles.mainTitle}>Mi Perfil</h1>
 
           {/* Sección Foto y Datos Básicos */}
-          <div className={styles.headerSection}>
+          <section className={styles.headerSection}>
              <div className={styles.avatar}>
-               {/* TODO: Usar la foto guardada si existiera */}
-               <div className={styles.avatarFallback}>
-                 {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
-               </div>
+               {/* TODO: Implementar carga de foto real si se guarda */}
+               <div className={styles.avatarFallback}>{fallbackInitial}</div>
              </div>
              <div className={styles.userInfo}>
                <h2 className={styles.name}>{user?.first_name || 'Nombre'} {user?.last_name || 'Apellido'}</h2>
                <p className={styles.email}>{user?.email || 'email@ejemplo.com'}</p>
+               {/* Podríamos añadir el rol si fuera útil */}
+               {/* <span className={styles.roleTag}>{user?.role || 'Paciente'}</span> */}
              </div>
-          </div>
+             {/* Botón Editar */}
+             <Link to="/app/profile-setup/patient" className={styles.editButton}>
+               Editar Perfil
+             </Link>
+          </section>
 
-          {/* Sección Datos Específicos del Paciente */}
-          <div className={styles.detailsSection}>
-            <h3 className={styles.sectionTitle}>Detalles del Perfil</h3>
+          {/* Sección Detalles Específicos del Paciente */}
+          <section className={styles.detailsSection}>
+            <h3 className={styles.sectionTitle}>Detalles de Terapia</h3>
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Fecha de Nacimiento:</span>
+              <span className={styles.detailLabel}>Fecha de Nacimiento</span>
               <span className={styles.detailValue}>{patientData?.birth_date || 'N/D'}</span>
             </div>
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Objetivos de Terapia:</span>
-              <p className={styles.detailValueBlock}>{patientData?.therapy_goals || 'N/D'}</p>
+              <span className={styles.detailLabel}>Objetivos de Terapia</span>
+              {/* Usamos un div para el texto largo */}
+              <div className={styles.detailValueBlock}>{patientData?.therapy_goals || 'No especificados'}</div>
             </div>
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Historial Médico Relevante:</span>
-              <p className={styles.detailValueBlock}>{patientData?.medical_history || 'N/D'}</p>
+              <span className={styles.detailLabel}>Historial Médico Relevante</span>
+              <div className={styles.detailValueBlock}>{patientData?.medical_history || 'No especificado'}</div>
             </div>
-          </div>
+          </section>
 
-          {/* TODO: Añadir botón para Editar Perfil */}
-          {/* <button className={styles.editButton}>Editar Perfil</button> */}
+          {/* --- Placeholder: Próximas Citas --- */}
+          {/* <section className={styles.appointmentsSection}>
+             <h3 className={styles.sectionTitle}>Próximas Citas</h3>
+             <p className={styles.mutedText}>Aquí aparecerán tus citas agendadas.</p>
+             {/* Aquí iría una lista o componente de citas }
+          </section> 
+          */}
 
         </div>
       </div>

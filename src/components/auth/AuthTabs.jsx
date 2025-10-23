@@ -8,7 +8,6 @@ export default function AuthTabs() {
 
   return (
     <div className={styles.wrapper}>
-      {/* Cabecera (logo/nombre + tagline) */}
       <div className={styles.header}>
         <div className={styles.logo} >
          <img className={styles.logo} src="/images/LongLogo.png" alt="Cora Mind Logo" />
@@ -16,7 +15,6 @@ export default function AuthTabs() {
 
       </div>
 
-      {/* Tabs */}
       <div className={styles.tabsBar}>
         <Link
           to="/login"

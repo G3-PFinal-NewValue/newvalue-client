@@ -1,13 +1,13 @@
 .page {
-  min-height: calc(100vh - 60px); /* Ajustar si tu Navbar tiene otra altura */
+  min-height: calc(100vh - 60px); /* Asumiendo Navbar de 60px */
   background: var(--color-bg);
   padding: var(--space-6); /* 24px */
   display: grid;
-  place-items: start center; /* Centrado horizontal, arriba vertical */
+  place-items: start center;
 }
 .wrap {
   width: 100%;
-  max-width: 768px; /* Ancho moderado */
+  max-width: 768px;
 }
 .card {
   background: var(--color-surface);
@@ -15,18 +15,26 @@
   box-shadow: var(--shadow-1);
   padding: var(--space-6); /* 24px */
 }
-.title {
+/* Estilos para loading/error */
+.loadingCard, .errorCard {
+   padding: var(--space-5); text-align: center; font-weight: 600;
+   background: var(--color-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-1);
+}
+.errorCard { color: #b91c1c; background: #fee2e2; }
+
+.mainTitle {
   font-family: var(--font-title);
-  font-size: var(--fs-title-lg);
+  font-size: var(--fs-title-lg); /* 36px */
   font-weight: 700;
   margin: 0 0 var(--space-5); /* 20px */
   color: var(--color-brand-title);
   text-align: center;
 }
 
-/* Sección Cabecera (Foto + Nombre/Email) */
+/* --- Sección Cabecera --- */
 .headerSection {
-  display: flex;
+  display: grid; /* Cambiado a grid para posicionar el botón */
+  grid-template-columns: auto 1fr auto; /* Avatar | Info | Botón */
   align-items: center;
   gap: var(--space-5); /* 20px */
   margin-bottom: var(--space-6); /* 24px */
@@ -34,12 +42,12 @@
   border-bottom: 1px solid var(--color-bg-alt);
 }
 .avatar {
-  width: 80px; /* Tamaño avatar */
-  height: 80px;
+  width: 80px; height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--color-brand-secondary); /* Color de fondo si no hay foto */
-  flex-shrink: 0; /* Evita que se encoja */
+  background: var(--color-brand-secondary);
+  flex-shrink: 0;
+  grid-row: 1 / 3; /* Ocupa dos filas si la info crece */
 }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .avatarFallback {
@@ -49,59 +57,131 @@
   font-size: 36px;
   font-weight: 700;
 }
-.userInfo { display: grid; gap: var(--space-1); }
+.userInfo { 
+   display: grid; 
+   gap: 2px; /* Menos espacio entre nombre y email */
+   grid-column: 2; /* Segunda columna */
+}
 .name {
   margin: 0;
   font-family: var(--font-title);
   font-size: var(--fs-subtitle); /* 24px */
   font-weight: 600;
   color: var(--color-text);
+  line-height: 1.2;
 }
-.email { margin: 0; color: var(--color-text); opacity: 0.8; }
+.email { margin: 0; color: var(--color-text); opacity: 0.8; font-size: 15px; }
 
-/* Sección Detalles */
-.detailsSection { display: grid; gap: var(--space-4); /* 16px */ }
+.editButton {
+  grid-column: 3; /* Tercera columna */
+  grid-row: 1 / 3; /* Centrado verticalmente */
+  /* Estilo similar a secondaryBtn */
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 600; /* Menos bold */
+  border-radius: 8px; /* Más pequeño */
+  padding: 8px 12px;
+  background: transparent;
+  border: 2px solid var(--color-brand-secondary); /* Color secundario */
+  color: var(--color-brand-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+.editButton:hover { 
+    background: var(--color-brand-secondary); 
+    color: #fff; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+/* --- Sección Detalles --- */
+.detailsSection { 
+  display: grid; 
+  gap: var(--space-5); /* Más espacio entre items */
+  margin-bottom: var(--space-6); /* Separar de la siguiente sección */
+}
 .sectionTitle {
   font-family: var(--font-title);
   font-size: 20px;
   font-weight: 600;
   color: var(--color-brand-title);
-  margin: 0 0 var(--space-2);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-bg-alt);
+  margin: 0; /* Sin margen inferior aquí */
+  /* Quitamos borde inferior aquí para un look más limpio */
 }
-.detailItem { display: grid; gap: var(--space-1); }
-.detailLabel { font-weight: 600; color: var(--color-text); opacity: 0.9; font-size: 15px; }
-.detailValue { color: var(--color-text); }
+.detailItem { 
+    display: grid; 
+    gap: var(--space-1); /* 4px */
+    padding-bottom: var(--space-3); /* Espacio debajo */
+    border-bottom: 1px solid var(--color-bg-alt); /* Línea separadora */
+}
+ .detailItem:last-child {
+     border-bottom: none; /* Sin línea en el último */
+     padding-bottom: 0;
+ }
+.detailLabel { 
+    font-weight: 600; 
+    color: var(--color-text); 
+    opacity: 0.9; 
+    font-size: 14px; /* Un poco más pequeño */
+    text-transform: uppercase; /* MAYÚSCULAS */
+    letter-spacing: 0.5px; /* Tracking ligero */
+}
+.detailValue { color: var(--color-text); font-size: 16px; }
 .detailValueBlock { /* Para textareas */
   color: var(--color-text);
   line-height: 1.6;
-  white-space: pre-wrap; /* Respeta saltos de línea */
+  white-space: pre-wrap;
   margin: 0;
+  font-size: 16px;
+  background-color: var(--color-bg); /* Fondo muy suave para destacar */
+  padding: var(--space-3); /* Padding interno */
+  border-radius: 8px; /* Bordes redondeados */
 }
 
-.error { color: #dc2626; font-weight: 600; }
-
-/* Botón Editar (opcional) */
-.editButton {
-  margin-top: var(--space-5);
-  /* Estilos similares a .primaryBtn de otros módulos */
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 700;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: var(--color-brand-primary); color: #fff; border: 0;
-  cursor: pointer;
+/* Estilo para texto silenciado (placeholders, etc.) */
+.mutedText {
+    color: var(--color-text);
+    opacity: 0.6;
+    font-style: italic;
+    font-size: 15px;
 }
-.editButton:hover { background: var(--color-brand-secondary); }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .headerSection { flex-direction: column; align-items: center; text-align: center; }
-  .avatar { width: 100px; height: 100px; margin-bottom: var(--space-3); }
-  .avatarFallback { font-size: 48px; }
-  .title { font-size: 28px; }
+/* Placeholder Sección Citas */
+.appointmentsSection {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-bg-alt);
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .headerSection { 
+      grid-template-columns: 1fr; /* Apilar todo */
+      text-align: center; 
+      gap: var(--space-3);
+  }
+  .avatar { 
+      width: 100px; height: 100px; 
+      margin: 0 auto var(--space-3); 
+      grid-row: 1; /* Resetear grid */
+      grid-column: 1;
+  }
+   .avatarFallback { font-size: 48px; }
+  .userInfo { 
+      grid-row: 2; 
+      grid-column: 1;
+  }
+  .editButton {
+      grid-row: 3;
+      grid-column: 1;
+      margin: var(--space-3) auto 0; /* Centrar botón */
+      width: auto; /* Ancho automático */
+  }
   .name { font-size: 22px; }
-  .card { padding: var(--space-4); }
+  .card { padding: var(--space-5); } /* Menos padding en tarjeta */
+  .mainTitle { font-size: 28px; }
+  .sectionTitle { font-size: 18px; }
 }

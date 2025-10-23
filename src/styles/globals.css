@@ -10,6 +10,13 @@
   --color-brand-secondary: #8fbbb0; /* Botón secundario (Manual de Marca) */
   --color-bg-alt: #ede3d2; /* Fondo alterno suave */
 
+  /*Otros Colores*/
+  --color-brand-3rd: #A1B6C2; 
+  --color-brand-4th: #82BDB1;
+  --color-brand-5th: #0C5C70; 
+  --color-brand-6th: #FD8C69; 
+
+
   /* Tipografía */
   --font-title: "Opun", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
     sans-serif;
