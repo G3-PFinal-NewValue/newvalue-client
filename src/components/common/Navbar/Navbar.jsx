@@ -17,6 +17,13 @@ export default function Navbar() {
   }, [pathname]);
 
   const isLoggedIn = !!user;
+  
+  // --- Lógica de Roles ---
+  // Verificamos el rol del usuario para los enlaces condicionales
+  const isPatient = user?.role === 'patient';
+  const isPsychologist = user?.role === 'psychologist';
+  const isAdmin = user?.role === 'admin';
+  // --- Fin Lógica de Roles ---
 
   return (
     <header className={styles.navbar}>
@@ -32,12 +39,26 @@ export default function Navbar() {
 
         {/* LINKS (desktop) */}
         <nav className={styles.navLinks}>
+          {/* Links Públicos/Generales */}
           {pathname !== "/" && (
             <Link to="/" className={styles.link}>Inicio</Link>
           )}
           {!pathname.startsWith("/blog") && (
             <Link to="/blog" className={styles.link}>Blog</Link>
           )}
+          
+          {/* --- Links Privados por Rol (Desktop) --- */}
+          {isPatient && pathname !== "/app/my-profile" && (
+            <Link to="/app/my-profile" className={styles.link}>Mi Perfil</Link>
+          )}
+          {isPsychologist && pathname !== "/app/profile" && (
+            // (Asumiendo que /app/profile es el setup/dashboard del psicólogo)
+            <Link to="/app/profile" className={styles.link}>Mi Perfil Profesional</Link>
+          )}
+          {isAdmin && pathname !== "/admin/dashboard" && (
+            <Link to="/admin/dashboard" className={styles.link}>Dashboard</Link>
+          )}
+          {/* --- Fin Links Privados --- */}
         </nav>
 
         {/* ACCIONES (desktop) */}
@@ -71,12 +92,25 @@ export default function Navbar() {
       {/* MENÚ MOBILE */}
       <div className={`${styles.mobileMenu} ${open ? styles.mobileOpen : ""}`}>
         <nav className={styles.mobileNav}>
+          {/* Links Públicos/Generales */}
           {pathname !== "/" && (
             <Link to="/" className={styles.mobileLink}>Inicio</Link>
           )}
           {!pathname.startsWith("/blog") && (
             <Link to="/blog" className={styles.mobileLink}>Blog</Link>
           )}
+
+          {/* --- Links Privados por Rol (Mobile) --- */}
+          {isPatient && pathname !== "/app/my-profile" && (
+            <Link to="/app/my-profile" className={styles.mobileLink}>Mi Perfil</Link>
+          )}
+          {isPsychologist && pathname !== "/app/profile" && (
+            <Link to="/app/profile" className={styles.mobileLink}>Mi Perfil Profesional</Link>
+          )}
+          {isAdmin && pathname !== "/admin/dashboard" && (
+            <Link to="/admin/dashboard" className={styles.mobileLink}>Dashboard</Link>
+          )}
+          {/* --- Fin Links Privados --- */}
         </nav>
 
         <div className={styles.mobileActions}>
