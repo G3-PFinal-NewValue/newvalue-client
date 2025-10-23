@@ -1,12 +1,101 @@
+.blog-header-full {
+  width: 100%;
+  background: #ede3d2; 
+  padding: 3rem 2rem;
+  color: #fff;
+  text-align: center;
+}
+
+.blog-page-container {
+   display: block;      
+  width: 100%;         
+  min-height: 100vh;    
+  box-sizing: border-box;
+  background-color: #f4f1e8; 
+}
+.header-content h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 36px;
+}
+
+.header-content p {
+  font-size: 24px;
+  margin: 0 0 1.5rem 0;
+  color:#333333;
+}
+
+.blog-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+}
+
+/* Contenedor principal debajo del header */
+.blog-main {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Sidebar */
+.blog-sidebar {
+  width: 200px;
+  background: #f4f1eb;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(40, 78, 91, 0.08);
+  height: fit-content;
+}
+
+.blog-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #295b6e;
+}
+
+.blog-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blog-sidebar li {
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #295b6e;
+  transition: background 0.2s, color 0.2s;
+}
+
+.blog-sidebar li:hover {
+  background: #ee9271;
+  color: #fff;
+}
+
+.blog-sidebar li.active {
+  background: #ee9271;
+  color: #fff;
+}
+
+/* Lista de tarjetas de blog */
 .blogcard-list {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
   justify-content: flex-start;
+  flex: 1; /* ocupa el resto del espacio */
 }
 
+/* Tarjeta individual */
 .blogcard {
-  background: #f4f1eb;
+  background: #f4f1e8;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(40, 78, 91, 0.08);
   flex: 0 1 300px;
@@ -31,7 +120,7 @@
 
 .blogcard-label {
   display: inline-block;
-  background: #e99c80;
+  background:#ee9271;
   color: #fff;
   padding: 0.1em 0.5em;
   font-size: 0.6rem;
@@ -51,12 +140,12 @@
 
 .blogcard-title {
   font-size: 1.18rem;
-  color: #284e5b;
+  color: #295b6e;
   margin: 0;
 }
 
 .blogcard-description {
-  color: #3d3d3d;
+  color: #333333;
   font-size: 1rem;
   margin: 0;
 }
@@ -69,13 +158,13 @@
 }
 
 .blogcard-author {
-  color: #9ecfc4;
+  color: #8fbbb0;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .see-more-link {
-  color: #e99c80;
+  color: #ee9271;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -85,3 +174,4 @@
 .see-more-link:focus {
   text-decoration: underline;
 }
+
