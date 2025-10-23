@@ -26,6 +26,8 @@ export default function Navbar() {
   const isPsychologist = user?.role === "psychologist";
   const isAdmin = user?.role === "admin";
 
+  
+
   return (
     <header className={styles.navbar}>
       <div className={styles.container}>
@@ -69,12 +71,18 @@ export default function Navbar() {
               <span>Mi Perfil</span>
             </Link>
           )}
+          {pathname !== "/app/my-appointments" && (
+                <Link to="/app/my-appointments" className={styles.link}>Mis Citas</Link>
+              )}
           {isPsychologist && pathname !== "/app/profile" && (
             <Link to="/app/profile" className={styles.link}>
               <ImProfile className={styles.icon} /> {/* Icono Perfil */}
               <span>Mi Perfil Profesional</span>
             </Link>
           )}
+          {pathname !== "/app/dashboard" && ( /* */
+                 <Link to="/app/dashboard" className={styles.link}>Mi Panel</Link> /* */
+               )}
           {isAdmin && pathname !== "/admin/dashboard" && (
             <Link to="/admin/dashboard" className={styles.link}>
               <LuLayoutDashboard className={styles.icon} />{" "}

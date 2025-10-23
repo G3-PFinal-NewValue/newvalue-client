@@ -15,6 +15,8 @@ import PsychologistProfileSetup from "../pages/private/PsychologistProfile/Psych
 import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
 import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; 
 import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard"; 
+import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
+import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -65,6 +67,14 @@ export default function AppRouter() {
             }
           />
           <Route
+            path="/app/dashboard" // O /app/professional-dashboard, etc.
+            element={
+              <ProtectedRoute allowedRoles={['psychologist']}>
+                <PsychologistDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/app/profile-setup/patient"
             element={
               <ProtectedRoute>
@@ -79,6 +89,15 @@ export default function AppRouter() {
               <ProtectedRoute>
                 {" "}
                 <MyPatientProfile />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/my-appointments"
+            element={
+              // Aseguramos que solo pacientes puedan entrar (opcional ahora)
+              <ProtectedRoute allowedRoles={['patient']}>
+                <PatientAppointmentsPage />
               </ProtectedRoute>
             }
           />
