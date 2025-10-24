@@ -1,0 +1,92 @@
+.cardLink {
+  display: block; /* Asegura que el enlace ocupe todo el espacio de la tarjeta */
+  text-decoration: none;
+  color: inherit; /* Hereda el color del texto normal */
+  border-radius: var(--radius-xl); /* Hereda el radio para el estado focus */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cardLink:hover,
+.cardLink:focus {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  outline: none; /* Quita el borde por defecto en focus */
+}
+/* Estilo focus visible para accesibilidad */
+.cardLink:focus-visible {
+   outline: 2px solid var(--color-brand-primary);
+   outline-offset: 2px;
+}
+
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4); /* 16px */
+  display: grid;
+  grid-template-columns: 64px 1fr; /* Columna fija para avatar, resto para info */
+  gap: var(--space-4); /* 16px */
+  align-items: center;
+  box-shadow: var(--shadow-1);
+  /* La transición se aplica al enlace padre (.cardLink) */
+}
+
+.avatarContainer {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%; /* Círculo */
+  overflow: hidden; /* Para recortar la imagen */
+  background-color: var(--color-bg-alt); /* Fondo suave si no hay imagen */
+  display: grid; /* Para centrar el fallback */
+  place-items: center; /* Para centrar el fallback */
+  flex-shrink: 0; /* Evita que se encoja */
+  border: 2px solid var(--color-brand-secondary); /* Borde sutil */
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Asegura que la imagen cubra el espacio */
+}
+
+.avatarFallback {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-brand-primary); /* Color primario para inicial */
+}
+
+.infoContainer {
+  display: grid;
+  gap: var(--space-1); /* 4px entre nombre y especialidad */
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 18px; /* Tamaño adecuado para tarjeta */
+  font-weight: 600;
+  color: var(--color-brand-title);
+  line-height: 1.3;
+}
+
+.specialty {
+  margin: 0;
+  font-size: 14px; /* Más pequeño */
+  color: var(--color-text);
+  opacity: 0.85;
+}
+
+/* --- Responsive (Opcional, si es necesario ajustar en móviles) --- */
+@media (max-width: 480px) {
+  .card {
+     grid-template-columns: 56px 1fr; /* Avatar un poco más pequeño */
+     gap: var(--space-3); /* 12px */
+     padding: var(--space-3);
+  }
+  .avatarContainer {
+      width: 56px;
+      height: 56px;
+  }
+  .name { font-size: 16px; }
+  .specialty { font-size: 13px; }
+}
