@@ -1,14 +1,14 @@
 .page {
-  min-height: calc(100vh - 60px); /* Adjust if Navbar height changes */
+  min-height: calc(100vh - 60px); 
   background: var(--color-bg);
-  padding: var(--space-6) var(--space-4); /* 24px top/bottom, 16px sides */
+  padding: var(--space-6) var(--space-4);
   display: grid;
   place-items: start center;
 }
 .wrap {
   width: 100%;
-  max-width: 1100px; /* Wider for grid layout */
-  margin: 0 auto; /* Centered */
+  max-width: 1100px; 
+  margin: 0 auto; 
 }
 
 /* --- Cabecera --- */
@@ -16,40 +16,39 @@
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: var(--space-5); /* 20px */
+  padding: var(--space-5); 
   display: grid;
-  grid-template-columns: 110px 1fr; /* Avatar size + remaining space */
-  gap: var(--space-5); /* 20px gap */
-  margin-bottom: var(--space-6); /* 24px separation */
-  align-items: center; /* Vertically align avatar and info */
+  grid-template-columns: 110px 1fr; 
+  gap: var(--space-5); 
+  margin-bottom: var(--space-6); 
+  align-items: center; 
 }
 
 .avatar {
   width: 110px; height: 110px;
-  border-radius: 999px; /* Circle */
+  border-radius: 999px;
   overflow: hidden;
-  border: 4px solid var(--color-brand-primary); /* Thicker border */
-  background: #fff; /* Fallback bg */
-  flex-shrink: 0; /* Prevent shrinking */
+  border: 4px solid var(--color-brand-primary);
+  background: #fff; 
+  flex-shrink: 0; 
 }
 .avatar img {
   width: 100%; height: 100%;
-  object-fit: cover; /* Cover the circle area */
+  object-fit: cover; 
 }
 .avatarFallback {
   width: 100%; height: 100%;
   display: grid; place-items: center;
-  color: #fff; background: var(--color-brand-primary); /* Brand color */
+  color: #fff; background: var(--color-brand-primary);
   font-weight: 800;
-  font-size: 48px; /* Large initials */
+  font-size: 48px; 
 }
-
-.headerInfo { display: grid; gap: var(--space-2); /* 8px gap */ }
+.headerInfo { display: grid; gap: var(--space-2);  }
 .name {
   margin: 0;
   font-family: var(--font-title);
   color: var(--color-brand-title);
-  font-size: var(--fs-title-lg); /* 36px */
+  font-size: var(--fs-title-lg);
   font-weight: 700;
   line-height: 1.3;
 }
@@ -57,63 +56,63 @@
   margin: 0;
   color: var(--color-text);
   font-weight: 600;
-  font-size: 18px; /* Slightly larger specialty */
+  font-size: 18px;
 }
 .license {
   margin: 0;
   color: var(--color-text);
-  opacity: .7; /* Less emphasis */
-  font-size: 15px; /* Slightly smaller */
+  opacity: .7; 
+  font-size: 15px; 
 }
 
-/* --- Grid Layout --- */
+
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1.8fr; /* Description takes less space than calendar */
-  gap: var(--space-6); /* 24px separation */
+  grid-template-columns: 1fr 1.8fr;
+  gap: var(--space-6); 
 }
 
-/* --- Section Styling (shared) --- */
+
 .section {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: var(--space-5); /* 20px padding */
+  padding: var(--space-5); 
 }
 .sectionTitle {
-  margin: 0 0 var(--space-4); /* 16px bottom margin */
+  margin: 0 0 var(--space-4); 
   font-family: var(--font-title);
-  font-weight: 600; /* Less bold than main title */
+  font-weight: 600; 
   color: var(--color-brand-title);
-  font-size: var(--fs-subtitle); /* 24px */
-  padding-bottom: var(--space-3); /* 12px bottom padding */
-  border-bottom: 1px solid var(--color-bg-alt); /* Separator line */
+  font-size: var(--fs-subtitle); 
+  padding-bottom: var(--space-3); 
+  border-bottom: 1px solid var(--color-bg-alt); 
 }
 .description {
   margin: 0;
   color: var(--color-text);
-  line-height: 1.7; /* More line spacing */
+  line-height: 1.7; 
   opacity: 0.9;
 }
 .muted {
   color: var(--color-text);
   opacity: .7;
-  font-style: italic; /* Indicate lack of content */
+  font-style: italic; 
 }
 
 /* --- Footer Actions --- */
 .footerActions {
-  display: flex; gap: var(--space-3); /* 12px gap */
-  justify-content: flex-start; /* Align button to the left */
-  margin-top: var(--space-6); /* 24px top margin */
+  display: flex; gap: var(--space-3); 
+  justify-content: flex-start; 
+  margin-top: var(--space-6); 
 }
-/* Reusing button styles (ideally define globally or in common file) */
+
  .primaryBtn, .secondaryBtn {
     display: inline-block;
     text-decoration: none;
     font-weight: 700;
     border-radius: 10px;
-    padding: 10px 14px; /* Standard button size */
+    padding: 10px 14px; 
     font-size: 15px;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -135,38 +134,38 @@
  .secondaryBtn:hover { background: var(--color-brand-primary); color: #fff; }
 
 
-/* --- Calendar Styles Refined --- */
-.calendarContainer { /* Wrapper div for height/spacing */
-  /* Height is set inline in the component */
+
+.calendarContainer { 
+
 }
 .calendarContainer :global(.rbc-calendar) {
   font-family: var(--font-body);
-  border: none; /* Remove default border */
-  border-radius: 0; /* Let .section handle rounding */
-  height: 100% !important; /* Force fill the container height */
+  border: none; 
+  border-radius: 0; 
+  height: 100% !important; 
 }
 .calendarContainer :global(.rbc-toolbar) {
-  background-color: transparent; /* No background needed */
+  background-color: transparent; 
   border-bottom: 1px solid var(--color-bg-alt);
-  padding: 0 0 var(--space-3); /* Only bottom padding */
-  margin-bottom: var(--space-3); /* Space below toolbar */
+  padding: 0 0 var(--space-3); 
+  margin-bottom: var(--space-3); 
 }
 .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) {
   font-family: var(--font-title);
   color: var(--color-brand-title);
   font-weight: 700;
   font-size: var(--fs-subtitle);
-  flex-grow: 0; /* Prevent label from taking too much space */
-  text-align: left; /* Align month/week text left */
+  flex-grow: 0; 
+  text-align: left; 
 }
 .calendarContainer :global(.rbc-toolbar button) {
   background: transparent;
   border: 1px solid var(--color-brand-primary);
   color: var(--color-brand-primary);
-  padding: 5px 10px; /* Slightly smaller buttons */
+  padding: 5px 10px; 
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px; /* Smaller font size */
+  font-size: 14px; 
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -182,7 +181,7 @@
    color: #fff;
 }
 .calendarContainer :global(.rbc-header) {
-  background-color: transparent; /* No background for headers */
+  background-color: transparent; 
   border-bottom: 1px solid var(--color-bg-alt);
   padding: 8px 0;
   font-weight: 600; /* Slightly less bold */
@@ -197,33 +196,33 @@
    border-left: none;
 }
 .calendarContainer :global(.rbc-today) {
-   background-color: rgba(238, 146, 113, 0.1); /* Very light primary color tint for today */
+   background-color: rgba(238, 146, 113, 0.1); 
 }
 .calendarContainer :global(.rbc-time-gutter) {
-    /* Maybe slightly wider gutter if needed */
+    
 }
 .calendarContainer :global(.rbc-time-slot) {
-    border-top: 1px dotted var(--color-bg-alt); /* Dotted lines for hours */
+    border-top: 1px dotted var(--color-bg-alt); 
 }
 .calendarContainer :global(.rbc-event) {
-  /* Styles applied via eventPropGetter in the component */
+  
 }
 .calendarContainer :global(.rbc-current-time-indicator) {
    background-color: var(--color-brand-primary); /* Primary color line */
-   height: 2px; /* Thicker line? */
+   height: 2px; 
 }
 
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 980px) {
   .wrap { max-width: 95%; }
-  .grid { grid-template-columns: 1fr; } /* Stack columns */
+  .grid { grid-template-columns: 1fr; } 
   .headerCard { grid-template-columns: 90px 1fr; }
   .avatar { width: 90px; height: 90px; border-width: 3px; }
   .avatarFallback { font-size: 36px; }
   .name { font-size: 28px; }
-  /* Ensure calendar section doesn't become too small */
-  .section:last-child { min-height: 500px; } /* Min height for calendar section */
+
+  .section:last-child { min-height: 500px; } 
 }
 @media (max-width: 480px) {
   .page { padding: var(--space-4) var(--space-3); }
@@ -231,9 +230,9 @@
   .avatar { width: 72px; height: 72px; }
   .name { font-size: 24px; }
   .specialty { font-size: 16px; }
-  .section { padding: var(--space-4); } /* Less padding */
+  .section { padding: var(--space-4); } 
   .sectionTitle { font-size: 20px; }
-  .footerActions { justify-content: center; } /* Center button */
-  .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) { font-size: 20px; } /* Smaller title */
-  .calendarContainer :global(.rbc-toolbar button) { padding: 4px 8px; font-size: 13px; } /* Smaller buttons */
+  .footerActions { justify-content: center; } 
+  .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) { font-size: 20px; } 
+  .calendarContainer :global(.rbc-toolbar button) { padding: 4px 8px; font-size: 13px; } 
 }
