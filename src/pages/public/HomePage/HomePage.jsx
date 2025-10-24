@@ -1,13 +1,13 @@
-import { Link } from "react-router-dom"; 
-import styles from "./HomePage.module.css"; 
-import SearchUserIcon from "../../../components/icons/SearchUserIcon";
-import LaptopUserIcon from "../../../components/icons/LaptopUserIcon";
-import HeartHandsIcon from "../../../components/icons/HeartHandsIcon";
-import { BsSearchHeart } from "react-icons/bs";
-import { BsPersonWorkspace } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import styles from "./HomePage.module.css";
+import { BsSearchHeart, BsPersonWorkspace } from "react-icons/bs";
 import { BiDonateHeart } from "react-icons/bi";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function HomePage() {
+  const { user } = useAuth();
+  const isAuthenticated = Boolean(user);
+
   return (
     <div className={styles.pageContainer}>
       {/* --- Sección Hero --- */}
@@ -21,18 +21,22 @@ export default function HomePage() {
             Encuentra tu bienestar y genera impacto social. Cada sesión que
             tomas ayuda a que otra persona reciba apoyo psicológico gratuito.
           </p>
+
           <div className={styles.heroActions}>
-            <Link to="/register" className={styles.primaryBtn}>
-              Empezar ahora
-            </Link>
-            {/* Podríamos añadir un botón secundario si es necesario */}
-            {/* <Link to="/como-funciona" className={styles.secondaryBtn}>Cómo funciona</Link> */}
+            {isAuthenticated ? (
+              <Link to="/psychologists" className={styles.primaryBtn}>
+                Buscar psicólogos
+              </Link>
+            ) : (
+              <Link to="/register" className={styles.primaryBtn}>
+                Empezar ahora
+              </Link>
+            )}
           </div>
         </div>
+
         <div className={styles.heroImageContainer}>
-          {/* 👇 El div placeholder AHORA CONTIENE la imagen 👇 */}
           <div className={styles.heroImagePlaceholder}>
-            {/* 👇 Ruta corregida y alt text añadido 👇 */}
             <img
               src="/images/foto1.jpeg"
               alt="Persona sonriendo mientras usa un portátil al aire libre"
@@ -41,10 +45,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* --- Sección ¿Cómo funciona? --- */}
       <section className={styles.howItWorksSection}>
         <h2 className={styles.sectionTitle}>¿Cómo funciona?</h2>
         <div className={styles.stepsGrid}>
-          {/* Paso 1 */}
           <div className={styles.stepCard}>
             <div className={styles.stepIcon}>
               <BsSearchHeart
@@ -55,11 +60,10 @@ export default function HomePage() {
             </div>
             <h3 className={styles.stepTitle}>Elige a tu psicólogo</h3>
             <p className={styles.stepText}>
-              Explora perfiles y encuentra al profesional que mejor se adapte a
-              ti.
+              Explora perfiles y encuentra al profesional que mejor se adapte a ti.
             </p>
           </div>
-          {/* Paso 2 */}
+
           <div className={styles.stepCard}>
             <div className={styles.stepIcon}>
               <BsPersonWorkspace
@@ -73,7 +77,7 @@ export default function HomePage() {
               Realiza tus sesiones online de forma segura y cómoda.
             </p>
           </div>
-          {/* Paso 3 */}
+
           <div className={styles.stepCard}>
             <div className={styles.stepIcon}>
               <BiDonateHeart
@@ -84,8 +88,7 @@ export default function HomePage() {
             </div>
             <h3 className={styles.stepTitle}>Ayuda a alguien más</h3>
             <p className={styles.stepText}>
-              Con cada sesión, contribuyes a que otra persona reciba apoyo
-              gratuito.
+              Con cada sesión, contribuyes a que otra persona reciba apoyo gratuito.
             </p>
           </div>
         </div>
@@ -101,9 +104,7 @@ export default function HomePage() {
           />
         </div>
         <div className={styles.socialImpactContent}>
-          <h2 className={styles.sectionTitle}>
-            Tu bienestar impulsa el cambio
-          </h2>
+          <h2 className={styles.sectionTitle}>Tu bienestar impulsa el cambio</h2>
           <p className={styles.socialImpactText}>
             En Cora Mind, creemos que cuidar tu mente es un acto poderoso que
             resuena más allá de ti. Por eso, conectamos tu proceso personal con
@@ -114,20 +115,32 @@ export default function HomePage() {
             Así, mientras tú encuentras equilibrio y crecimiento, también estás
             ayudando a construir un mundo con mayor acceso a la salud mental.
           </p>
-          {/* <Link to="/nuestro-impacto" className={styles.secondaryBtn}>Conoce más</Link> */}
         </div>
       </section>
 
       {/* --- Sección CTA Final --- */}
       <section className={styles.ctaSection}>
-        <h2 className={styles.ctaTitle}>¿Listo para empezar?</h2>
-        <p className={styles.ctaText}>
-          Únete a Cora Mind y da el primer paso hacia tu bienestar mientras
-          ayudas a otros.
-        </p>
-        <Link to="/register" className={styles.primaryBtn}>
-          Crear mi cuenta
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <h2 className={styles.ctaTitle}>Mis próximas citas</h2>
+            <p className={styles.ctaText}>
+              Revisa tu agenda, gestiona tus sesiones y mantén el equilibrio día a día.
+            </p>
+            <Link to="/app/my-appointments" className={styles.primaryBtn}>
+              Ver mis citas
+            </Link>
+          </>
+        ) : (
+          <>
+            <h2 className={styles.ctaTitle}>¿Listo para empezar?</h2>
+            <p className={styles.ctaText}>
+              Únete a Cora Mind y da el primer paso hacia tu bienestar mientras ayudas a otros.
+            </p>
+            <Link to="/register" className={styles.primaryBtn}>
+              Crear mi cuenta
+            </Link>
+          </>
+        )}
       </section>
     </div>
   );
