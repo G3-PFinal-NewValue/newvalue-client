@@ -27,7 +27,10 @@ export default function Navbar() {
   const isAdmin = user?.role === "admin";
 
   // Función para marcar link activo
-  const isActive = (path) => pathname.startsWith(path) ? styles.active : "";
+  const isActive = (path, exact = false) => {
+    if (exact) return pathname === path ? styles.active : "";
+    return pathname.startsWith(path) ? styles.active : "";
+  };
 
   return (
     <header className={styles.navbar}>
@@ -46,43 +49,35 @@ export default function Navbar() {
           <Link to="/psychologists" className={`${styles.link} ${isActive("/psychologists")}`}>
             Conócenos
           </Link>
-
           <Link to="/social-project" className={`${styles.link} ${isActive("/social-project")}`}>
             Proyecto social
           </Link>
-
           <Link to="/treatments" className={`${styles.link} ${isActive("/treatments")}`}>
             Tratamientos
           </Link>
-
           <Link to="/blog" className={`${styles.link} ${isActive("/blog")}`}>
             Recursos gratuitos
           </Link>
-
           {isPatient && (
             <Link to="/app/my-profile" className={`${styles.link} ${isActive("/app/my-profile")}`}>
               Mi Perfil
             </Link>
           )}
-
           {isLoggedIn && (
             <Link to="/app/my-appointments" className={`${styles.link} ${isActive("/app/my-appointments")}`}>
               Mis Citas
             </Link>
           )}
-
           {isPsychologist && (
             <Link to="/app/profile" className={`${styles.link} ${isActive("/app/profile")}`}>
               Mi Perfil Profesional
             </Link>
           )}
-
           {isLoggedIn && (
             <Link to="/app/dashboard" className={`${styles.link} ${isActive("/app/dashboard")}`}>
               Mi Panel
             </Link>
           )}
-
           {isAdmin && (
             <Link to="/admin/dashboard" className={`${styles.link} ${isActive("/admin/dashboard")}`}>
               <LuLayoutDashboard className={styles.icon} />
@@ -128,46 +123,42 @@ export default function Navbar() {
       {/* MENÚ MOBILE */}
       <div className={`${styles.mobileMenu} ${open ? styles.mobileOpen : ""}`}>
         <nav className={styles.mobileNav}>
+          <Link to="/" className={`${styles.mobileLink} ${isActive("/", true)}`}>
+            <span>Inicio</span>
+          </Link>
+
           <Link to="/psychologists" className={`${styles.mobileLink} ${isActive("/psychologists")}`}>
             Conócenos
           </Link>
-
           <Link to="/social-project" className={`${styles.mobileLink} ${isActive("/social-project")}`}>
             Proyecto social
           </Link>
-
           <Link to="/treatments" className={`${styles.mobileLink} ${isActive("/treatments")}`}>
             Tratamientos
           </Link>
-
           <Link to="/blog" className={`${styles.mobileLink} ${isActive("/blog")}`}>
             Recursos gratuitos
           </Link>
-
           {isPatient && (
             <Link to="/app/my-profile" className={`${styles.mobileLink} ${isActive("/app/my-profile")}`}>
               Mi Perfil
             </Link>
           )}
-
           {isLoggedIn && (
             <Link to="/app/my-appointments" className={`${styles.mobileLink} ${isActive("/app/my-appointments")}`}>
               Mis Citas
             </Link>
           )}
-
           {isPsychologist && (
             <Link to="/app/profile" className={`${styles.mobileLink} ${isActive("/app/profile")}`}>
               Mi Perfil Profesional
             </Link>
           )}
-
           {isLoggedIn && (
             <Link to="/app/dashboard" className={`${styles.mobileLink} ${isActive("/app/dashboard")}`}>
               Mi Panel
             </Link>
           )}
-
           {isAdmin && (
             <Link to="/admin/dashboard" className={`${styles.mobileLink} ${isActive("/admin/dashboard")}`}>
               Dashboard
