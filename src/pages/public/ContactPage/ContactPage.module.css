@@ -1,0 +1,215 @@
+.pageContainer {
+  width: 100%;
+  max-width: 768px; 
+  margin: 0 auto; 
+  padding: var(--space-6) var(--space-4); 
+}
+
+.contentWrapper {
+  background: var(--color-surface); 
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-6); 
+}
+
+.pageTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg);
+  font-weight: 700;
+  color: var(--color-brand-title);
+  text-align: center;
+  margin: 0 auto var(--space-4); 
+}
+
+.introText {
+  text-align: center;
+  margin-bottom: var(--space-6); 
+  font-size: var(--fs-body);
+  color: var(--color-text);
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.introText p {
+  margin: 0 auto var(--space-2); 
+  max-width: 500px;
+}
+.introText a {
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.introText a:hover {
+  text-decoration: underline;
+}
+
+
+.contactForm {
+  display: grid;
+  gap: var(--space-5); 
+}
+
+.formTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-subtitle); /* 24px */
+  font-weight: 600;
+  color: var(--color-brand-title);
+  text-align: center;
+  margin: 0 auto var(--space-2);
+}
+
+
+.formGroup {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label { 
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db; 
+  border-radius: 10px;
+  font: inherit; 
+  background: #fff;
+  min-height: 120px;
+  resize: vertical; 
+  line-height: 1.5;
+  transition: border-color .2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-brand-primary); 
+}
+
+
+.errorText {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: -4px; 
+}
+.errorBorder {
+  border-color: #dc2626 !important; 
+}
+
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: var(--fs-detail); /* 18px */
+  background: var(--color-brand-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease, transform .1s ease, box-shadow .2s ease;
+  margin-top: var(--space-2); 
+}
+.submitButton:hover:not(:disabled) {
+    background: var(--color-brand-secondary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+.submitButton:disabled { opacity: .7; cursor: not-allowed; }
+.submitButton:active:not(:disabled) {
+    transform: scale(.98);
+    box-shadow: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .pageContainer {
+     padding: var(--space-5) var(--space-3);
+  }
+  .contentWrapper {
+     padding: var(--space-5);
+  }
+  .pageTitle { font-size: 30px; }
+  .formTitle { font-size: 22px; }
+  .contactForm { gap: var(--space-4); } 
+}
+
+.submitMessage {
+  padding: var(--space-3) var(--space-4); 
+  border-radius: 8px; 
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: var(--space-2);
+  text-align: center;
+}
+
+
+.successMessage {
+  background-color: #dcfce7; 
+  color: #166534; 
+  border: 1px solid #86efac; 
+}
+
+.errorMessageFeedback {
+  background-color: #fee2e2; 
+  color: #991b1b; 
+  border: 1px solid #fca5a5;
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+   .pageContainer {
+     padding: var(--space-5) var(--space-3);
+  }
+  .contentWrapper {
+     padding: var(--space-5);
+  }
+  .pageTitle { font-size: 30px; }
+  .formTitle { font-size: 22px; }
+  .contactForm { gap: var(--space-4); }
+}
+
+.whatsappButton {
+  display: inline-flex; 
+  align-items: center;
+  gap: var(--space-2); 
+  background-color: #25D366; 
+  color: #fff; 
+  padding: 10px 20px; 
+  border-radius: 999px; 
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  margin-top: var(--space-3); 
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.whatsappButton:hover {
+  background-color: #1DAE54; 
+  transform: translateY(-1px); 
+}
+.whatsappButton svg { 
+  vertical-align: middle; 
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  
+   .pageContainer {
+     padding: var(--space-5) var(--space-3);
+  }
+  .contentWrapper {
+     padding: var(--space-5);
+  }
+  .pageTitle { font-size: 30px; }
+  .formTitle { font-size: 22px; }
+  .contactForm { gap: var(--space-4); }
+
+  .whatsappButton {
+    padding: 8px 16px;
+    font-size: 15px;
+  }
+}

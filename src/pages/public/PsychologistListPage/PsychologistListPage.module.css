@@ -1,9 +1,8 @@
-/* src/pages/public/PsychologistListPage/PsychologistListPage.module.css */
 
 .pageContainer {
   width: 100%;
-  max-width: 1200px; /* Consistente con otros anchos */
-  margin: 0 auto; /* Centrar contenido */
+  max-width: 1200px; 
+  margin: 0 auto; 
 }
 
 .pageTitle {
@@ -17,14 +16,12 @@ font-family: var(--font-title);
   padding-bottom: var(--space-4);
 }
 
-/* --- Grid para las tarjetas --- */
 .listGrid {
 display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-5);
 }
 
-/* --- Estilos para mensajes --- */
 .loadingMessage,
 .errorMessage,
 .noResultsMessage {
@@ -51,15 +48,14 @@ color: #b91c1c;
 .filtersContainer {
   display: flex;
   align-items: center;
-  gap: var(--space-3); /* 12px entre label y select */
-  margin-bottom: var(--space-5); /* 20px de separación con la lista */
-  padding: var(--space-3) var(--space-4); /* Padding interno */
-  background-color: var(--color-surface); /* Fondo suave */
-  border-radius: var(--radius-xl); /* Bordes redondeados */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra muy sutil */
-  max-width: 450px; /* Ancho máximo para el filtro */
-  /* margin-left: auto; */ /* Descomentar para alinear a la derecha */
-  /* margin-right: auto; */ /* Descomentar para centrar */
+  gap: var(--space-3);
+  margin-bottom: var(--space-5); 
+  padding: var(--space-3) var(--space-4); 
+  background-color: var(--color-surface); 
+  border-radius: var(--radius-xl); 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+  max-width: 450px; 
+  
 }
 
 .filterLabel {
@@ -67,49 +63,49 @@ color: #b91c1c;
   font-size: 15px;
   color: var(--color-text);
   opacity: 0.9;
-  white-space: nowrap; /* Evita que el label se parta */
+  white-space: nowrap; 
 }
 
 .filterSelect {
-  flex-grow: 1; /* Ocupa el espacio restante */
-  padding: 8px 12px; /* Padding interno del select */
-  border: 1px solid var(--color-bg-alt); /* Borde suave */
-  border-radius: 8px; /* Bordes redondeados */
-  background-color: #fff; /* Fondo blanco */
-  font-family: inherit; /* Hereda la fuente del body */
+  flex-grow: 1; 
+  padding: 8px 12px; 
+  border: 1px solid var(--color-bg-alt); 
+  border-radius: 8px; 
+  background-color: #fff; 
+  font-family: inherit; 
   font-size: 15px;
   color: var(--color-text);
   cursor: pointer;
-  /* Añadir flecha personalizada (opcional, mejora estética) */
-  appearance: none; /* Quita flecha por defecto */
+  
+  appearance: none; 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
   background-position: right 12px center;
   background-repeat: no-repeat;
   background-size: 1em;
-  padding-right: 32px; /* Espacio para la flecha */
+  padding-right: 32px; 
 }
 .filterSelect:focus {
   outline: none;
   border-color: var(--color-brand-primary);
-  box-shadow: 0 0 0 2px rgba(238, 146, 113, 0.2); /* Sombra focus */
+  box-shadow: 0 0 0 2px rgba(238, 146, 113, 0.2); 
 }
 
 .paginationContainer {
   display: flex;
-  justify-content: center; /* Centrar los controles */
+  justify-content: center; 
   align-items: center;
-  gap: var(--space-3); /* 12px de espacio */
-  margin-top: var(--space-5); /* Margen superior para separarlo de la lista */
-  padding: var(--space-4) 0; /* Padding vertical */
+  gap: var(--space-3);
+  margin-top: var(--space-5); 
+  padding: var(--space-4) 0;
 }
 
 .paginationButton {
-  /* Estilo similar a secondaryBtn pero más pequeño */
+
   background: transparent;
-  border: 2px solid var(--color-brand-secondary); /* Usar secundario */
+  border: 2px solid var(--color-brand-secondary);
   color: var(--color-brand-secondary);
   border-radius: 8px;
-  padding: 6px 12px; /* Más pequeño */
+  padding: 6px 12px; 
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -124,8 +120,8 @@ color: #b91c1c;
 .paginationButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  border-color: #ccc; /* Gris claro para borde deshabilitado */
-  color: #ccc; /* Texto gris claro */
+  border-color: #ccc; 
+  color: #ccc; 
 }
 
 .paginationInfo {
@@ -133,35 +129,34 @@ color: #b91c1c;
   font-weight: 600;
   color: var(--color-text);
   opacity: 0.8;
-  padding: 0 var(--space-2); /* Espacio a los lados */
+  padding: 0 var(--space-2); 
 }
-/* --- Responsive (Ajustes para móviles si es necesario) --- */
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .pageTitle {
-    font-size: 30px; /* Título un poco más pequeño */
+    font-size: 30px; 
     margin-bottom: var(--space-5);
   }
   .listGrid {
-     /* Quizás asegurar 1 columna en móviles muy pequeños */
+     
      grid-template-columns: 1fr;
-     gap: var(--space-4); /* Menos separación */
+     gap: var(--space-4); 
   }
   .filtersContainer {
-    flex-direction: column; /* Apilar label y select */
-    align-items: stretch; /* Ocupar todo el ancho */
-    max-width: 100%; /* Ocupar todo el ancho disponible */
+    flex-direction: column; 
+    align-items: stretch; 
     padding: var(--space-3);
   }
   .filterLabel {
-      margin-bottom: var(--space-1); /* Pequeño espacio bajo el label */
-      text-align: center; /* Centrar label */
+      margin-bottom: var(--space-1); 
+      text-align: center; 
   }
 
   .paginationContainer {
-       gap: var(--space-2); /* Menos espacio en móvil */
+       gap: var(--space-2);
    }
    .paginationButton {
-       padding: 5px 10px; /* Botones un poco más pequeños */
+       padding: 5px 10px; 
        font-size: 13px;
    }
    .paginationInfo {

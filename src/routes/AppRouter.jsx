@@ -9,6 +9,7 @@ import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
 import PsychologistListPage from "../pages/public/PsychologistListPage/PsychologistListPage";
+import ContactPage from "../pages/public/ContactPage/ContactPage";
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
@@ -46,6 +47,7 @@ export default function AppRouter() {
           <Route path="/blog/:id" element={<BlogArticlePage />} />
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />
           <Route path="/psychologists" element={<PsychologistListPage />} />
+          <Route path="/contacto" element={<ContactPage />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
@@ -67,7 +69,7 @@ export default function AppRouter() {
             }
           />
           <Route
-            path="/app/dashboard" // O /app/professional-dashboard, etc.
+            path="/app/dashboard" 
             element={
               <ProtectedRoute allowedRoles={['psychologist']}>
                 <PsychologistDashboardPage />
@@ -95,7 +97,6 @@ export default function AppRouter() {
           <Route
             path="/app/my-appointments"
             element={
-              // Aseguramos que solo pacientes puedan entrar (opcional ahora)
               <ProtectedRoute allowedRoles={['patient']}>
                 <PatientAppointmentsPage />
               </ProtectedRoute>

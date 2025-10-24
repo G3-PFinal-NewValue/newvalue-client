@@ -1,10 +1,8 @@
-// src/pages/public/PsychologistListPage/PsychologistListPage.jsx
 import { useState, useEffect, useMemo } from 'react';
 import { getAllPsychologistProfiles } from '../../../services/psychologistsService';
 import PsychologistCard from '../../../components/common/PsychologistCard/PsychologistCard';
 import styles from './PsychologistListPage.module.css';
 
-// Lista de especialidades (podría venir de una API en el futuro)
 const SPECIALTIES = [
   "Terapia Cognitivo-Conductual",
   "Ansiedad y Estrés",
@@ -16,7 +14,6 @@ const SPECIALTIES = [
   "Otro",
 ];
 
-// Definir cuántos items por página
 const ITEMS_PER_PAGE = 6;
 
 export default function PsychologistListPage() {
@@ -32,9 +29,8 @@ export default function PsychologistListPage() {
     setError(null);
     try {
       const profiles = getAllPsychologistProfiles();
-      // Simulamos un pequeño retraso
       setTimeout(() => {
-        setAllPsychologists(profiles); // Guardamos la lista completa
+        setAllPsychologists(profiles); 
         setLoading(false);
       }, 500);
     } catch (err) {
@@ -47,7 +43,7 @@ export default function PsychologistListPage() {
 
   // Lista filtrada
   const filteredPsychologists = useMemo(() => {
-    // Reiniciar a página 1 cuando cambia el filtro
+    
     setCurrentPage(1);
     if (!selectedSpecialty) {
       return allPsychologists; // Si no hay filtro, mostrar todos
@@ -55,19 +51,17 @@ export default function PsychologistListPage() {
     return allPsychologists.filter(
       (psy) => psy.specialty === selectedSpecialty
     );
-  }, [allPsychologists, selectedSpecialty]); // Se recalcula si cambia la lista o el filtro
+  }, [allPsychologists, selectedSpecialty]); 
 
-  // Calcular datos para paginación
+
   const paginationData = useMemo(() => {
     const totalItems = filteredPsychologists.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    // Asegurarse de que currentPage no sea mayor que totalPages después de filtrar
     const validCurrentPage = Math.min(currentPage, totalPages > 0 ? totalPages : 1);
     const startIndex = (validCurrentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentPsychologists = filteredPsychologists.slice(startIndex, endIndex);
 
-    // Actualizar currentPage si se quedó fuera de rango
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     } else if (currentPage < 1 && totalPages > 0) {
@@ -80,18 +74,17 @@ export default function PsychologistListPage() {
       totalPages,
       startIndex,
       endIndex,
-      currentPage: validCurrentPage, // Devolver la página actual válida
-      currentPsychologists, // Psicólogos a mostrar en la página actual
+      currentPage: validCurrentPage, 
+      currentPsychologists, 
     };
-  }, [filteredPsychologists, currentPage]); // Recalcular si cambia la lista filtrada o la página
+  }, [filteredPsychologists, currentPage]); 
 
-  // Manejador para el cambio en el select del filtro
   const handleFilterChange = (event) => {
     setSelectedSpecialty(event.target.value);
-    // El useMemo de filteredPsychologists se encargará de resetear la página a 1
+    
   };
 
-  // Funciones para cambiar de página
+
   const goToNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, paginationData.totalPages));
   };
@@ -107,7 +100,7 @@ export default function PsychologistListPage() {
     <div className={styles.pageContainer}>
       <h1 className={styles.pageTitle}>Encuentra a tu psicólogo</h1>
 
-      {/* --- Filtro --- */}
+    
       {!loading && !error && allPsychologists.length > 0 && (
         <div className={styles.filtersContainer}>
           <label htmlFor="specialtyFilter" className={styles.filterLabel}>Filtrar por especialidad:</label>
@@ -126,15 +119,15 @@ export default function PsychologistListPage() {
           </select>
         </div>
       )}
-      {/* --- Fin Filtro --- */}
+
 
       {loading && <p className={styles.loadingMessage}>Cargando psicólogos...</p>}
       {error && <p className={styles.errorMessage}>{error}</p>}
 
       {!loading && !error && (
-        <> {/* Fragment para agrupar lista y paginación */}
+        <> 
           <div className={styles.listGrid}>
-            {/* Usar currentPsychologists de paginationData */}
+           
             {paginationData.currentPsychologists.length > 0 ? (
               paginationData.currentPsychologists.map((psy) => (
                 <PsychologistCard key={psy.id} psychologist={psy} />
@@ -148,8 +141,7 @@ export default function PsychologistListPage() {
             )}
           </div>
 
-          {/* --- Paginación --- */}
-          {/* Solo mostrar si hay más de una página */}
+
           {paginationData.totalPages > 1 && (
             <div className={styles.paginationContainer}>
               <button
@@ -159,7 +151,7 @@ export default function PsychologistListPage() {
               >
                 &lt; Anterior
               </button>
-              {/* Podríamos añadir números de página aquí si quisiéramos */}
+           
               <span className={styles.paginationInfo}>
                 Página {paginationData.currentPage} de {paginationData.totalPages}
               </span>
@@ -172,7 +164,7 @@ export default function PsychologistListPage() {
               </button>
             </div>
           )}
-          {/* --- Fin Paginación --- */}
+      
         </>
       )}
     </div>
