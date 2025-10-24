@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-// Usamos el servicio mock todavía
 import { getPsychologistProfileById } from "../../../services/psychologistsService"; 
 import styles from "./PsychologistPublicProfile.module.css";
 
@@ -16,10 +15,9 @@ import isWithinInterval from 'date-fns/isWithinInterval';
 import setHours from 'date-fns/setHours';
 import setMinutes from 'date-fns/setMinutes';
 import setSeconds from 'date-fns/setSeconds';
-import es from 'date-fns/locale/es'; // Para ponerlo en español
-import "react-big-calendar/lib/css/react-big-calendar.css"; // Estilos base del calendario
+import es from 'date-fns/locale/es'; 
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
-// Configuración del localizador para date-fns en español
 const locales = {
   'es': es,
 };
@@ -31,26 +29,25 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Helper para parsear "HH:MM" a [horas, minutos]
+
 const parseTime = (timeStr) => {
   if (!timeStr || !timeStr.includes(':')) return { hours: 0, minutes: 0 }; // Manejo defensivo
   const [hours, minutes] = timeStr.split(':').map(Number);
   return { hours, minutes };
 };
 
-// --- Componente ---
+
 export default function PsychologistPublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- Carga del perfil (usando el servicio mock asíncrono) ---
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        // Llama a la versión mock que devuelve una Promesa
+       
         const p = await getPsychologistProfileById(id); 
         setProfile(p || null);
       } catch (error) {
@@ -63,21 +60,18 @@ export default function PsychologistPublicProfile() {
     fetchProfile();
   }, [id]);
 
-  // --- Lógica para generar los eventos del calendario ---
+ 
   const calendarEvents = useMemo(() => {
     if (!profile?.availabilities) return [];
 
     const events = [];
     const today = new Date();
-    // Establecer la hora a 00:00:00 para comparaciones de día
     const startOfToday = setSeconds(setMinutes(setHours(today, 0), 0), 0); 
-    const futureLimit = addDays(startOfToday, 28); // Generar slots para las próximas 4 semanas desde hoy
+    const futureLimit = addDays(startOfToday, 28); 
 
-    // ⚠️ SIMULACIÓN DE CITAS RESERVADAS (Reemplazar con llamada a API)
+
     const mockBookedAppointments = [
-      // Añadir ejemplos que puedas probar
-      // { start: setHours(addDays(startOfToday, 2), 10), end: setHours(addDays(startOfToday, 2), 11) }, 
-      // { start: setHours(addDays(startOfToday, 3), 15), end: setHours(addDays(startOfToday, 3), 16) }, 
+
     ];
     // Fin de la simulación
 
@@ -93,7 +87,6 @@ export default function PsychologistPublicProfile() {
         const { hours: startHour, minutes: startMinute } = parseTime(availability.start_time);
         const { hours: endHour, minutes: endMinute } = parseTime(availability.end_time);
 
-        // Asegurarse de que las horas/minutos son válidos
         if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) return;
 
         let slotStart = setSeconds(setMinutes(setHours(currentDate, startHour), startMinute), 0);
@@ -102,7 +95,7 @@ export default function PsychologistPublicProfile() {
         while (slotStart < slotEndLimit) {
           const slotEnd = addHours(slotStart, 1); // Slots de 1 hora
 
-          // Omitir slots cuya HORA DE FIN ya pasó
+      
           if (slotEnd <= today) { 
              slotStart = slotEnd;
              continue;

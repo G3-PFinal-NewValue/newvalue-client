@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user } = useAuth();
 
-  // 2. Si no está logueado, redirigir a login (como antes)
+  // 2. Si no está logueado, redirigir a login 
   if (!user) {
      return <Navigate to="/login" replace />;
   }
@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
      // ...redirigir a una página de "No autorizado" o a la home
      // Por ahora, redirigimos a la home ('/app' si está logueado)
      console.warn(`Acceso denegado a ruta. Rol requerido: ${allowedRoles.join('/')}, Rol actual: ${user.role}`);
-     return <Navigate to="/app" replace />; // O podrías crear una página '/unauthorized'
+     return <Navigate to="/app" replace />; 
   }
 
   // 4. Si pasó las verificaciones, renderizar el componente hijo
