@@ -1,0 +1,254 @@
+.navbar {
+  width: 100%;
+  background: var(--color-surface); 
+  /* border-bottom: 1px solid var(--color-bg);  */
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); */
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* ====== Desktop link activo ====== */
+.link.active {
+  border-bottom: 2px solid var(--color-brand-primary); /* subrayado visible */
+  color: var(--color-brand-primary); 
+  font-weight: 700;
+}
+
+/* ====== Mobile link activo ====== */
+.mobileLink.active {
+  background-color: var(--color-bg); /* resalta ligeramente el fondo */
+  color: var(--color-brand-primary); 
+  font-weight: 700;
+  border-radius: 6px; /* opcional, mantiene consistencia */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* ====== Desktop container ====== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 24px; /* Reducimos padding vertical para navbar más compacto */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo { display: inline-flex; align-items: center; text-decoration: none; }
+.logoImg { height: 40px; width: auto; object-fit: contain; }
+
+/* Links desktop */
+.navLinks { display: flex; gap: 28px; align-items: center; } /* Aumentamos gap ligeramente */
+.link {
+  color: var(--color-text); 
+  font-family: var(--font-body);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px; 
+  transition: color .2s ease, border-color .2s ease;
+  /* 👇 1. Ajustamos padding vertical para mejor alineación con botones */
+  padding: 8px 0; 
+  /* 👇 2. Borde inferior transparente para hover */
+  border-bottom: 2px solid transparent; 
+}
+.link:hover { 
+  color: var(--color-brand-primary); 
+  /* 👇 2. Mostramos borde inferior en hover */
+  border-bottom-color: var(--color-brand-primary); 
+}
+
+/* Acciones desktop */
+.actions { display: flex; align-items: center; gap: 16px; }
+
+.primaryBtn {
+  background: var(--color-brand-primary);
+  color: #fff;
+  border: 2px solid var(--color-brand-primary); /* Añadimos borde para consistencia */
+  border-radius: 8px;
+  padding: 6px 14px; /* Ajustamos padding por el borde */
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .2s ease; /* Transición para todo */
+}
+.primaryBtn:hover { 
+  background: var(--color-brand-secondary); 
+  border-color: var(--color-brand-secondary); /* Cambiamos borde en hover */
+  transform: translateY(-1px);
+}
+.secondaryBtn {
+  background: transparent;
+  border: 2px solid var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  border-radius: 8px;
+  padding: 6px 12px; 
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.secondaryBtn:hover { 
+  background: var(--color-brand-primary); 
+  color: #fff; 
+  transform: translateY(-1px); /* Sutil efecto hover */
+}
+
+/* ====== Burger button (mobile) ====== */
+/* (Sin cambios aquí) */
+.burger {
+  display: none; 
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+}
+.line {
+  position: absolute;
+  left: 10px; right: 10px;
+  height: 2px;
+  background: var(--color-text); 
+  transition: transform .2s ease, opacity .2s ease;
+}
+.line:nth-child(1) { top: 14px; }
+.line:nth-child(2) { top: 21px; }
+.line:nth-child(3) { top: 28px; }
+.lineTopOpen  { transform: translateY(7px) rotate(45deg); }
+.lineMidOpen  { opacity: 0; }
+.lineBotOpen  { transform: translateY(-7px) rotate(-45deg); }
+
+/* ====== Overlay + Mobile menu ====== */
+/* (Sin cambios aquí) */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.0);
+  z-index: 49; 
+}
+.overlayOpen {
+  display: block;
+  background: rgba(0,0,0,.3); 
+  pointer-events: auto;
+}
+.mobileMenu {
+  position: fixed;
+  top: 60px; /* Ajustar si la altura del navbar cambia */
+  left: 0; right: 0;
+  background: var(--color-surface); 
+  border-bottom: 1px solid var(--color-bg); 
+  box-shadow: 0 8px 20px rgba(0,0,0,.08); 
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+  z-index: 50; 
+}
+.mobileOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity .2s ease, transform .2s ease, visibility 0s;
+}
+.mobileNav {
+  display: grid;
+  gap: 4px; 
+  padding: 12px 16px; 
+  border-bottom: 1px solid var(--color-bg); 
+}
+.mobileLink {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 10px 12px; 
+  border-radius: 6px; 
+  transition: background .2s ease, color .2s ease;
+}
+.mobileLink:hover { 
+  background: var(--color-bg); 
+  color: var(--color-brand-primary); 
+}
+.mobileActions {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.mobilePrimary {
+  display: block;
+  text-align: center;
+  background: var(--color-brand-primary);
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+.mobileSecondary {
+  background: transparent;
+  border: 2px solid var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  border-radius: 8px;
+  padding: 8px 12px; 
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.mobileSecondary:hover { background: var(--color-brand-primary); color: #fff; }
+
+/* ====== Responsive rules ====== */
+@media (max-width: 991px) {
+  .navLinks, .actions { display: none; }  
+  .burger { display: inline-block; }      
+}
+
+@media (min-width: 991px) {
+  .mobileMenu, .overlay { display: none; } 
+}
+
+/* ====== Estilos para Iconos ====== */
+.icon {
+  /* Alineación vertical con el texto */
+  vertical-align: middle; 
+  /* Espacio entre icono y texto */
+  margin-right: 6px; 
+  /* Tamaño del icono (ajusta si es necesario) */
+  font-size: 1.1em; 
+  /* Evita que el icono cambie de color con el hover del link/botón si no quieres */
+  /* color: inherit; */ 
+}
+
+/* Ajustes para que los links y botones usen flexbox */
+.link, .primaryBtn, .secondaryBtn, .mobileLink, .mobilePrimary, .mobileSecondary {
+  display: inline-flex; /* Usa flex para alinear icono y texto */
+  align-items: center;  /* Centra verticalmente icono y texto */
+  justify-content: center; /* Centra en botones móviles */
+}
+
+/* Asegurar que el span ocupe el espacio restante si es necesario */
+.link span, .primaryBtn span, .secondaryBtn span,
+.mobileLink span, .mobilePrimary span, .mobileSecondary span {
+  flex-grow: 0; /* No necesita crecer por defecto */
+}
+
+
+.mobilePrimary, .mobileSecondary {
+  width: auto;       
+  max-width: 400px;  
+  margin: 0 auto;    
+  justify-content: center; 
+}
+
+/* Espaciado extra en móvil entre icono y texto si se ve apretado */
+.mobileLink .icon, .mobilePrimary .icon, .mobileSecondary .icon {
+  margin-right: 8px;
+}

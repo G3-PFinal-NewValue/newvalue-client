@@ -1,0 +1,405 @@
+.pageContainer {
+  width: 100%;
+  /* Podemos añadir más padding vertical si es necesario */
+  /* padding: var(--space-6) 0; */
+}
+
+/* --- Sección Hero --- */
+.heroSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas: texto e imagen */
+  align-items: center;
+  gap: var(--space-6); /* 24px */
+  padding: var(--space-6) 0; /* Espaciado vertical */
+  min-height: 60vh; /* Altura mínima para ocupar pantalla */
+}
+
+.heroContent {
+  display: grid;
+  gap: var(--space-4); /* 16px entre título, subtítulo y botones */
+  animation: fadeIn 0.5s ease-out; /* Reutilizamos la animación de index.css */
+}
+
+.heroTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-xl); /* 48px */
+  font-weight: 800; /* Más peso para el título principal */
+  color: var(--color-brand-title);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.heroSubtitle {
+  font-size: var(--fs-body); /* 17px */
+  color: var(--color-text);
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 500px; /* Limitar ancho del texto */
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--space-4); /* 16px */
+  margin-top: var(--space-2); /* Pequeño espacio extra arriba */
+}
+
+/* Estilos de botones (podrían ir a un archivo global/common si se repiten mucho) */
+.primaryBtn, .secondaryBtn {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 12px 24px; /* Botones más grandes en Hero */
+  font-size: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.primaryBtn {
+  background: var(--color-brand-primary);
+  color: #fff;
+  border: 2px solid var(--color-brand-primary);
+}
+.primaryBtn:hover {
+  background: var(--color-brand-secondary); /* Usar secundario en hover */
+  border-color: var(--color-brand-secondary);
+  transform: translateY(-2px); /* Efecto sutil */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.secondaryBtn { /* Estilo para botón secundario si lo añadimos */
+  background: transparent;
+  border: 2px solid var(--color-brand-primary);
+  color: var(--color-brand-primary);
+}
+.secondaryBtn:hover {
+  background: var(--color-brand-primary);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Placeholder para la imagen */
+.heroImageContainer {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.heroImagePlaceholder {
+   width: 80%; /* O el tamaño que prefieras */
+   aspect-ratio: 1 / 1; /* Cuadrado */
+   background-color: var(--color-surface); /* Color suave */
+   border-radius: 50%; /* Círculo */
+   /* Podríamos añadir un icono o ilustración simple aquí con ::before o background-image */
+   box-shadow: var(--shadow-1);
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 980px) { /* Tablet y menos */
+   .heroSection {
+      grid-template-columns: 1fr; /* Apilar en una columna */
+      text-align: center; /* Centrar texto */
+      gap: var(--space-5);
+   }
+   .heroTitle {
+      font-size: 40px; /* Un poco más pequeño */
+   }
+   .heroSubtitle {
+      margin: 0 auto; /* Centrar el párrafo */
+   }
+   .heroActions {
+      justify-content: center; /* Centrar botones */
+   }
+   .heroImageContainer {
+      order: -1; /* Mover la imagen arriba en móvil */
+      margin-bottom: var(--space-4);
+   }
+   .heroImagePlaceholder {
+      width: 60%;
+      max-width: 300px; /* Tamaño máximo */
+   }
+}
+
+@media (max-width: 480px) { /* Móvil pequeño */
+  .heroTitle {
+      font-size: 32px;
+  }
+  .heroSubtitle {
+      font-size: 16px;
+  }
+  .primaryBtn, .secondaryBtn {
+      padding: 10px 18px;
+      font-size: 15px;
+  }
+}
+
+/* Placeholder para la imagen */
+.heroImageContainer {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.heroImagePlaceholder {
+   width: 80%; 
+   aspect-ratio: 1 / 1; 
+   background-color: var(--color-surface); 
+   border-radius: 50%; 
+   box-shadow: var(--shadow-1);
+   overflow: hidden; /* <-- MUY IMPORTANTE: Recorta la imagen al círculo */
+   position: relative; /* Necesario por si queremos superponer algo */
+}
+
+/* 👇 NUEVA CLASE para la imagen DENTRO del placeholder 👇 */
+.heroImage {
+  display: block; /* Asegura que no tenga espacio extra abajo */
+  width: 100%;    /* Ocupa todo el ancho del círculo */
+  height: 100%;   /* Ocupa todo el alto del círculo */
+  object-fit: cover; /* Escala la imagen para cubrir, recortando si es necesario */
+  object-position: center; /* Centra la imagen dentro del círculo */
+}
+
+
+/* --- Responsive --- */
+/* ... (Media queries como estaban) ... */
+@media (max-width: 980px) { /* Tablet y menos */
+   /* ... (reglas anteriores) ... */
+   .heroImagePlaceholder {
+      width: 60%;
+      max-width: 300px; 
+   }
+}
+
+/* --- Estilos Generales de Sección --- */
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg); /* 36px */
+  font-weight: 700;
+  color: var(--color-brand-title);
+  text-align: center;
+  margin: 0 auto var(--space-6); /* Centrado y con margen inferior */
+  max-width: 600px; /* Limitar ancho para títulos largos */
+}
+
+/* --- Sección Cómo Funciona --- */
+.howItWorksSection {
+  background-color: var(--color-surface); /* Fondo suave */
+  padding: var(--space-6) var(--space-4); /* Padding vertical y horizontal */
+  margin: var(--space-6) 0; /* Margen para separarla */
+  border-radius: var(--radius-xl);
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Columnas responsivas */
+  gap: var(--space-5); /* 20px */
+  max-width: 1000px; /* Ancho máximo del grid */
+  margin: 0 auto; /* Centrar el grid */
+}
+
+.stepCard {
+  background: var(--color-bg); /* Fondo base */
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stepCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+}
+
+.stepIcon {
+  font-size: 40px; /* Tamaño del icono (emoji placeholder) */
+  margin-bottom: var(--space-3);
+  /* Podrías usar background-image para iconos reales */
+}
+
+.stepTitle {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--space-2);
+}
+
+.stepText {
+  font-size: 15px;
+  color: var(--color-text);
+  opacity: 0.8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --- Sección Impacto Social --- */
+.socialImpactSection {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* Imagen a la izquierda, texto a la derecha */
+  align-items: center;
+  gap: var(--space-6); /* 24px */
+  padding: var(--space-6) 0;
+  margin: var(--space-6) 0;
+}
+
+.socialImpactImagePlaceholder {
+  width: 100%;
+  aspect-ratio: 4 / 3; /* Proporción rectangular */
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  /* Añadir imagen con background-image o <img> */
+}
+
+.socialImpactContent {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.socialImpactContent .sectionTitle { /* Título alineado a la izquierda */
+  text-align: left;
+  margin: 0 0 var(--space-4);
+}
+
+.socialImpactText {
+  font-size: var(--fs-body);
+  color: var(--color-text);
+  opacity: 0.9;
+  line-height: 1.7; /* Un poco más de espacio */
+  margin: 0;
+}
+
+/* --- Sección CTA Final --- */
+.ctaSection {
+  background-color: var(--color-brand-title); /* Fondo oscuro de marca */
+  color: #fff; /* Texto blanco */
+  padding: var(--space-6) var(--space-5);
+  margin: var(--space-6) auto;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  max-width: 800px;
+}
+
+.ctaTitle {
+  font-family: var(--font-title);
+  font-size: var(--fs-title-lg);
+  font-weight: 700;
+  color: #fff; /* Asegurar color blanco */
+  margin: 0 auto var(--space-3);
+}
+
+.ctaText {
+  font-size: 18px; /* Texto un poco más grande */
+  opacity: 0.9;
+  margin: 0 auto var(--space-5);
+  max-width: 500px; /* Limitar ancho */
+  line-height: 1.6;
+}
+
+/* Reutilizamos .primaryBtn pero ajustamos colores si es necesario */
+.ctaSection .primaryBtn {
+   /* El estilo base ya funciona bien aquí */
+   /* Podrías invertir colores si quisieras */
+   /* background: #fff; */
+   /* color: var(--color-brand-primary); */
+}
+
+.sessionCardsWrapper {
+  background-color: #ede3d2;
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  margin: 3rem auto;
+  max-width: 1200px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.sessionCardsContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.sessionCardsSection {
+  padding: 4rem 2rem;
+}
+
+.sessionCardsHeader,
+.sessionCardsFooter {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sessionCardsTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #295b6e;
+}
+
+.sessionCardsSubtitle {
+  font-size: 1rem;
+  color: #333333;
+}
+
+.sessionCardsFooter {
+  font-size: 1rem;
+  color: #333333;
+  margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .sessionCardsContainer {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sessionCardsContainer {
+    flex-direction: column; /* Las cards se apilan verticalmente */
+    align-items: center; /* Centra las cards */
+  }
+
+  .sessionCardsWrapper {
+    padding: 2rem 1rem;
+  }
+
+  .sessionCardsTitle {
+    font-size: 1.6rem;
+  }
+
+  .sessionCardsSubtitle {
+    font-size: 1rem;
+  }
+}
+
+
+
+/* --- Responsive Adicional --- */
+@media (max-width: 768px) { /* Tablet y menos */
+  .sectionTitle {
+     font-size: 30px;
+  }
+  .socialImpactSection {
+     grid-template-columns: 1fr; /* Apilar */
+  }
+  .socialImpactImagePlaceholder {
+      margin-bottom: var(--space-5);
+      aspect-ratio: 16 / 9; /* Más panorámica en móvil */
+  }
+  .socialImpactContent .sectionTitle {
+      text-align: center; /* Centrar título en móvil */
+  }
+  .ctaSection {
+      padding: var(--space-5);
+  }
+  .ctaTitle {
+      font-size: 28px;
+  }
+  .ctaText {
+      font-size: 16px;
+  }
+}

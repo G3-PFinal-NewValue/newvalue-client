@@ -1,0 +1,20 @@
+.simple-btn {
+  color: #f4f1e8;
+  background-color: #ee9271; 
+  border: none;
+  border-radius: 0.425rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.simple-btn:hover:not(:disabled) {
+  background-color: #d97f61; 
+}
+
+.simple-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
