@@ -1,29 +1,30 @@
-import { useState } from "react"; // Importar useState
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-// Crearemos este servicio en el siguiente paso
-// import { createPatientProfile } from "../../../services/patientService";
+
+import { createPatientProfile } from "../../../services/patientService"; 
 
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
-import styles from "./PatientProfileSetup.module.css"; // CSS que creamos antes
+import styles from "./PatientProfileSetup.module.css";
 
-// Esquema de validación con Zod
+
 const schema = z.object({
-  birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato AAAA-MM-DD"), // O usar z.date() si prefieres
-  therapy_goals: z.string().min(10, "Describe brevemente tus objetivos (mín. 10 caracteres)").max(500, "Máximo 500 caracteres"),
-  medical_history: z.string().max(500, "Máximo 500 caracteres").optional().or(z.literal("")), // Opcional
+  birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato AAAA-MM-DD"),
+  
+  gender: z.string().min(1, "El género es obligatorio"), 
+  therapy_goals: z.string().min(10, "Mín. 10 caracteres").max(500, "Máx. 500 caracteres"),
+  medical_history: z.string().max(500, "Máx. 500 caracteres").optional().or(z.literal("")),
 });
 
 export default function PatientProfileSetup() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Estados para la foto (igual que en PsychologistProfileSetup)
-  const [photoPreview, setPhotoPreview] = useState(null); // URL temporal para vista previa
-  const [photoDataUrl, setPhotoDataUrl] = useState(null); // Base64 para "guardar"
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoFile, setPhotoFile] = useState(null); 
 
   const {
     register,
@@ -33,42 +34,68 @@ export default function PatientProfileSetup() {
     resolver: zodResolver(schema),
     defaultValues: {
       birth_date: "",
+      gender: "", 
       therapy_goals: "",
       medical_history: "",
     },
   });
 
-  // Manejador onPhotoChange (igual que en PsychologistProfileSetup)
   const onPhotoChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    // Preview temporal
+    if (!file) {
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      return;
+    }
+    setPhotoFile(file); 
     const previewUrl = URL.createObjectURL(file);
     setPhotoPreview(previewUrl);
-    // Convertir a Data URL (base64) para "guardar"
-    const reader = new FileReader();
-    reader.onload = () => setPhotoDataUrl(reader.result); // Guardar base64 en estado
-    reader.readAsDataURL(file);
+    return () => URL.revokeObjectURL(previewUrl);
   };
 
+ 
+  const onSubmit = async (values) => {
+    if (!user || !user.id) {
+      alert("Error: Usuario no autenticado.");
+      return;
+    }
 
-const onSubmit = async (values) => {
+   
+    const formData = new FormData();
+
+    
+    formData.append('user_id', user.id);
+    formData.append('birth_date', values.birth_date);
+    formData.append('gender', values.gender); 
+    formData.append('therapy_goals', values.therapy_goals);
+    if (values.medical_history) { 
+      formData.append('medical_history', values.medical_history);
+    }
+
+
+    if (photoFile) {
+      formData.append('photo', photoFile);
+    }
+
+    console.log("Enviando FormData para crear perfil paciente:");
+    for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+             console.log(`FormData entry: ${key}`, { name: value.name, type: value.type });
+        } else {
+             console.log(`FormData entry: ${key}`, value);
+        }
+    }
+
+
     try {
-      console.log("Datos a enviar (mock):", {
-         user_id: user?.id,
-         ...values,
-         photo_url: photoDataUrl 
-        });
-      // const profileData = await createPatientProfile(...); 
-      
-      alert("Perfil de paciente guardado (simulación con foto en consola).");
-      
-      // 👇 CAMBIA ESTA LÍNEA
-      navigate("/app/my-profile"); // Ruta del perfil privado del paciente
+     
+      await createPatientProfile(formData);
+      alert("Perfil de paciente guardado con éxito.");
+      navigate("/app/my-profile"); 
 
     } catch (e) {
-      console.error(e);
-      alert("No se pudo guardar el perfil del paciente.");
+      console.error("Error en onSubmit PatientProfileSetup:", e);
+      alert(e?.response?.data?.message || e.message || "No se pudo guardar el perfil.");
     }
   };
 
@@ -78,10 +105,10 @@ const onSubmit = async (values) => {
         <div className={styles.card}>
           <h1 className={styles.title}>Completa tu perfil</h1>
           <p className={styles.subtitle}>
-            Ayúdanos a conocerte un poco mejor para encontrar al profesional adecuado para ti.
+            Ayúdanos a conocerte un poco mejor.
           </p>
 
-          {/* Sección de la foto */}
+          
           <div className={styles.photoSection}>
             <label className={styles.photoLabel}>
               {photoPreview ? (
@@ -89,19 +116,13 @@ const onSubmit = async (values) => {
               ) : (
                 <span>Seleccionar foto</span>
               )}
-              {/* Input oculto */}
-              <input
-                type="file"
-                accept="image/*" // Aceptar solo imágenes
-                onChange={onPhotoChange}
-                hidden // Ocultar el input por defecto
-              />
+              <input type="file" accept="image/*" onChange={onPhotoChange} hidden />
             </label>
             <p className={styles.photoHint}>Sube tu foto de perfil (opcional)</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-            {/* Campo Fecha de Nacimiento */}
+           
             <TextInput
               label="Fecha de Nacimiento"
               type="date"
@@ -109,13 +130,32 @@ const onSubmit = async (values) => {
               {...register("birth_date")}
             />
 
-            {/* Campo Objetivos de Terapia */}
+            
+             <div className={styles.group}>
+                <label className={styles.label}>Género</label>
+                <select
+                    
+                    {...register("gender")}
+                    className={`${styles.select} ${errors.gender ? styles.errorBorder : ''}`} 
+                >
+                    <option value="">Selecciona...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="No binario">No binario</option>
+                    <option value="Otro">Otro</option>
+                    <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                </select>
+                {errors.gender && <p className={styles.error}>{errors.gender.message}</p>}
+            </div>
+
+
+            
             <div className={styles.group}>
               <label className={styles.label}>Objetivos de Terapia</label>
               <textarea
                 rows={4}
-                placeholder="¿Qué te gustaría trabajar o mejorar? (Ej: manejar ansiedad, mejorar relaciones, autoconocimiento...)"
-                className={styles.textarea}
+                placeholder="¿Qué te gustaría trabajar o mejorar?"
+                className={`${styles.textarea} ${errors.therapy_goals ? styles.errorBorder : ''}`}
                 {...register("therapy_goals")}
               />
               {errors.therapy_goals && (
@@ -123,13 +163,13 @@ const onSubmit = async (values) => {
               )}
             </div>
 
-            {/* Campo Historial Médico */}
+           
             <div className={styles.group}>
               <label className={styles.label}>Historial Médico Relevante (Opcional)</label>
               <textarea
                 rows={3}
-                placeholder="¿Alguna condición médica o medicación actual que consideres importante mencionar?"
-                className={styles.textarea}
+                placeholder="Condiciones médicas o medicación actual relevante..."
+                className={`${styles.textarea} ${errors.medical_history ? styles.errorBorder : ''}`}
                 {...register("medical_history")}
               />
               {errors.medical_history && (
@@ -137,7 +177,7 @@ const onSubmit = async (values) => {
               )}
             </div>
 
-            {/* Botón de envío */}
+           /}
             <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
               {isSubmitting ? "Guardando…" : "Guardar Perfil"}
             </button>
