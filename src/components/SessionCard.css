@@ -1,0 +1,163 @@
+.session-card {
+  background-color: #f4f1e8;
+  border-radius: 5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 2rem 2rem 2rem;
+  text-align: center;
+  max-width: 300px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  align-items: center;
+  position: relative; 
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.session-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Card destacada */
+.session-card.highlighted {
+  background-color: #295b6e;
+  transform: scale(1.05);
+}
+
+.session-card.highlighted:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+/* Badge "Recomendado" */
+.recommended-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ee9271; 
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.5rem 0;
+  border-top-left-radius: 5rem;
+  border-top-right-radius: 5rem;
+  letter-spacing: 0.5px;
+}
+
+/* --- Contenedor del título --- */
+.session-card-title-container {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Título --- */
+.session-card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333333;
+  line-height: 1.3;
+  white-space: pre-line; 
+}
+
+.session-card.highlighted .session-card-title {
+  color: #fff;
+}
+
+/* --- Subtítulo --- */
+.session-card-subtitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.session-card.highlighted .session-card-subtitle {
+  color: #fff;
+}
+
+/* --- Primera descripción --- */
+.session-card-first-description {
+  font-size: 0.95rem;
+  color: #333333;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.session-card.highlighted .session-card-first-description {
+  color: #fff;
+}
+
+.session-card-first-description span:first-child {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+/* --- Segunda descripción --- */
+.session-card-second-description {
+  font-size: 0.9rem;
+  color: #333333;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.session-card.highlighted .session-card-second-description {
+  color: #fff;
+}
+
+/* Resaltar la cantidad donada */
+.session-card-second-description strong,
+.session-card-second-description b {
+  font-weight: 700;
+}
+
+/* --- Botón --- */
+.session-card-button {
+  background-color: #ee9271;
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  margin-top: auto;
+  width: 100%;
+  max-width: 200px;
+}
+
+.session-card-button:hover {
+  background-color: #d97d5d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .session-card {
+    max-width: 100%;
+    min-width: auto;
+  }
+  
+  .session-card.highlighted {
+    transform: scale(1);
+  }
+  
+  .session-card.highlighted:hover {
+    transform: translateY(-5px);
+  }
+}
