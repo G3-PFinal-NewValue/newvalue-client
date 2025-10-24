@@ -35,15 +35,19 @@ export async function getPsychologistProfileById(id) {
   }
 }
 
-// --- CREAR PERFIL (Mock temporal hasta conectar el formulario) ---
-const KEY = "cm_psychologist_profiles";
-export async function createPsychologistProfile(payload) {
-  const data = { id: Date.now(), ...payload };
-  const prev = JSON.parse(localStorage.getItem(KEY) || "[]");
-  localStorage.setItem(KEY, JSON.stringify([...prev, data]));
-  await new Promise(r => setTimeout(r, 300));
-  console.log("Perfil guardado en localStorage (mock - crear):", data);
-  return data;
+// --- CREAR PERFIL  ---
+export async function createPsychologistProfile(formData) {
+  try {
+    console.log("Enviando datos del perfil (FormData) a POST /psychologist...");
+    // Importante: No establecer manualmente 'Content-Type'.
+    // Axios lo hará automáticamente a 'multipart/form-data' cuando envíe FormData.
+    const response = await api.post("/psychologist", formData);
+    console.log("Respuesta de creación de perfil:", response.data);
+    return response.data.profile; // Asume que el backend devuelve { message: '...', profile: {...} }
+  } catch (error) {
+    console.error("Error al crear el perfil del psicólogo:", error);
+    throw error; 
+  }
 }
 
 // --- ACTUALIZAR PERFIL (Placeholder/Mock) ---
