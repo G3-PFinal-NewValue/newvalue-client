@@ -1,12 +1,29 @@
 .navbar {
   width: 100%;
-  background: var(--color-surface); 
-  border-bottom: 1px solid var(--color-bg); 
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  /* background: var(--color-surface);  */
+  /* border-bottom: 1px solid var(--color-bg);  */
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); */
   position: sticky;
   top: 0;
   z-index: 50;
 }
+
+/* ====== Desktop link activo ====== */
+.link.active {
+  border-bottom: 2px solid var(--color-brand-primary); /* subrayado visible */
+  color: var(--color-brand-primary); 
+  font-weight: 700;
+}
+
+/* ====== Mobile link activo ====== */
+.mobileLink.active {
+  background-color: var(--color-bg); /* resalta ligeramente el fondo */
+  color: var(--color-brand-primary); 
+  font-weight: 700;
+  border-radius: 6px; /* opcional, mantiene consistencia */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 
 /* ====== Desktop container ====== */
 .container {
@@ -89,6 +106,7 @@
   background: transparent;
   position: relative;
   padding: 10px;
+  cursor: pointer;
 }
 .line {
   position: absolute;
