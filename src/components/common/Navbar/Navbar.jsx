@@ -26,7 +26,11 @@ export default function Navbar() {
   const isPsychologist = user?.role === "psychologist";
   const isAdmin = user?.role === "admin";
 
-  
+  // Función para marcar link activo
+  const isActive = (path, exact = false) => {
+    if (exact) return pathname === path ? styles.active : "";
+    return pathname.startsWith(path) ? styles.active : "";
+  };
 
   return (
     <header className={styles.navbar}>
@@ -34,7 +38,7 @@ export default function Navbar() {
         {/* LOGO */}
         <Link to="/" className={styles.logo} aria-label="Ir a inicio">
           <img
-            src="/images/CropLogo.png"
+            src="/images/coramind_logo_long.png"
             alt="Cora Mind"
             className={styles.logoImg}
           />
@@ -42,51 +46,41 @@ export default function Navbar() {
 
         {/* LINKS (desktop) */}
         <nav className={styles.navLinks}>
-          {pathname !== "/" && (
-            <Link to="/" className={styles.link}>
-              <IoHomeOutline className={styles.icon} /> {/* Icono Inicio */}
-              <span>Inicio</span>
+          <Link to="/psychologists" className={`${styles.link} ${isActive("/psychologists")}`}>
+            Conócenos
+          </Link>
+          <Link to="/social-project" className={`${styles.link} ${isActive("/social-project")}`}>
+            Proyecto social
+          </Link>
+          <Link to="/treatments" className={`${styles.link} ${isActive("/treatments")}`}>
+            Tratamientos
+          </Link>
+          <Link to="/blog" className={`${styles.link} ${isActive("/blog")}`}>
+            Recursos gratuitos
+          </Link>
+          {isPatient && (
+            <Link to="/app/my-profile" className={`${styles.link} ${isActive("/app/my-profile")}`}>
+              Mi Perfil
             </Link>
           )}
-          {/* 👇 Añadir enlace a Psicólogos (Mobile) 👇 */}
-          {!pathname.startsWith("/psychologists") && (
-            <Link
-              to="/psychologists"
-              className={styles.link}
-              aria-label="Psicólogos" // <-- 3. Añadir aria-label
-            >
-              <MdOutlinePsychologyAlt size={24} className={styles.icon} /> 
-               <span>Psicólogos</span>{/* <-- 2. Usar icono */}
+          {isLoggedIn && (
+            <Link to="/app/my-appointments" className={`${styles.link} ${isActive("/app/my-appointments")}`}>
+              Mis Citas
             </Link>
           )}
-          {!pathname.startsWith("/blog") && (
-            <Link to="/blog" className={styles.link}>
-              <GrArticle className={styles.icon} /> {/* Icono Blog */}
-              <span>Blog</span>
+          {isPsychologist && (
+            <Link to="/app/profile" className={`${styles.link} ${isActive("/app/profile")}`}>
+              Mi Perfil Profesional
             </Link>
           )}
-          {isPatient && pathname !== "/app/my-profile" && (
-            <Link to="/app/my-profile" className={styles.link}>
-              <ImProfile className={styles.icon} /> {/* Icono Perfil */}
-              <span>Mi Perfil</span>
+          {isLoggedIn && (
+            <Link to="/app/dashboard" className={`${styles.link} ${isActive("/app/dashboard")}`}>
+              Mi Panel
             </Link>
           )}
-          {pathname !== "/app/my-appointments" && (
-                <Link to="/app/my-appointments" className={styles.link}>Mis Citas</Link>
-              )}
-          {isPsychologist && pathname !== "/app/profile" && (
-            <Link to="/app/profile" className={styles.link}>
-              <ImProfile className={styles.icon} /> {/* Icono Perfil */}
-              <span>Mi Perfil Profesional</span>
-            </Link>
-          )}
-          {pathname !== "/app/dashboard" && ( /* */
-                 <Link to="/app/dashboard" className={styles.link}>Mi Panel</Link> /* */
-               )}
-          {isAdmin && pathname !== "/admin/dashboard" && (
-            <Link to="/admin/dashboard" className={styles.link}>
-              <LuLayoutDashboard className={styles.icon} />{" "}
-              {/* Icono Dashboard */}
+          {isAdmin && (
+            <Link to="/admin/dashboard" className={`${styles.link} ${isActive("/admin/dashboard")}`}>
+              <LuLayoutDashboard className={styles.icon} />
               <span>Dashboard</span>
             </Link>
           )}
@@ -96,34 +90,27 @@ export default function Navbar() {
         <div className={styles.actions}>
           {!isLoggedIn ? (
             <Link to="/login" className={styles.primaryBtn}>
-              <CiLogin className={styles.icon} /> {/* Icono Login */}
-              <span>Iniciar sesión</span>
+              <CiLogin className={styles.icon} />
+              <span>Acceder</span>
             </Link>
           ) : (
             <button onClick={logout} className={styles.secondaryBtn}>
-              <CiLogout className={styles.icon} /> {/* Icono Logout */}
+              <CiLogout className={styles.icon} />
               <span>Cerrar sesión</span>
             </button>
           )}
         </div>
 
         {/* BOTÓN HAMBURGUESA (mobile) */}
-        {/* ... (sin cambios aquí) ... */}
         <button
           className={styles.burger}
           aria-label="Abrir menú"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          <span
-            className={`${styles.line} ${open ? styles.lineTopOpen : ""}`}
-          />
-          <span
-            className={`${styles.line} ${open ? styles.lineMidOpen : ""}`}
-          />
-          <span
-            className={`${styles.line} ${open ? styles.lineBotOpen : ""}`}
-          />
+          <span className={`${styles.line} ${open ? styles.lineTopOpen : ""}`} />
+          <span className={`${styles.line} ${open ? styles.lineMidOpen : ""}`} />
+          <span className={`${styles.line} ${open ? styles.lineBotOpen : ""}`} />
         </button>
       </div>
 
@@ -136,39 +123,45 @@ export default function Navbar() {
       {/* MENÚ MOBILE */}
       <div className={`${styles.mobileMenu} ${open ? styles.mobileOpen : ""}`}>
         <nav className={styles.mobileNav}>
-          {pathname !== "/" && (
-            <Link to="/" className={styles.mobileLink}>
-              <IoHomeOutline className={styles.icon} />
-              <span>Inicio</span>
+          <Link to="/" className={`${styles.mobileLink} ${isActive("/", true)}`}>
+            <span>Inicio</span>
+          </Link>
+
+          <Link to="/psychologists" className={`${styles.mobileLink} ${isActive("/psychologists")}`}>
+            Conócenos
+          </Link>
+          <Link to="/social-project" className={`${styles.mobileLink} ${isActive("/social-project")}`}>
+            Proyecto social
+          </Link>
+          <Link to="/treatments" className={`${styles.mobileLink} ${isActive("/treatments")}`}>
+            Tratamientos
+          </Link>
+          <Link to="/blog" className={`${styles.mobileLink} ${isActive("/blog")}`}>
+            Recursos gratuitos
+          </Link>
+          {isPatient && (
+            <Link to="/app/my-profile" className={`${styles.mobileLink} ${isActive("/app/my-profile")}`}>
+              Mi Perfil
             </Link>
           )}
-          {!pathname.startsWith("/psychologists") && (
-            <Link to="/psychologists" className={styles.mobileLink}>
-              Psicólogos
+          {isLoggedIn && (
+            <Link to="/app/my-appointments" className={`${styles.mobileLink} ${isActive("/app/my-appointments")}`}>
+              Mis Citas
             </Link>
           )}
-          {!pathname.startsWith("/blog") && (
-            <Link to="/blog" className={styles.mobileLink}>
-              <GrArticle className={styles.icon} />
-              <span>Blog</span>
+          {isPsychologist && (
+            <Link to="/app/profile" className={`${styles.mobileLink} ${isActive("/app/profile")}`}>
+              Mi Perfil Profesional
             </Link>
           )}
-          {isPatient && pathname !== "/app/my-profile" && (
-            <Link to="/app/my-profile" className={styles.mobileLink}>
-              <ImProfile className={styles.icon} />
-              <span>Mi Perfil</span>
+          {isLoggedIn && (
+            <Link to="/app/dashboard" className={`${styles.mobileLink} ${isActive("/app/dashboard")}`}>
+              Mi Panel
             </Link>
           )}
-          {isPsychologist && pathname !== "/app/profile" && (
-            <Link to="/app/profile" className={styles.mobileLink}>
-              <ImProfile className={styles.icon} />
-              <span>Mi Perfil Profesional</span>
-            </Link>
-          )}
-          {isAdmin && pathname !== "/admin/dashboard" && (
-            <Link to="/admin/dashboard" className={styles.mobileLink}>
-              <LuLayoutDashboard className={styles.icon} />
-              <span>Dashboard</span>
+          {isAdmin && (
+            <Link to="/admin/dashboard" className={`${styles.mobileLink} ${isActive("/admin/dashboard")}`}>
+              Dashboard
             </Link>
           )}
         </nav>
