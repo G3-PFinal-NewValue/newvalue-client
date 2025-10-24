@@ -1,103 +1,80 @@
 import { Link } from "react-router-dom";
-import styles from "./Footer.module.css"; 
-import { FiInstagram, FiLinkedin } from 'react-icons/fi';
+import styles from "./Footer.module.css";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className={styles.footer}>
+
       <div className={styles.container}>
-        {/* Sección de Logo/Nombre */}
-        <div className={styles.brandSection}>
-          <Link to="/" className={styles.logoLink}>
-            {/* Podríamos usar el logo corto o solo texto */}
-            <img
-              src="/images/CropLogo.png"
-              alt="Cora Mind Logo"
-              className={styles.footerLogo}
-            />
-            {/* <span className={styles.brandName}>Cora Mind</span> */}
-          </Link>
-          <p className={styles.tagline}>Corazón y mente en equilibrio.</p>
+        {/* Columna 1: Logo + Descripción */}
+        <div className={styles.column}>
+          <div className={styles.brandSection}>
+            <Link to="/" className={styles.logoLink}>
+              <img src="/images/coramind_logo_long.png" alt="Cora Mind Logo" className={styles.footerLogo} />
+            </Link>
+            <p className={styles.tagline}>
+              Cada sesión transforma bienestar personal en bienestar compartido.
+            </p>
+          </div>
         </div>
 
-        {/* Sección de Enlaces */}
-        <nav className={styles.navSection}>
-          <h4 className={styles.sectionTitle}>Navegación</h4>
-          <ul className={styles.navList}>
-            <li>
-              <Link to="/" className={styles.navLink}>
-                Inicio
-              </Link>
-            </li>
-            <li>
-              <Link to="/blog" className={styles.navLink}>
-                Blog
-              </Link>
-            </li>
-            {/* Añadir enlaces a "Cómo funciona", "Sobre nosotros" cuando existan */}
-            <li>
-              <Link to="/#how-it-works" className={styles.navLink}>
-                Cómo funciona
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        {/* Columna 2: Cora Mind + Proyecto Social + Recursos gratuitos */}
+        <div className={styles.column}>
+          <nav className={styles.navSection}>
+            <h4 className={styles.sectionTitle}>CORA MIND</h4>
+            <ul className={styles.navList}>
+              <li><Link to="/" className={styles.navLink}>Quiénes somos</Link></li>
+              <li><Link to="/" className={styles.navLink}>Equipo</Link></li>
+            </ul>
 
-        {/* Sección Legal/Contacto (Placeholder) */}
-        <nav className={styles.navSection}>
-          <h4 className={styles.sectionTitle}>Legal</h4>
-          <ul className={styles.navList}>
-            <li>
-              <Link to="/terminos" className={styles.navLink}>
-                Términos de Servicio
-              </Link>
-            </li>
-            <li>
-              <Link to="/privacidad" className={styles.navLink}>
-                Política de Privacidad
-              </Link>
-            </li>
-            <li>
-              <Link to="/contacto" className={styles.navLink}>
-                Contacto
-              </Link>
-            </li>
-          </ul>
-        </nav>
+            <h4 className={styles.sectionTitle}>PROYECTO SOCIAL</h4>
+            <ul className={styles.navList}>
+              <li><Link to="/" className={styles.navLink}>Con Cora Mind</Link></li>
+            </ul>
 
-        <div className={styles.socialSection}>
-          <h4 className={styles.sectionTitle}>Síguenos</h4>
-          <div className={styles.socialIcons}>
-            {/* 👇 2. Usar los componentes importados 👇 */}
-            <a
-              href="https://instagram.com/concoramind" // URL Real
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className={styles.socialLink}
-            >
-              {/* Puedes pasar size y className */}
-              <FiInstagram size={20} />
-            </a>
-            <a
-              href="#" // URL Real
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className={styles.socialLink}
-            >
-              <FiLinkedin size={20} />
-            </a>
-          </div>
+            <h4 className={styles.sectionTitle}>RECURSOS GRATUITOS</h4>
+            <ul className={styles.navList}>
+              <li><Link to="/blog" className={styles.navLink}>Blog de psicología</Link></li>
+            </ul>
+          </nav>
+        </div>
+
+        {/* Columna 3: Tratamientos */}
+        <div className={styles.column}>
+          <nav className={styles.navSection}>
+            <h4 className={styles.sectionTitle}>TRATAMIENTOS</h4>
+            <ul className={styles.navList}>
+              <li><Link to="/" className={styles.navLink}>Ansiedad y estrés</Link></li>
+              <li><Link to="/" className={styles.navLink}>Estado de ánimo</Link></li>
+              <li><Link to="/" className={styles.navLink}>Autoestima</Link></li>
+              <li><Link to="/" className={styles.navLink}>Relaciones afectivas</Link></li>
+              <li><Link to="/" className={styles.navLink}>Pareja y familia</Link></li>
+              <li><Link to="/" className={styles.navLink}>Dependencia emocional</Link></li>
+            </ul>
+          </nav>
+        </div>
+
+        {/* Columna 4: Acceder */}
+        <div className={styles.column}>
+          <nav className={styles.navSection}>
+            <h4 className={styles.sectionTitle}>ACCEDER</h4>
+            <ul className={styles.navList}>
+              <li><Link to="/login" className={styles.navLink}>Login</Link></li>
+              <li><Link to="/register" className={styles.navLink}>Registrarse</Link></li>
+            </ul>
+          </nav>
         </div>
 
         {/* Copyright */}
         <div className={styles.copyright}>
-          © {currentYear} Cora Mind. Todos los derechos reservados.
+          <ul>
+            <li><Link to="/" className={styles.navLink}>Aviso legal</Link></li>
+            <li><Link to="/" className={styles.navLink}>Política de cookies</Link></li>
+            <li><Link to="/" className={styles.navLink}>Protección de datos</Link></li>
+          </ul>
         </div>
       </div>
+
     </footer>
   );
 }
