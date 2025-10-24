@@ -13,10 +13,9 @@ const contactSchema = z.object({
   message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
 });
 
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkgqdybo";
-
-const WHATSAPP_NUMBER = "34654130653"; // <--- CAMBIA ESTE NÚMERO
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
 export default function ContactPage() {
   const {
@@ -37,7 +36,7 @@ export default function ContactPage() {
     setSubmitMessage(''); 
 
     try {
-      const response = await axios.post(FORMSPREE_ENDPOINT, data, {
+      const response = await axios.post(formspreeEndpoint, data, {
         headers: {
           'Accept': 'application/json'
         }
@@ -70,7 +69,7 @@ export default function ContactPage() {
           <p>¿Tienes alguna pregunta, sugerencia o necesitas ayuda? Ponte en contacto con nosotros a través del formulario o directamente por WhatsApp.</p> {/* */}
           
           <a
-            href={WHATSAPP_LINK}
+            href={whatsappLink}
             target="_blank" 
             rel="noopener noreferrer" 
             className={styles.whatsappButton} 
