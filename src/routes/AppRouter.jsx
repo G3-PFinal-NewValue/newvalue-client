@@ -6,7 +6,7 @@ import HomePage from "../pages/public/HomePage/HomePage.jsx";
 import LoginPage from "../pages/public/LoginPage/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
 import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
-import BlogArticlePage from "../pages/public/BlogArticlePage";
+import BlogArticlePage from "../pages/public/Blog/BlogArticlePage.jsx";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
 
 // Protegidas

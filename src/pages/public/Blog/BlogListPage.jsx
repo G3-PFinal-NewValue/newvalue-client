@@ -1,4 +1,4 @@
-import BlogCard from "../../../components/BlogCard";
+import BlogCard from "../../../components/blogcard";
 import "./blog.css";
 
 const articles = [
@@ -8,7 +8,7 @@ const articles = [
     title: "Aprende a respirar y liberar el estrés",
     description: "Date permiso para pausar. La calma no es ausencia de desafíos...",
     author: "Dra. Andrea Molina",
-    slug: "guia-respira-y-libera-el-estres",
+    slug: "aprender-respirar-y-liberar-el-estres",
   },
   {
     image: "../images/mujer-meditando.png",
@@ -16,7 +16,7 @@ const articles = [
     title: "Pasos para superar la ansiedad",
     description: "Conoce técnicas para reducir y manejar la ansiedad...",
     author: "Dra. Clara Martín",
-    slug: "primeros-pasos-superar-ansiedad",
+    slug: "pasos-superar-ansiedad",
   },
   {
     image: "../images/comunicacion-efectiva.png",
