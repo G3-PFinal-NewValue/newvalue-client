@@ -12,6 +12,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { loginRequest } from "../../../services/authService";
 
 import styles from "./LoginPage.module.css";
+import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
 
 const schema = z.object({
   email: z.string().email("Correo inválido"),
@@ -51,6 +52,8 @@ export default function LoginPage() {
           <p className={styles.subtitle}>
             Bienvenido(a) de nuevo a Cora Mind
           </p>
+
+          <GoogleSignInButton mode="signin"/>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <TextInput
