@@ -55,6 +55,7 @@ export default function BlogCardList() {
     <div className="blog-page-container">
       <header className="blog-header-full">
         <div className="header-content">
+          <img className="icon-charity" src="/icons/charity.png" alt="icon"/>
           <h1>Blog y recursos</h1>
           <p>Artículos, guías y recursos para tu bienestar mental</p>
           <input

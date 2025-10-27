@@ -306,6 +306,77 @@
    /* color: var(--color-brand-primary); */
 }
 
+.sessionCardsWrapper {
+  background-color: #ede3d2;
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  margin: 3rem auto;
+  max-width: 1200px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.sessionCardsContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.sessionCardsSection {
+  padding: 4rem 2rem;
+}
+
+.sessionCardsHeader,
+.sessionCardsFooter {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sessionCardsTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #295b6e;
+}
+
+.sessionCardsSubtitle {
+  font-size: 1rem;
+  color: #333333;
+}
+
+.sessionCardsFooter {
+  font-size: 1rem;
+  color: #333333;
+  margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .sessionCardsContainer {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sessionCardsContainer {
+    flex-direction: column; /* Las cards se apilan verticalmente */
+    align-items: center; /* Centra las cards */
+  }
+
+  .sessionCardsWrapper {
+    padding: 2rem 1rem;
+  }
+
+  .sessionCardsTitle {
+    font-size: 1.6rem;
+  }
+
+  .sessionCardsSubtitle {
+    font-size: 1rem;
+  }
+}
+
+
 
 /* --- Responsive Adicional --- */
 @media (max-width: 768px) { /* Tablet y menos */
