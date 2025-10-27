@@ -1,41 +1,58 @@
-// Mock temporal usando localStorage hasta que el backend esté listo
+import api from "./apiClient";
 
-const KEY = "cm_psychologist_profiles"; // Clave para guardar en localStorage
-
-// Crear perfil (Mock con localStorage)
-export async function createPsychologistProfile(payload) {
-  // Asignamos un ID simple basado en timestamp (como antes)
-  const data = { id: Date.now(), ...payload };
-  const prev = JSON.parse(localStorage.getItem(KEY) || "[]");
-  localStorage.setItem(KEY, JSON.stringify([...prev, data]));
-  
-  // Simulamos una pequeña demora como si fuera una llamada a API
-  await new Promise(r => setTimeout(r, 300)); 
-  console.log("Perfil guardado en localStorage (mock):", data); // Para depuración
-  return data;
+// --- OBTENER TODOS LOS PERFILES ---
+export async function getAllPsychologistProfiles() {
+  try {
+    console.log("Llamando a la API para obtener todos los psicólogos...");
+    const response = await api.get("/psychologist"); 
+    console.log("Psicólogos recibidos:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener todos los perfiles de psicólogos:", error);
+    throw error;
+  }
 }
 
-// Obtener todos los perfiles (Mock con localStorage)
-export function getAllPsychologistProfiles() {
-  // NOTA: Esta versión es síncrona, si la usas en algún
-  // componente con useEffect, asegúrate de que no esperas una Promesa.
-  console.log("Obteniendo perfiles de localStorage (mock)");
-  return JSON.parse(localStorage.getItem(KEY) || "[]");
+// --- OBTENER UN PERFIL POR ID ---
+export async function getPsychologistProfileById(id) {
+ 
+  if (!id) {
+     console.error("getPsychologistProfileById: ID inválido proporcionado");
+     throw new Error("ID de psicólogo no válido");
+  }
+  try {
+    console.log(`Llamando a la API para obtener el psicólogo con ID: ${id}...`);
+    const response = await api.get(`/psychologist/${id}`);
+    console.log(`Perfil recibido para ID ${id}:`, response.data);
+    return response.data; 
+  } catch (error) {
+     console.error(`Error al obtener el perfil del psicólogo ${id}:`, error);
+     if (error.status === 404) {
+       console.warn(`Perfil no encontrado para ID ${id}`);
+       return null; 
+     }
+    throw error;
+  }
 }
 
-// Obtener un perfil por ID (Mock con localStorage)
-export function getPsychologistProfileById(id) {
-  // NOTA: Esta versión es síncrona. Tu componente PsychologistPublicProfile
-  // ya está preparado para manejar una Promesa, así que lo envolvemos.
-  console.log(`Buscando perfil ${id} en localStorage (mock)`);
-  const all = getAllPsychologistProfiles();
-  // Asegurarse de comparar números, no string vs número
-  const numId = typeof id === "string" ? Number(id) : id; 
-  const profile = all.find(p => p.id === numId) || null;
-  
-  // Envolvemos el resultado en una Promesa para simular asincronía
-  return Promise.resolve(profile); 
+// --- CREAR PERFIL  ---
+export async function createPsychologistProfile(formData) {
+  try {
+    console.log("Enviando datos del perfil (FormData) a POST /psychologist...");
+    // Importante: No establecer manualmente 'Content-Type'.
+    // Axios lo hará automáticamente a 'multipart/form-data' cuando envíe FormData.
+    const response = await api.post("/psychologist", formData);
+    console.log("Respuesta de creación de perfil:", response.data);
+    return response.data.profile; // Asume que el backend devuelve { message: '...', profile: {...} }
+  } catch (error) {
+    console.error("Error al crear el perfil del psicólogo:", error);
+    throw error; 
+  }
 }
 
-// No necesitamos importar 'api' si todo es mock
-// import api from "./apiClient";
+// --- ACTUALIZAR PERFIL (Placeholder/Mock) ---
+export async function updatePsychologistProfile(id, payload) {
+   console.warn(`Simulación: Actualizar perfil ${id} con datos:`, payload);
+   await new Promise(r => setTimeout(r, 300));
+   return { id: Number(id), ...payload };
+}
