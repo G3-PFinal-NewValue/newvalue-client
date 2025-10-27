@@ -177,7 +177,7 @@ export default function PatientProfileSetup() {
               )}
             </div>
 
-           /}
+          
             <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
               {isSubmitting ? "Guardando…" : "Guardar Perfil"}
             </button>
