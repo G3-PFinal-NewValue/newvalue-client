@@ -10,6 +10,9 @@ import { useAuth } from "../../../context/AuthContext";
 import { registerRequest } from "../../../services/authService";
 
 import styles from "./RegisterPage.module.css";
+import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
+
+
 
 const schema = z
   .object({
@@ -77,6 +80,8 @@ export default function RegisterPage() {
           </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+            <GoogleSignInButton mode="signup"/>
+
             <TextInput
               label="Nombre"
               placeholder="Nombre"
