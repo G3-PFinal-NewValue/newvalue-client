@@ -25,6 +25,7 @@ export default function Footer() {
             <ul className={styles.navList}>
               <li><Link to="/" className={styles.navLink}>Quiénes somos</Link></li>
               <li><Link to="/" className={styles.navLink}>Equipo</Link></li>
+              <li><Link to="/contacto" className={styles.navLink}>Contáctanos</Link></li>
             </ul>
 
             <h4 className={styles.sectionTitle}>PROYECTO SOCIAL</h4>
