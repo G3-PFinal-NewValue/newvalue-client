@@ -18,6 +18,7 @@ import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile";
 import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard"; 
 import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
 import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
+import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -52,6 +53,15 @@ export default function AppRouter() {
 
         {/* Rutas privadas con Layout (Navbar visible) */}
         <Route element={<Layout />}>
+          <Route
+            path="/elegir-rol"
+            element={
+              <ProtectedRoute>
+                <ChooseRolePage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/app"
             element={
