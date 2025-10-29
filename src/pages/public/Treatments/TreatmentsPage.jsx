@@ -1,3 +1,5 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./TreatmentsPage.module.css";
 
 const treatments = [
@@ -34,6 +36,12 @@ const treatments = [
 ];
 
 const TreatmentsPage = () => {
+  const navigate = useNavigate();
+
+  const handleReserveClick = () => {
+    navigate("/first-session");
+  };
+
   return (
     <div className={styles.pageContainer}>
       <section className={styles.sessionCardsSection}>
@@ -65,7 +73,9 @@ const TreatmentsPage = () => {
 
         <div className={styles.sessionCardsFooter}>
           <p>Agenda tu cita y descubre el tratamiento más adecuado para ti.</p>
-          <button className={styles.primaryBtn}>Reservar cita</button>
+          <button className={styles.primaryBtn} onClick={handleReserveClick}>
+            Reserva tu primera sesión
+          </button>
         </div>
       </section>
     </div>
