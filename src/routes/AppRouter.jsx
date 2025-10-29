@@ -10,6 +10,8 @@ import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
 import PsychologistListPage from "../pages/public/PsychologistListPage/PsychologistListPage";
 import ContactPage from "../pages/public/ContactPage/ContactPage";
+import TreatmentsPage from "../pages/public/Treatments/TreatmentsPage.jsx";
+import FirstSessionForm from "../pages/public/FirstSessionForm/FirstSessionForm.jsx";
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
@@ -49,6 +51,8 @@ export default function AppRouter() {
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />
           <Route path="/psychologists" element={<PsychologistListPage />} />
           <Route path="/contacto" element={<ContactPage />} />
+          <Route path="/treatments" element={<TreatmentsPage />} />
+          <Route path="/first-session" element={<FirstSessionForm />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
