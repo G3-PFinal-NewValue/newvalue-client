@@ -41,7 +41,6 @@ const FirstSessionForm = () => {
             availability: e.target.availability.value,
         };
 
-
         try {
             const response = await fetch("http://localhost:4000/user", {
                 method: "POST",
@@ -62,8 +61,6 @@ const FirstSessionForm = () => {
             alert(error.message);
         }
     };
-
-
 
     return (
         <div className={styles.formContainer}>
@@ -107,7 +104,6 @@ const FirstSessionForm = () => {
                         </span>
                     </div>
                 </div>
-
 
                 {/* Información personal */}
                 <fieldset className={styles.fieldset}>
@@ -201,7 +197,6 @@ const FirstSessionForm = () => {
                         </label>
                     </div>
                 </fieldset>
-
 
                 <button type="submit" className={styles.submitBtnForm}>
                     Solicitar primera consulta
