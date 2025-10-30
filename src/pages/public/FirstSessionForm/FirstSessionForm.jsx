@@ -16,26 +16,18 @@ const FirstSessionForm = () => {
         const phone = e.target.phone.value.trim();
 
         // Validaciones
-        if (email !== repeatEmail) {
-            return alert("Los correos electrónicos no coinciden");
-        }
-
-        if (password !== repeatPassword) {
-            return alert("Las contraseñas no coinciden");
-        }
-
+        if (email !== repeatEmail) return alert("Los correos electrónicos no coinciden");
+        if (password !== repeatPassword) return alert("Las contraseñas no coinciden");
         const phoneRegex = /^[+]?[\d\s()-]+$/;
-        if (!phoneRegex.test(phone)) {
-            return alert("Teléfono inválido. Solo números, espacios, +, - y paréntesis son permitidos.");
-        }
+        if (!phoneRegex.test(phone)) return alert("Teléfono inválido");
 
         const formData = {
             email,
             password,
-            firstName: e.target.firstName.value.trim(),
+            firstName: e.target.firstName.value.trim(), 
             firstLastName: e.target.firstLastName.value.trim(),
             secondLastName: e.target.secondLastName.value.trim(),
-            phone,
+            phone: e.target.phone.value.trim(),
             address: e.target.address.value.trim(),
             city: e.target.city.value.trim(),
             province: e.target.province.value.trim(),
@@ -48,6 +40,7 @@ const FirstSessionForm = () => {
             previousTherapy: e.target.previousTherapy.value.trim(),
             availability: e.target.availability.value,
         };
+
 
         try {
             const response = await fetch("http://localhost:4000/user", {
@@ -63,12 +56,13 @@ const FirstSessionForm = () => {
 
             const data = await response.json();
             alert("Usuario creado y correo enviado correctamente");
-            e.target.reset(); 
+            e.target.reset();
         } catch (error) {
             console.error("Error enviando formulario:", error);
             alert(error.message);
         }
     };
+
 
 
     return (
@@ -203,7 +197,7 @@ const FirstSessionForm = () => {
                     <div className={`${styles.inputGroup} ${styles.fullWidthInput}`}>
                         <input type="date" id="availability" placeholder=" " required />
                         <label htmlFor="availability">
-                            Selecciona tu disponibilidad *
+                            Selecciona tu disponibilidad (día) *
                         </label>
                     </div>
                 </fieldset>
