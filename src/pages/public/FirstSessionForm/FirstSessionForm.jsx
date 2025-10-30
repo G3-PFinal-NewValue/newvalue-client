@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./FirstSessionForm.module.css";
 
 const FirstSessionForm = () => {
@@ -6,11 +6,70 @@ const FirstSessionForm = () => {
 
     const togglePassword = () => setShowPassword(!showPassword);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí iría la lógica para enviar el formulario
-        alert("Formulario enviado");
+
+        const email = e.target.email.value.trim();
+        const repeatEmail = e.target.repeatEmail.value.trim();
+        const password = e.target.password.value;
+        const repeatPassword = e.target.repeatPassword.value;
+        const phone = e.target.phone.value.trim();
+
+        // Validaciones
+        if (email !== repeatEmail) {
+            return alert("Los correos electrónicos no coinciden");
+        }
+
+        if (password !== repeatPassword) {
+            return alert("Las contraseñas no coinciden");
+        }
+
+        const phoneRegex = /^[+]?[\d\s()-]+$/;
+        if (!phoneRegex.test(phone)) {
+            return alert("Teléfono inválido. Solo números, espacios, +, - y paréntesis son permitidos.");
+        }
+
+        const formData = {
+            email,
+            password,
+            firstName: e.target.firstName.value.trim(),
+            firstLastName: e.target.firstLastName.value.trim(),
+            secondLastName: e.target.secondLastName.value.trim(),
+            phone,
+            address: e.target.address.value.trim(),
+            city: e.target.city.value.trim(),
+            province: e.target.province.value.trim(),
+            country: e.target.country.value.trim(),
+            postalCode: e.target.postalCode.value.trim(),
+            dni: e.target.dni.value.trim(),
+            reason: e.target.reason.value.trim(),
+            feeling: e.target.feeling.value.trim(),
+            timeFeeling: e.target.timeFeeling.value.trim(),
+            previousTherapy: e.target.previousTherapy.value.trim(),
+            availability: e.target.availability.value,
+        };
+
+        try {
+            const response = await fetch("http://localhost:4000/user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Error al crear el usuario");
+            }
+
+            const data = await response.json();
+            alert("Usuario creado y correo enviado correctamente");
+            e.target.reset(); 
+        } catch (error) {
+            console.error("Error enviando formulario:", error);
+            alert(error.message);
+        }
     };
+
 
     return (
         <div className={styles.formContainer}>
