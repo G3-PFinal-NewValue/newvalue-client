@@ -50,6 +50,27 @@ const FirstSessionForm = () => {
             return;
         }
 
+        if (password.length < 6) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "La contraseña debe tener al menos 6 caracteres",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+        if (!passwordRegex.test(password)) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "La contraseña debe contener al menos una letra y un número",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
         const phoneRegex = /^[+]?[\d\s()-]+$/;
         if (!phoneRegex.test(phone)) {
             await Swal.fire({
@@ -181,6 +202,7 @@ const FirstSessionForm = () => {
                             {showPassword ? "🙉" : "🙈"}
                         </span>
                     </div>
+
                     <div className={styles.inputGroup}>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -193,7 +215,12 @@ const FirstSessionForm = () => {
                             {showPassword ? "🙉" : "🙈"}
                         </span>
                     </div>
+                    <small className={styles.passwordHint}>
+                        La contraseña debe tener al menos 6 caracteres, incluir mayúsculas, minúsculas y un número.
+                    </small>
                 </div>
+
+
 
                 {/* Información personal */}
                 <fieldset className={styles.fieldset}>
