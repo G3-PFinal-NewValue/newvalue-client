@@ -9,7 +9,17 @@ const FirstSessionForm = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const togglePassword = () => setShowPassword(!showPassword);
+
+    // Fechas mínimas y máximas para la selección de disponibilidad
+    const today = new Date();
+    const minDate = new Date(today);
+    minDate.setDate(minDate.getDate() + 1); // mañana
+    const maxDate = new Date(today);
+    maxDate.setMonth(maxDate.getMonth() + 4); // dentro de 4 meses
+    const formatDate = (date) => date.toLocaleDateString("es-ES");
+
     const [acceptedTerms, setAcceptedTerms] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -51,6 +61,18 @@ const FirstSessionForm = () => {
             return;
         }
 
+        const availability = e.target.availability.value;
+        const selectedDate = new Date(availability);
+        if (selectedDate < minDate || selectedDate > maxDate) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: `Selecciona una fecha entre ${formatDate(minDate)} y ${formatDate(maxDate)}.`,
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
         if (!acceptedTerms) {
             await Swal.fire({
                 icon: "warning",
@@ -80,7 +102,6 @@ const FirstSessionForm = () => {
             previousTherapy: e.target.previousTherapy.value.trim(),
             availability: e.target.availability.value,
         };
-
 
         try {
             const response = await fetch("http://localhost:4000/user", {
@@ -261,10 +282,19 @@ const FirstSessionForm = () => {
                     </div>
 
                     <div className={`${styles.inputGroup} ${styles.fullWidthInput}`}>
-                        <input type="date" id="availability" placeholder=" " required />
+                        <input
+                            type="date"
+                            id="availability"
+                            placeholder=" "
+                            required
+                            min={minDate.toISOString().split("T")[0]}
+                            max={maxDate.toISOString().split("T")[0]}
+                        />
+
                         <label htmlFor="availability">
-                            Selecciona tu disponibilidad (día) *
+                            Selecciona tu disponibilidad (día) desde {formatDate(minDate)} hasta {formatDate(maxDate)}
                         </label>
+
                     </div>
                 </fieldset>
 
