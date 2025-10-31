@@ -1,18 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./FirstSessionForm.module.css";
+import Swal from "sweetalert2";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 const FirstSessionForm = () => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-
     const togglePassword = () => setShowPassword(!showPassword);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-         if (!acceptedTerms) {
-            return alert("Debe aceptar las Condiciones de uso y el Aviso de privacidad antes de continuar.");
-        }
 
         const email = e.target.email.value.trim();
         const repeatEmail = e.target.repeatEmail.value.trim();
@@ -21,15 +20,51 @@ const FirstSessionForm = () => {
         const phone = e.target.phone.value.trim();
 
         // Validaciones
-        if (email !== repeatEmail) return alert("Los correos electrónicos no coinciden");
-        if (password !== repeatPassword) return alert("Las contraseñas no coinciden");
+        if (email !== repeatEmail) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "Los correos electrónicos no coinciden",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
+        if (password !== repeatPassword) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "Las contraseñas no coinciden",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
         const phoneRegex = /^[+]?[\d\s()-]+$/;
-        if (!phoneRegex.test(phone)) return alert("Teléfono inválido");
+        if (!phoneRegex.test(phone)) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "Teléfono inválido",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
+
+        if (!acceptedTerms) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Aviso",
+                text: "Debe aceptar las Condiciones de uso y el Aviso de privacidad antes de continuar",
+                confirmButtonText: "Aceptar",
+            });
+            return;
+        }
 
         const formData = {
             email,
             password,
-            firstName: e.target.firstName.value.trim(), 
+            firstName: e.target.firstName.value.trim(),
             firstLastName: e.target.firstLastName.value.trim(),
             secondLastName: e.target.secondLastName.value.trim(),
             phone: e.target.phone.value.trim(),
@@ -46,6 +81,7 @@ const FirstSessionForm = () => {
             availability: e.target.availability.value,
         };
 
+
         try {
             const response = await fetch("http://localhost:4000/user", {
                 method: "POST",
@@ -58,12 +94,40 @@ const FirstSessionForm = () => {
                 throw new Error(errorData.message || "Error al crear el usuario");
             }
 
-            const data = await response.json();
-            alert("Usuario creado y correo enviado correctamente");
+            // Login automático con email y password
+            const loginResponse = await fetch("http://localhost:4000/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!loginResponse.ok) throw new Error("Error iniciando sesión");
+
+            const loginData = await loginResponse.json();
+            console.log(loginData);
+            localStorage.setItem("cm_auth", JSON.stringify({ user: loginData.user, token: loginData.token }));
+
+            // Actualizar estado global
+            login(loginData.user);
+
+            await Swal.fire({
+                icon: "success",
+                title: "¡Solicitud de primera consulta enviada!",
+                text: "Ahora puedes completar tu perfil para empezar tu terapia.",
+                confirmButtonText: "Aceptar",
+            });
+
             e.target.reset();
+            navigate("/app/my-profile");
+
         } catch (error) {
             console.error("Error enviando formulario:", error);
-            alert(error.message);
+            await Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.message,
+                confirmButtonText: "Aceptar",
+            });
         }
     };
 
@@ -158,7 +222,7 @@ const FirstSessionForm = () => {
                                 <input type="text" id="country" placeholder=" " required />
                                 <label htmlFor="country">País *</label>
                             </div>
-                            
+
                         </div>
                     </div>
                 </fieldset>
