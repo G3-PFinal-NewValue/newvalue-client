@@ -58,6 +58,10 @@
     min-width: 180px;
 }
 
+.accessRow {
+    row-gap: 0;
+}
+
 .inputGroup {
     position: relative;
     flex: 1;
