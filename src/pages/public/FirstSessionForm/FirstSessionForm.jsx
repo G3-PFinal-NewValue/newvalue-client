@@ -5,9 +5,14 @@ const FirstSessionForm = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePassword = () => setShowPassword(!showPassword);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+         if (!acceptedTerms) {
+            return alert("Debe aceptar las Condiciones de uso y el Aviso de privacidad antes de continuar.");
+        }
 
         const email = e.target.email.value.trim();
         const repeatEmail = e.target.repeatEmail.value.trim();
@@ -111,48 +116,49 @@ const FirstSessionForm = () => {
                     <p>Si no estableces otros datos de facturación, tus facturas se generarán a este nombre.</p>
                     <div className={styles.row}>
                         <div className={styles.column}>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} data-order="1">
                                 <input type="text" id="firstName" placeholder=" " required />
                                 <label htmlFor="firstName">Nombre *</label>
                             </div>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} data-order="3">
                                 <input type="text" id="secondLastName" placeholder=" " required />
                                 <label htmlFor="secondLastName">Segundo apellido *</label>
                             </div>
-                            <div className={styles.inputGroup}>
-                                <input type="text" id="postalCode" placeholder=" " required />
-                                <label htmlFor="postalCode">Código postal *</label>
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <input type="text" id="province" placeholder=" " required />
-                                <label htmlFor="province">Provincia *</label>
-                            </div>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} data-order="5">
                                 <input type="tel" id="phone" placeholder=" " required />
                                 <label htmlFor="phone">Teléfono *</label>
                             </div>
+                            <div className={styles.inputGroup} data-order="7">
+                                <input type="text" id="postalCode" placeholder=" " required />
+                                <label htmlFor="postalCode">Código postal *</label>
+                            </div>
+                            <div className={styles.inputGroup} data-order="9">
+                                <input type="text" id="province" placeholder=" " required />
+                                <label htmlFor="province">Provincia *</label>
+                            </div>
                         </div>
                         <div className={styles.column}>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} data-order="2">
                                 <input type="text" id="firstLastName" placeholder=" " required />
                                 <label htmlFor="firstLastName">Primer apellido *</label>
                             </div>
-                            <div className={styles.inputGroup}>
-                                <input type="text" id="address" placeholder=" " required />
-                                <label htmlFor="address">Dirección completa *</label>
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <input type="text" id="city" placeholder=" " required />
-                                <label htmlFor="city">Municipio *</label>
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <input type="text" id="country" placeholder=" " required />
-                                <label htmlFor="country">País *</label>
-                            </div>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} data-order="4">
                                 <input type="text" id="dni" placeholder=" " required />
                                 <label htmlFor="dni">DNI / NIE / CIF *</label>
                             </div>
+                            <div className={styles.inputGroup} data-order="6">
+                                <input type="text" id="address" placeholder=" " required />
+                                <label htmlFor="address">Dirección completa *</label>
+                            </div>
+                            <div className={styles.inputGroup} data-order="8">
+                                <input type="text" id="city" placeholder=" " required />
+                                <label htmlFor="city">Municipio *</label>
+                            </div>
+                            <div className={styles.inputGroup} data-order="10">
+                                <input type="text" id="country" placeholder=" " required />
+                                <label htmlFor="country">País *</label>
+                            </div>
+                            
                         </div>
                     </div>
                 </fieldset>
@@ -197,6 +203,23 @@ const FirstSessionForm = () => {
                         </label>
                     </div>
                 </fieldset>
+
+                {/* Checkbox de aceptación */}
+                <div className={styles.checkboxContainer}>
+                    <label className={styles.checkboxLabel}>
+                        <input
+                            type="checkbox"
+                            checked={acceptedTerms}
+                            onChange={(e) => setAcceptedTerms(e.target.checked)}
+                            required
+                        />
+                        <span>
+                            Al continuar, confirma que ha leído y está de acuerdo con las{" "}
+                            <a href="#" target="_blank" rel="noopener noreferrer">Condiciones de uso de Cora Mind</a> y{" "}
+                            <a href="#" target="_blank" rel="noopener noreferrer">Aviso de privacidad</a>, y acepta recibir SMS y correo electrónico con promociones y ofertas.
+                        </span>
+                    </label>
+                </div>
 
                 <button type="submit" className={styles.submitBtnForm}>
                     Solicitar primera consulta
