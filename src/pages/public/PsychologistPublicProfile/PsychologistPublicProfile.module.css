@@ -236,3 +236,92 @@
   .calendarContainer :global(.rbc-toolbar .rbc-toolbar-label) { font-size: 20px; } 
   .calendarContainer :global(.rbc-toolbar button) { padding: 4px 8px; font-size: 13px; } 
 }
+
+/* Modal de confirmación de reserva */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal h3 {
+  margin: 0 0 20px 0;
+  color: var(--color-brand-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modalContent {
+  margin-bottom: 24px;
+}
+
+.modalContent p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.modalNote {
+  background-color: var(--color-background-light);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-top: 16px !important;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modalActions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalActions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modalActions .primaryBtn {
+  background-color: var(--color-brand-primary);
+  color: white;
+  border: none;
+}
+
+.modalActions .primaryBtn:hover:not(:disabled) {
+  background-color: var(--color-brand-primary-dark);
+}
+
+.modalActions .secondaryBtn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.modalActions .secondaryBtn:hover:not(:disabled) {
+  background-color: var(--color-background-light);
+}

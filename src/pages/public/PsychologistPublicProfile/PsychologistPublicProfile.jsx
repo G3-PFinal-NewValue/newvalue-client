@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { getPsychologistProfileById } from "../../../services/psychologistsService";
-import { getBookedSlotsForPsychologist } from "../../../services/appointmentService";
+import { getBookedSlotsForPsychologist, createAppointment } from "../../../services/appointmentService";
+import { useAuth } from "../../../context/AuthContext";
 import styles from "./PsychologistPublicProfile.module.css";
 
 // Importaciones de react-big-calendar y date-fns
@@ -42,11 +43,17 @@ const parseTime = (timeStr) => {
 export default function PsychologistPublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bookedAppointments, setBookedAppointments] = useState([]);
   // Nuevo estado para controlar la fecha actual del calendario
   const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Estados para el modal de reserva
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfileAndBookings = async () => {
@@ -182,23 +189,66 @@ export default function PsychologistPublicProfile() {
 
   // --- Manejador de clics en slots ---
   const handleSlotSelect = (event) => {
-    if (event.isAvailable) {
-      alert(
-        `Has seleccionado el horario: ${format(event.start, "Pp", {
-          locale: es,
-        })}. \n(Aquí iría la lógica para reservar)`
-      );
-      // Lógica futura: Abrir modal, confirmar, llamar API POST /appointments
-      // const appointmentData = {
-      //   patient_id: user.id, // <-- Necesitas el ID del usuario logueado
-      //   psychologist_id: profile.user_id,
-      //   date: event.start.toISOString(),
-      //   duration_minutes: 45 // o la duración que uses
-      // }
-      // await createAppointment(appointmentData);
-    } else {
+    if (!event.isAvailable) {
       alert("Este horario ya está reservado.");
+      return;
     }
+
+    // Verificar que el usuario esté logueado
+    if (!user) {
+      alert("Debes iniciar sesión para reservar una cita.");
+      navigate("/login");
+      return;
+    }
+
+    // Verificar que el usuario sea un paciente
+    if (user.role !== "patient") {
+      alert("Solo los pacientes pueden reservar citas.");
+      return;
+    }
+
+    // Mostrar modal de confirmación
+    setSelectedSlot(event);
+    setShowBookingModal(true);
+  };
+
+  // --- Función para confirmar la reserva ---
+  const handleConfirmBooking = async () => {
+    if (!selectedSlot || !user) return;
+
+    setBookingLoading(true);
+    try {
+      const appointmentData = {
+        patient_id: user.id,
+        psychologist_id: profile.user_id,
+        date: selectedSlot.start.toISOString(),
+        duration_minutes: 45, // Duración fija de 45 minutos
+        status: "pending"
+      };
+
+      await createAppointment(appointmentData);
+      
+      // Actualizar las citas reservadas
+      const updatedBookings = await getBookedSlotsForPsychologist(id);
+      setBookedAppointments(updatedBookings || []);
+      
+      // Cerrar modal y mostrar mensaje de éxito
+      setShowBookingModal(false);
+      setSelectedSlot(null);
+      alert("¡Cita reservada exitosamente! Te contactaremos pronto para confirmar.");
+      
+    } catch (error) {
+      console.error("Error al reservar la cita:", error);
+      alert("Error al reservar la cita. Por favor, inténtalo de nuevo.");
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  // --- Función para cancelar la reserva ---
+  const handleCancelBooking = () => {
+    setShowBookingModal(false);
+    setSelectedSlot(null);
   };
 
   // --- Manejador de navegación del calendario ---
@@ -268,19 +318,19 @@ export default function PsychologistPublicProfile() {
     specialities,
     professional_description,
     user_id,
-    user,
+    user: psychologistUser,
   } = profile;
 
   const psychologistName =
-    user?.first_name && user?.last_name
-      ? `${user.first_name} ${user.last_name}`
+    psychologistUser?.first_name && psychologistUser?.last_name
+      ? `${psychologistUser.first_name} ${psychologistUser.last_name}`
       : `Psicólogo/a #${user_id ?? "N/D"}`;
 
-  const fallbackInitial = user?.first_name
-    ? user.first_name[0].toUpperCase()
+  const fallbackInitial = psychologistUser?.first_name
+    ? psychologistUser.first_name[0].toUpperCase()
     : "P";
 
-  const photoToShow = photo || user?.avatar;
+  const photoToShow = photo || psychologistUser?.avatar;
 
   const specialtiesText =
     specialities && specialities.length > 0
@@ -400,6 +450,39 @@ export default function PsychologistPublicProfile() {
           </Link>
         </div>
       </div>
+
+      {/* --- Modal de Confirmación de Reserva --- */}
+      {showBookingModal && selectedSlot && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h3>Confirmar Reserva de Cita</h3>
+            <div className={styles.modalContent}>
+              <p><strong>Psicólogo:</strong> {psychologistName}</p>
+              <p><strong>Fecha y hora:</strong> {format(selectedSlot.start, "PPPP 'a las' p", { locale: es })}</p>
+              <p><strong>Duración:</strong> 45 minutos</p>
+              <p className={styles.modalNote}>
+                Una vez confirmada, recibirás información de contacto para coordinar los detalles de la sesión.
+              </p>
+            </div>
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.secondaryBtn} 
+                onClick={handleCancelBooking}
+                disabled={bookingLoading}
+              >
+                Cancelar
+              </button>
+              <button 
+                className={styles.primaryBtn} 
+                onClick={handleConfirmBooking}
+                disabled={bookingLoading}
+              >
+                {bookingLoading ? "Reservando..." : "Confirmar Reserva"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

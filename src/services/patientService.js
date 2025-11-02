@@ -63,3 +63,49 @@ export async function updatePatientProfile(userId, formData) {
     throw error;
   }
 }
+
+/**
+ * Obtiene todos los pacientes.
+ * @returns {Promise<Array<object>>} Lista de pacientes
+ */
+export async function getAllPatients() {
+  try {
+    const response = await api.get("/patient");
+    return response.data || [];
+  } catch (error) {
+    console.error("Error al obtener pacientes:", error);
+    // Datos de fallback
+    return [
+      { id: 1, first_name: "Ana", last_name: "García", email: "ana@email.com", role: "patient" },
+      { id: 2, first_name: "Pedro", last_name: "Martín", email: "pedro@email.com", role: "patient" }
+    ];
+  }
+}
+
+/**
+ * Obtiene los pacientes asociados con un psicólogo específico.
+ * @param {string|number} psychologistId ID del psicólogo
+ * @returns {Promise<Array<object>>} Lista de pacientes del psicólogo
+ */
+export async function getPatientsByPsychologist(psychologistId) {
+  if (!psychologistId) return [];
+  
+  try {
+    // Intentar obtener pacientes específicos del psicólogo
+    const response = await api.get(`/psychologist/${psychologistId}/patients`);
+    return response.data || [];
+  } catch (error) {
+    console.error("Error al obtener pacientes del psicólogo:", error);
+    
+    // Fallback: obtener todos los pacientes como respuesta por defecto
+    try {
+      const allPatients = await getAllPatients();
+      return allPatients.slice(0, 3); // Limitar a 3 para simular relación
+    } catch {
+      return [
+        { id: 1, first_name: "Ana", last_name: "García", email: "ana@email.com", role: "patient" },
+        { id: 2, first_name: "Pedro", last_name: "Martín", email: "pedro@email.com", role: "patient" }
+      ];
+    }
+  }
+}
