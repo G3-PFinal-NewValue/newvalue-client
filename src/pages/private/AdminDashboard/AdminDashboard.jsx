@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-// 👇 1. Importar los servicios del admin
+// 1. Importar los servicios del admin
 import {
   adminGetAllUsers,
   adminGetAllPatients,
@@ -22,9 +22,6 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalUsers: 0, pending: 0, activePsy: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // --- 👇 2. Eliminar TODOS los mock data (mockSessions, mockPatients, mockPsychologists, etc.) ---
-  // ... (mock data eliminado) ...
 
   // --- 3. Función para cargar y procesar datos ---
   const fetchData = async () => {
@@ -84,7 +81,6 @@ export default function AdminDashboard() {
       setStats(prev => ({
         ...prev,
         pending: prev.pending - 1,
-        // activePsy podría o no cambiar, recalcular es más seguro
         activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
       }));
 
@@ -98,13 +94,10 @@ export default function AdminDashboard() {
       try {
         await adminRejectPsychologist(psychologistId);
         
-        // Actualizar estado local (optimista)
         setUsers(prev => prev.filter(u => u.id !== psychologistId));
         setPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
         setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
 
-        // Recalcular stats
-        // (La lista de psicólogos ya está filtrada, así que podemos recontar)
         const newPsychologists = psychologists.filter(p => p.user_id !== psychologistId);
         setStats(prev => ({
             totalUsers: prev.totalUsers - 1,
@@ -118,7 +111,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Renderizado (sin cambios, excepto en el map) ---
   if (loading) {
     return <div className={styles.page}><p className={styles.loadingMessage}>Cargando dashboard...</p></div>;
   }
@@ -126,9 +118,9 @@ export default function AdminDashboard() {
     return <div className={styles.page}><p className={`${styles.card} ${styles.errorMessage}`}>{error}</p></div>;
   }
 
-  return (
-    <div className={styles.page}>
-      <h1 className={styles.mainTitle}>Panel de Administración</h1>
+   return (
+      <div className={styles.page}>
+         <h1 className={styles.mainTitle}>Panel de Administración</h1>
 
       {/* --- Sección Estadísticas --- */}
       <section className={styles.statsGrid}>
@@ -155,7 +147,7 @@ export default function AdminDashboard() {
           <table className={styles.dataTable}>
             <thead>
               <tr>
-                {/* 👇 6. Ajustar columnas a datos reales */}
+              
                 <th>Nombre</th>
                 <th>Email (Usuario)</th>
                 <th>Especialidades</th>
@@ -165,7 +157,6 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {/* 👇 7. Mapear datos reales y usar user_id como key */}
               {pendingPsychologists.map(p => {
                 // Buscamos el usuario correspondiente para obtener nombre y email
                 const userInfo = users.find(u => u.id === p.user_id);

@@ -4,6 +4,8 @@
   padding: 3rem 2rem;
   color: #fff;
   text-align: center;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .blog-page-container {
@@ -12,6 +14,8 @@
   min-height: 100vh;    
   box-sizing: border-box;
   background-color: #f4f1e8; 
+  margin: 0;
+  padding: 0
 }
 .header-content h1 {
   margin: 0 0 0.5rem 0;
@@ -19,7 +23,7 @@
 }
 
 .header-content p {
-  font-size: 24px;
+  font-size: 18px;
   margin: 0 0 1.5rem 0;
   color:#333333;
 }
@@ -82,6 +86,12 @@
 .blog-sidebar li.active {
   background: #ee9271;
   color: #fff;
+}
+
+.icon-charity {
+  width: 80px;
+  height: auto;
+  stroke: #ee9271;
 }
 
 /* Lista de tarjetas de blog */
