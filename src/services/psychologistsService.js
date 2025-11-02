@@ -50,9 +50,19 @@ export async function createPsychologistProfile(formData) {
   }
 }
 
-// --- ACTUALIZAR PERFIL (Placeholder/Mock) ---
-export async function updatePsychologistProfile(id, payload) {
-   console.warn(`Simulación: Actualizar perfil ${id} con datos:`, payload);
-   await new Promise(r => setTimeout(r, 300));
-   return { id: Number(id), ...payload };
+export async function updatePsychologistProfile(id, formData) {
+   if (!id) {
+     console.error("updatePsychologistProfile: ID inválido");
+     throw new Error("ID de psicólogo no válido");
+  }
+  try {
+    console.log(`Enviando datos actualizados (FormData) a PUT /psychologist/${id}...`);
+    // Axios se encargará del 'multipart/form-data'
+    const response = await api.put(`/psychologist/${id}`, formData);
+    console.log("Respuesta de actualización de perfil:", response.data);
+    return response.data.profile; // El backend devuelve el perfil actualizado
+  } catch (error) {
+    console.error(`Error al actualizar el perfil del psicólogo ${id}:`, error);
+    throw error;
+  }
 }

@@ -152,6 +152,23 @@ display: inline-block;
 }
 .rejectButton:hover { background: #fee2e2; }
 
+.deactivateButton {
+    background: #fef3c7; /* Amarillo suave */
+    color: #92400e; /* Amarillo/marrón oscuro */
+    border: 1px solid #fde68a;
+}
+.deactivateButton:hover {
+    background: #fde68a;
+}
+
+.activateButton {
+    background: #dcfce7; /* Verde muy suave */
+    color: #166534; /* Verde oscuro */
+    border: 1px solid #86efac;
+}
+.activateButton:hover {
+    background: #bbf7d0;
+}
 
 /* Badges de Rol */
 .roleBadge {

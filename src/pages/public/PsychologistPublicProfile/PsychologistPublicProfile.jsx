@@ -177,38 +177,43 @@ export default function PsychologistPublicProfile() {
   const {
     photo_url,
     license_number,
-    specialty,
+    specialities,
     professional_description,
     user_id,
-    // first_name, // Datos esperados del backend
-    // last_name 
+    user
   } = profile;
 
-  // Placeholder para nombre mientras no venga del backend
-  const psychologistName = profile.first_name && profile.last_name 
-      ? `${profile.first_name} ${profile.last_name}` 
+const psychologistName = user?.first_name && user?.last_name 
+      ? `${user.first_name} ${user.last_name}` 
       : `Psicólogo/a #${user_id ?? "N/D"}`;
   
-  // Placeholder para iniciales
-  const fallbackInitial = profile.first_name ? profile.first_name[0].toUpperCase() : 'P';
+  // Elige la inicial desde el objeto 'user'
+  const fallbackInitial = user?.first_name ? user.first_name[0].toUpperCase() : 'P';
+  
+  // Elige la foto de perfil (la del perfil de psicólogo o la del avatar de google)
+  const photoToShow = photo_url || user?.avatar;
 
+  // Mapea las especialidades para mostrarlas
+  const specialtiesText = specialities && specialities.length > 0
+    ? specialities.map(s => s.name).join(', ')
+    : "Especialidad no especificada";
 
-  return (
+return (
     <div className={styles.page}>
       <div className={styles.wrap}>
         {/* --- Cabecera --- */}
         <div className={styles.headerCard}>
           <div className={styles.avatar}>
-            {photo_url
-              ? <img src={photo_url} alt={`Foto de ${psychologistName}`} /> // Alt text dinámico
+            {photoToShow // <-- Variable actualizada
+              ? <img src={photoToShow} alt={`Foto de ${psychologistName}`} />
               : <div className={styles.avatarFallback}>{fallbackInitial}</div>}
           </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.name}>
-              {/* RECORDATORIO: Pedir first_name y last_name al backend */}
-              {psychologistName}
+              {psychologistName} {/* <-- Variable actualizada */}
             </h1>
-            <p className={styles.specialty}>{specialty || "Especialidad no especificada"}</p>
+            {/* Usamos la variable de especialidades */}
+            <p className={styles.specialty}>{specialtiesText}</p> 
             <p className={styles.license}>Licencia: {license_number || "N/D"}</p>
           </div>
         </div>

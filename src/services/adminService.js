@@ -67,3 +67,31 @@ export async function adminRejectPsychologist(psychologistId) {
     throw error;
   }
 }
+
+/**
+ * Desactiva un usuario (solo admin).
+ * @param {string|number} userId ID del usuario
+ */
+export async function adminDeactivateUser(userId) {
+  try {
+    const response = await api.patch(`/user/${userId}/deactivate`);
+    return response.data;
+  } catch (error) {
+    console.error("Error en adminDeactivateUser:", error);
+    throw error;
+  }
+}
+
+/**
+ * Activa un usuario (solo admin).
+ * @param {string|number} userId ID del usuario
+ */
+export async function adminActivateUser(userId) {
+  try {
+    const response = await api.patch(`/user/${userId}/activate`);
+    return response.data;
+  } catch (error) {
+    console.error("Error en adminActivateUser:", error);
+    throw error;
+  }
+}

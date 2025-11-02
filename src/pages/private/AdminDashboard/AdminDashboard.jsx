@@ -8,6 +8,8 @@ import {
   adminGetAllPsychologists,
   adminValidatePsychologist,
   adminRejectPsychologist,
+  adminDeactivateUser,
+  adminActivateUser
 } from '../../../services/adminService'; // Ajusta la ruta si es necesario
 import styles from './AdminDashboard.module.css';
 import AdminExportExcel from '../../../components/AdminExportExcel';
@@ -112,6 +114,33 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleUserStatus = async (userToToggle) => {
+    const isActivating = userToToggle.status !== 'active';
+    const actionText = isActivating ? "activar" : "desactivar";
+    
+    if (window.confirm(`¿Estás seguro de que deseas ${actionText} a este usuario?`)) {
+      try {
+        if (isActivating) {
+          await adminActivateUser(userToToggle.id);
+        } else {
+          await adminDeactivateUser(userToToggle.id);
+        }
+
+        // Actualizar el estado local (optimista)
+        setUsers(prevUsers => 
+          prevUsers.map(u => 
+            u.id === userToToggle.id 
+              ? { ...u, status: isActivating ? 'active' : 'inactive' } 
+              : u
+          )
+        );
+
+      } catch (err) {
+        alert(`Error al ${actionText} al usuario: ${err.message}`);
+      }
+    }
+  };
+
   if (loading) {
     return <div className={styles.page}><p className={styles.loadingMessage}>Cargando dashboard...</p></div>;
   }
@@ -147,13 +176,12 @@ export default function AdminDashboard() {
         ) : (
           <table className={styles.dataTable}>
             <thead>
-              <tr>
-              
+<tr>
                 <th>Nombre</th>
                 <th>Email (Usuario)</th>
                 <th>Especialidades</th>
                 <th>Licencia</th>
-                {/* <th>Enviado</th> */}
+                <th>Enviado</th> {/* <-- DESCOMENTA/AÑADE ESTE ENCABEZADO */}
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -208,28 +236,54 @@ export default function AdminDashboard() {
         <h2 className={styles.sectionTitle}>Últimos Usuarios Registrados ({users.length})</h2>
         <table className={styles.dataTable}>
           <thead>
-            <tr>
+<tr>
               <th>Nombre</th>
               <th>Email</th>
               <th>Rol</th>
-              <th>Fecha Registro</th>
-              
+              {/* <th>Fecha Registro</th> */} {/* Sigue comentado, ¡está bien! */}
+              <th>Estado</th> 
+              <th>Acciones</th> 
             </tr>
           </thead>
           <tbody>
-            {/* 👇 8. Usar u.role.name para el rol */}
             {users.map(u => (
               <tr key={u.id}>
                 <td>{u.first_name} {u.last_name}</td>
                 <td>{u.email}</td>
-                {/* El controlador envía el objeto de rol anidado */}
-                <td><span className={`${styles.roleBadge} ${styles[u.role?.name || '']}`}>{u.role?.name || 'N/A'}</span></td>
-                <td>{new Date(u.registration_date).toLocaleDateString()}</td>
+                <td>
+                  <span className={`${styles.roleBadge} ${styles[u.role?.name || '']}`}>
+                    {u.role?.name || 'N/A'}
+                  </span>
+                </td>
+                <td>{u.status}</td> { /* <-- Nuevo Campo */ }
+                <td className={styles.actionsCell}>
+                  {/* Solo mostrar "Ver Perfil" si es psicólogo */}
+                  {u.role?.name === 'psychologist' && (
+                    <Link
+                      to={`/profile/${u.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${styles.actionButton} ${styles.viewButton}`}
+                    >
+                      Ver Perfil
+                    </Link>
+                  )}
+                  {/* No permitir que el admin se desactive a sí mismo */}
+                  {user.id !== u.id && u.role?.name !== 'admin' && (
+                    <button
+                      className={`${styles.actionButton} ${u.status === 'active' ? styles.deactivateButton : styles.activateButton}`}
+                      onClick={() => handleToggleUserStatus(u)}
+                    >
+                      {u.status === 'active' ? 'Desactivar' : 'Activar'}
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </section>
+
 
       {/* --- Exportar Excel --- */}
       <AdminExportExcel
