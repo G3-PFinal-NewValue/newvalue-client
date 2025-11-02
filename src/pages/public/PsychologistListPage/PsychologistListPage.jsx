@@ -105,7 +105,6 @@ return (
     <div className={styles.pageContainer}>
       <h1 className={styles.pageTitle}>Encuentra a tu psicólogo</h1>
 
-      {/* 👇 11. Filtros (ahora usa 'allSpecialties') */}
       <div className={styles.filtersContainer}>
         <label htmlFor="specialtyFilter" className={styles.filterLabel}>Filtrar por especialidad:</label>
         <select

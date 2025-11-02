@@ -175,7 +175,7 @@ export default function PsychologistPublicProfile() {
 
   // --- Renderizado del Perfil + Calendario ---
   const {
-    photo_url,
+    photo,
     license_number,
     specialities,
     professional_description,
@@ -191,7 +191,7 @@ const psychologistName = user?.first_name && user?.last_name
   const fallbackInitial = user?.first_name ? user.first_name[0].toUpperCase() : 'P';
   
   // Elige la foto de perfil (la del perfil de psicólogo o la del avatar de google)
-  const photoToShow = photo_url || user?.avatar;
+  const photoToShow = photo || user?.avatar;
 
   // Mapea las especialidades para mostrarlas
   const specialtiesText = specialities && specialities.length > 0
