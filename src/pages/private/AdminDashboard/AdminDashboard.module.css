@@ -117,21 +117,30 @@
 /* Celda de Acciones */
 .actionsCell {
     text-align: right;
-    white-space: nowrap; /* Evita que los botones se partan */
+    white-space: nowrap; 
 }
 .actionButton {
-  /* Estilos base del botón */
+display: inline-block;
+  text-decoration: none;
+  text-align: center;
   border: none;
   border-radius: 8px;
   padding: 6px 10px;
-  font-size: 13px; /* Más pequeño */
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all .2s ease;
-  margin-left: var(--space-2); /* Espacio entre botones */
+  margin-left: var(--space-2);
 }
 .actionButton:hover { opacity: 0.8; transform: scale(1.05); }
-
+.viewButton {
+    background: #dbeafe; 
+    color: #1e40af; 
+    border: 1px solid #bfdbfe; 
+}
+.viewButton:hover {
+    background: #bfdbfe;
+}
 .validateButton {
     background: var(--color-brand-secondary); /* Verde suave */
     color: #fff;

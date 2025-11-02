@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
+import { Link } from 'react-router-dom';
 // 1. Importar los servicios del admin
 import {
   adminGetAllUsers,
@@ -171,8 +172,16 @@ export default function AdminDashboard() {
                         : 'No especificada'}
                     </td>
                     <td>{p.license_number}</td>
-                    {/* <td>{new Date(p.created_at).toLocaleDateString()}</td> */}
+                    <td>{new Date(p.created_at).toLocaleDateString()}</td> 
                     <td className={styles.actionsCell}>
+                      <Link
+                        to={`/profile/${p.user_id}`}
+                        target="_blank" // Abre en una nueva pestaña
+                        rel="noopener noreferrer"
+                        className={`${styles.actionButton} ${styles.viewButton}`}
+                      >
+                        Ver Perfil
+                      </Link>
                       <button
                         className={`${styles.actionButton} ${styles.validateButton}`}
                         onClick={() => handleValidate(p.user_id)}
@@ -204,6 +213,7 @@ export default function AdminDashboard() {
               <th>Email</th>
               <th>Rol</th>
               <th>Fecha Registro</th>
+              
             </tr>
           </thead>
           <tbody>
