@@ -11,12 +11,14 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import addDays from "date-fns/addDays";
-import addHours from "date-fns/addHours";
+// import addHours from "date-fns/addHours"; // No se usa directamente
 import addMinutes from "date-fns/addMinutes";
-import isWithinInterval from "date-fns/isWithinInterval";
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import setSeconds from "date-fns/setSeconds";
+// --- CAMBIO: Importaciones añadidas ---
+import startOfDay from "date-fns/startOfDay";
+// --- FIN CAMBIO ---
 import es from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -43,30 +45,57 @@ export default function PsychologistPublicProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bookedAppointments, setBookedAppointments] = useState([]);
+  // Nuevo estado para controlar la fecha actual del calendario
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndBookings = async () => {
       setLoading(true);
       try {
-        const p = await getPsychologistProfileById(id);
-        setProfile(p || null);
+        const profilePromise = getPsychologistProfileById(id);
+        const bookingsPromise = getBookedSlotsForPsychologist(id);
+
+        const [profileData, bookingsData] = await Promise.all([
+          profilePromise,
+          bookingsPromise,
+        ]);
+
+        setProfile(profileData || null);
+        setBookedAppointments(bookingsData || []);
       } catch (error) {
-        console.error("Error cargando el perfil (mock):", error);
+        console.error("Error cargando el perfil o las citas:", error);
         setProfile(null);
+        setBookedAppointments([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchProfileAndBookings();
   }, [id]);
 
+  // --- CAMBIO: Definir límites de fecha y hora con useMemo ---
+  // Memoizamos 'today' para que solo se calcule una vez por carga
+  const today = useMemo(() => new Date(), []);
+  
+  // Límite de FECHA mínima: Hoy
+  const minNavigationDate = useMemo(() => startOfDay(today), [today]);
+  
+  // Límite de FECHA máxima: 28 días desde hoy
+  const maxNavigationDate = useMemo(() => startOfDay(addDays(today, 28)), [today]);
+
+  // Límites de HORA para el calendario (8:00 AM - 22:00 PM)
+  const minTime = useMemo(() => setHours(setMinutes(new Date(), 0), 8), []);
+  const maxTime = useMemo(() => setHours(setMinutes(new Date(), 0), 22), []);
+  // --- FIN CAMBIO ---
+  
   const calendarEvents = useMemo(() => {
     if (!profile?.availabilities) return [];
 
     const events = [];
-    const today = new Date();
-    const startOfToday = setSeconds(setMinutes(setHours(today, 0), 0), 0);
-    const futureLimit = addDays(startOfToday, 28);
+    // Usamos minNavigationDate como punto de partida (hoy a las 00:00)
+    const startOfToday = minNavigationDate; 
+    // Usamos maxNavigationDate como límite (28 días desde hoy)
+    const futureLimit = maxNavigationDate; 
 
     const realBookedSlots = bookedAppointments.map((app) => {
       const startDate = new Date(app.date); // El backend envía un string ISO
@@ -76,13 +105,16 @@ export default function PsychologistPublicProfile() {
 
     let currentDate = startOfToday;
     while (currentDate < futureLimit) {
-      const currentDayOfWeek = getDay(currentDate); // 0=Domingo, 1=Lunes,...
-
+      const jsDay = getDay(currentDate); // 0=Domingo, 1=Lunes,...
+      // Convertimos el día de JS (0=Dom) al formato de BD (7=Dom)
+      const dbWeekday = jsDay === 0 ? 7 : jsDay;
+      
       const dayAvailabilities = profile.availabilities.filter(
-        (a) => a.weekday === currentDayOfWeek
+        (a) => a.weekday === dbWeekday // Lógica de filtro restaurada
       );
-
+      
       dayAvailabilities.forEach((availability) => {
+        // Lógica de parseTime restaurada
         const { hours: startHour, minutes: startMinute } = parseTime(
           availability.start_time
         );
@@ -90,6 +122,7 @@ export default function PsychologistPublicProfile() {
           availability.end_time
         );
 
+        // Lógica de isNaN restaurada
         if (
           isNaN(startHour) ||
           isNaN(startMinute) ||
@@ -98,44 +131,54 @@ export default function PsychologistPublicProfile() {
         )
           return;
 
+        // Lógica de slotStart restaurada
         let slotStart = setSeconds(
           setMinutes(setHours(currentDate, startHour), startMinute),
           0
         );
+        // Lógica de slotEndLimit restaurada
         const slotEndLimit = setSeconds(
           setMinutes(setHours(currentDate, endHour), endMinute),
           0
         );
 
-        while (slotStart < slotEndLimit) {
-          const slotEnd = addHours(slotStart, 1); // Slots de 1 hora
+        const slotDuration = 45; 
 
-          if (slotEnd <= today) {
+        while (slotStart < slotEndLimit) {
+          const slotEnd = addMinutes(slotStart, slotDuration); 
+
+          // Comparamos contra 'today' (que tiene la hora actual)
+          if (slotEnd <= today) { 
             slotStart = slotEnd;
             continue;
           }
+          
+          if (slotEnd > slotEndLimit) {
+            break;
+          }
 
+          // Lógica de isBooked restaurada
           const isBooked = realBookedSlots.some(
             (booked) =>
-              // Comprobar si hay solapamiento exacto o parcial
               slotStart < booked.end && slotEnd > booked.start
           );
 
+          // Lógica de push restaurada
           events.push({
             title: isBooked ? "Reservado" : "Disponible",
             start: slotStart,
             end: slotEnd,
             isAvailable: !isBooked,
-            resourceId: profile.id,
+            resourceId: profile.id, 
           });
 
-          slotStart = slotEnd;
+          slotStart = slotEnd; 
         }
       });
       currentDate = addDays(currentDate, 1);
     }
     return events;
-  }, [profile]);
+  }, [profile, bookedAppointments, minNavigationDate, maxNavigationDate, today]); 
 
   // --- Manejador de clics en slots ---
   const handleSlotSelect = (event) => {
@@ -146,8 +189,23 @@ export default function PsychologistPublicProfile() {
         })}. \n(Aquí iría la lógica para reservar)`
       );
       // Lógica futura: Abrir modal, confirmar, llamar API POST /appointments
+      // const appointmentData = {
+      //   patient_id: user.id, // <-- Necesitas el ID del usuario logueado
+      //   psychologist_id: profile.user_id,
+      //   date: event.start.toISOString(),
+      //   duration_minutes: 45 // o la duración que uses
+      // }
+      // await createAppointment(appointmentData);
     } else {
       alert("Este horario ya está reservado.");
+    }
+  };
+
+  // --- Manejador de navegación del calendario ---
+  const handleNavigate = (newDate) => {
+    // Verificar que la fecha esté dentro de los límites
+    if (newDate >= minNavigationDate && newDate <= maxNavigationDate) {
+      setCurrentDate(newDate);
     }
   };
 
@@ -155,15 +213,15 @@ export default function PsychologistPublicProfile() {
   const eventPropGetter = (event) => {
     const style = {
       backgroundColor: event.isAvailable
-        ? "var(--color-brand-secondary)"
+        ? "var(--color-brand-secondary)" // Verde
         : "#e0e0e0", // Gris más claro para reservado
       borderRadius: "5px",
-      opacity: event.isAvailable ? 0.9 : 0.7, // Ligeramente más opaco si está disponible
+      opacity: event.isAvailable ? 0.9 : 0.7,
       color: event.isAvailable ? "white" : "#757575", // Texto gris oscuro para reservado
-      border: "none", // Sin borde
-      cursor: event.isAvailable ? "pointer" : "not-allowed", // Cambiar cursor
-      fontSize: "13px", // Tamaño de fuente del evento
-      padding: "2px 5px", // Padding interno
+      border: "none",
+      cursor: event.isAvailable ? "pointer" : "not-allowed",
+      fontSize: "13px",
+      padding: "2px 5px",
     };
     return { style };
   };
@@ -218,15 +276,12 @@ export default function PsychologistPublicProfile() {
       ? `${user.first_name} ${user.last_name}`
       : `Psicólogo/a #${user_id ?? "N/D"}`;
 
-  // Elige la inicial desde el objeto 'user'
   const fallbackInitial = user?.first_name
     ? user.first_name[0].toUpperCase()
     : "P";
 
-  // Elige la foto de perfil (la del perfil de psicólogo o la del avatar de google)
   const photoToShow = photo || user?.avatar;
 
-  // Mapea las especialidades para mostrarlas
   const specialtiesText =
     specialities && specialities.length > 0
       ? specialities.map((s) => s.name).join(", ")
@@ -238,7 +293,7 @@ export default function PsychologistPublicProfile() {
         {/* --- Cabecera --- */}
         <div className={styles.headerCard}>
           <div className={styles.avatar}>
-            {photoToShow ? ( // <-- Variable actualizada
+            {photoToShow ? ( 
               <img src={photoToShow} alt={`Foto de ${psychologistName}`} />
             ) : (
               <div className={styles.avatarFallback}>{fallbackInitial}</div>
@@ -246,9 +301,8 @@ export default function PsychologistPublicProfile() {
           </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.name}>
-              {psychologistName} {/* <-- Variable actualizada */}
+              {psychologistName} 
             </h1>
-            {/* Usamos la variable de especialidades */}
             <p className={styles.specialty}>{specialtiesText}</p>
             <p className={styles.license}>
               Licencia: {license_number || "N/D"}
@@ -281,7 +335,6 @@ export default function PsychologistPublicProfile() {
                 style={{ height: "65vh", minHeight: "550px" }}
               >
                 {" "}
-                {/* Ajustar altura si es necesario */}
                 <Calendar
                   localizer={localizer}
                   culture="es"
@@ -290,35 +343,50 @@ export default function PsychologistPublicProfile() {
                   endAccessor="end"
                   defaultView={Views.WEEK}
                   views={[Views.WEEK, Views.DAY]}
-                  selectable={false} // Deshabilitar selección de rango de tiempo
-                  onSelectEvent={handleSlotSelect} // Solo permitir clic en eventos
+                  selectable={false} 
+                  onSelectEvent={handleSlotSelect} 
                   eventPropGetter={eventPropGetter}
-                  min={setHours(new Date(), 8)}
-                  max={setHours(new Date(), 21)} // Extender hasta las 9 PM?
-                  step={60}
-                  timeslots={1}
+                  
+                  // --- Propiedades para controlar la navegación ---
+                  date={currentDate}
+                  onNavigate={handleNavigate}
+                  
+                  // --- Corrección de min/max para limitar horas del día ---
+                  min={minTime} 
+                  max={maxTime} 
+                  // --- scrollToTime para iniciar en las 8:00 AM ---
+                  scrollToTime={minTime}
+
+                  step={15} 
+                  timeslots={4} 
                   messages={{
-                    next: "Sig >", // Flechas más claras
+                    next: "Sig >",
                     previous: "< Ant",
                     today: "Hoy",
                     week: "Semana",
                     day: "Día",
-                    // Ocultar textos no usados
-                    // month: "Mes",
-                    // agenda: "Agenda",
-                    // date: "Fecha",
-                    // time: "Hora",
-                    // event: "Evento",
+                    month: "Mes",
+                    agenda: "Agenda",
+                    date: "Fecha",
+                    time: "Hora",
+                    event: "Evento",
                     noEventsInRange:
                       "No hay horarios disponibles en esta vista.",
-                    showMore: (total) => `+ ${total} más`, // Texto más corto
+                    showMore: (total) => `+ ${total} más`,
                   }}
                   formats={{
-                    // Formato de hora en la columna izquierda
                     timeGutterFormat: (date, culture, localizer) =>
-                      localizer.format(date, "H:mm", culture), // Formato 24h
+                      localizer.format(date, "H:mm", culture), 
+                    eventTimeRangeFormat: (
+                      { start, end },
+                      culture,
+                      localizer
+                    ) =>
+                      localizer.format(start, "H:mm", culture) +
+                      " - " +
+                      localizer.format(end, "H:mm", culture),
                   }}
-                  dayLayoutAlgorithm="no-overlap" // Evitar solapamiento visual
+                  dayLayoutAlgorithm="no-overlap"
                 />
               </div>
             )}
@@ -335,3 +403,4 @@ export default function PsychologistPublicProfile() {
     </div>
   );
 }
+
