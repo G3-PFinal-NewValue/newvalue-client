@@ -27,6 +27,12 @@ const schema = z.object({
 
 const WEEKDAYS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
+const defaultFormValues = {
+  license_number: "",
+  specialities: [],
+  professional_description: "",
+  availabilities: [{ weekday: 1, start_time: "09:00", end_time: "12:00" }],
+};
 
 export default function PsychologistProfileSetup() {
   const { user } = useAuth();
@@ -34,12 +40,12 @@ export default function PsychologistProfileSetup() {
 
   // Estado para la foto
 const [existingProfile, setExistingProfile] = useState(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(true); // Para la carga inicial
+  const [isLoading, setIsLoading] = useState(true); // 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
   const [allSpecialties, setAllSpecialties] = useState([]);
 
-  const {
+const {
     register,
     handleSubmit,
     control,
@@ -48,12 +54,7 @@ const [existingProfile, setExistingProfile] = useState(null);
     reset
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      license_number: "",
-      specialities: [],
-      professional_description: "",
-      availabilities: [{ weekday: 1, start_time: "09:00", end_time: "12:00" }], 
-    },
+    defaultValues: defaultFormValues, // <-- 2. Usar la variable
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "availabilities" });
@@ -61,66 +62,60 @@ const [existingProfile, setExistingProfile] = useState(null);
 
 useEffect(() => {
     if (!user?.id) {
-      setIsLoadingProfile(false);
-      return; // No hay usuario, no hacer nada
+      setIsLoading(false);
+      return; 
     }
 
     const loadData = async () => {
       try {
-        setIsLoadingProfile(true);
-
+        setIsLoading(true);
         const specialtiesData = await getAllSpecialities();
         setAllSpecialties(specialtiesData);
         
-       
         const profileData = await getPsychologistProfileById(user.id);
-      
+        
         if (profileData) {
+          // MODO EDICIÓN
           setExistingProfile(profileData);
-          
-     
           const formattedData = {
             license_number: profileData.license_number || "",
             professional_description: profileData.professional_description || "",
-
             specialities: profileData.specialities 
               ? profileData.specialities.map(s => String(s.id)) 
               : [],
-
             availabilities: profileData.availabilities && profileData.availabilities.length > 0
               ? profileData.availabilities.map(a => ({
                   weekday: a.weekday,
                   start_time: a.start_time.substring(0, 5),
                   end_time: a.end_time.substring(0, 5)
                 }))
-         
-              : [{ weekday: 1, start_time: "09:00", end_time: "12:00" }]
+              : defaultFormValues.availabilities // Usar el por defecto si no hay
           };
-          
-         
-          reset(formattedData);
-          
+          reset(formattedData); // Poblar formulario con datos de DB
           if (profileData.photo) {
             setPhotoPreview(profileData.photo);
           }
+        } else {
+          // MODO CREACIÓN (El 404 se manejó en el servicio y devolvió null)
+          setExistingProfile(null);
+          reset(defaultFormValues); // <-- 4. ¡LA LÍNEA CLAVE! Resetear con valores por defecto
         }
-
-        
       } catch (error) {
         if (error.status === 404) {
-          
+          // MODO CREACIÓN (Si el servicio lanza el error 404)
           console.log("No se encontró perfil existente, cargando formulario de creación.");
           setExistingProfile(null);
+          reset(defaultFormValues); // <-- 4. ¡LA LÍNEA CLAVE! Resetear con valores por defecto
         } else {
           console.error("Error cargando datos del perfil:", error);
         }
       } finally {
-        setIsLoadingProfile(false);
+        setIsLoading(false);
       }
     };
     
     loadData();
-  }, [user, reset]); 
+  }, [user, reset]);
 
   const onPhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -145,6 +140,7 @@ const onSubmit = async (values) => {
     formData.append('license_number', values.license_number);
     formData.append('professional_description', values.professional_description);
     formData.append('specialities', JSON.stringify(values.specialities));
+    formData.append('availabilities', JSON.stringify(values.availabilities));
 
     if (photoFile) {
       formData.append('photo', photoFile);
@@ -161,10 +157,11 @@ const onSubmit = async (values) => {
         alert("Perfil actualizado con éxito.");
       } else {
         // MODO CREACIÓN
-        console.log("Intentando llamar a createPsychologistProfile...");
         newProfile = await createPsychologistProfile(formData);
         alert("Perfil creado con éxito.");
       }
+
+      // setExistingProfile(newProfile);
       
       navigate(`/profile/${newProfile.user_id}`); // Ir al perfil público
 
@@ -175,6 +172,17 @@ const onSubmit = async (values) => {
   };
 
 
+  if (isLoading) { // <-- Usar el estado de carga unificado
+    return (
+      <div className={styles.page}>
+        <div className={styles.wrap}>
+          <div className={styles.card}>
+            <p style={{ textAlign: 'center' }}>Cargando datos del perfil...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 return (
     <div className={styles.page}>
        <div className={styles.wrap}>
@@ -239,7 +247,7 @@ return (
               )}
             </div>
 
-            {/* ... (Textarea de Descripción sin cambios) ... */}
+            
              <div className={styles.group}>
               <label className={styles.label}>Descripción profesional</label>
               <textarea
@@ -253,7 +261,7 @@ return (
               )}
             </div>
             
-            {/* ... (Sección de Disponibilidades sin cambios) ... */}
+            
             <div className={styles.availBox}>
               <div className={styles.availHeader}>
                 <h2 className={styles.sectionTitle}>Disponibilidades</h2>
@@ -266,14 +274,67 @@ return (
                 </button>
               </div>
               {/* ... (map de fields sin cambios) ... */}
-            </div>
+            {fields.map((f, idx) => (
+                <div key={f.id} className={styles.availRow}>
+                  <select
+                    className={styles.select}
+                    {...register(`availabilities.${idx}.weekday`, { valueAsNumber: true })} 
+                  >
+                    {WEEKDAYS.map((d, i) => (
+                      <option key={i} value={i}>{d}</option> 
+                    ))}
+                  </select>
 
+                  <input
+                    type="time"
+                    className={styles.time}
+                    {...register(`availabilities.${idx}.start_time`)}
+                  />
+
+                  <input
+                    type="time"
+                    className={styles.time}
+                    {...register(`availabilities.${idx}.end_time`)}
+                  />
+
+                  <button
+                    type="button"
+                    className={styles.removeBtn}
+                    onClick={() => remove(idx)}
+                    aria-label="Quitar"
+                  >
+                    ✕
+                  </button>
+
+                  <div className={styles.rowErrors}>
+                     {errors.availabilities?.[idx]?.weekday && (
+                       <span className={styles.error}>Día: {errors.availabilities[idx].weekday.message}</span>
+                     )}
+                     {errors.availabilities?.[idx]?.start_time && (
+                       <span className={styles.error}>Inicio: {errors.availabilities[idx].start_time.message}</span>
+                     )}
+                     {errors.availabilities?.[idx]?.end_time && (
+                       <span className={styles.error}>Fin: {errors.availabilities[idx].end_time.message}</span>
+                     )}
+                  </div>
+
+                </div>
+              ))}
+              {/* --- FIN MAP --- */}
+
+              {errors.availabilities && typeof errors.availabilities === 'object' && 'message' in errors.availabilities && (
+                  <p className={styles.error}>{errors.availabilities.message}</p>
+              )}
+               {errors.availabilities?.root && (
+                 <p className={styles.error}>{errors.availabilities.root.message}</p>
+              )}
+            </div>
+            
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={isSubmitting || isLoadingProfile} // Deshabilitar si está enviando O cargando
+              disabled={isSubmitting || isLoading} 
             >
-              {/* Texto dinámico */}
               {isSubmitting
                 ? (existingProfile ? "Actualizando..." : "Guardando...")
                 : (existingProfile ? "Actualizar perfil" : "Guardar perfil")

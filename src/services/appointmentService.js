@@ -31,3 +31,19 @@ export async function cancelAppointment(appointmentId) {
     throw error;
   }
 }
+
+/**
+ * Obtiene las citas reservadas (confirmadas/pendientes) para un psicólogo específico.
+ * @param {string|number} psychologistId ID del psicólogo (user_id)
+ * @returns {Promise<Array<{date: string, duration_minutes: number}>>}
+ */
+export async function getBookedSlotsForPsychologist(psychologistId) {
+  if (!psychologistId) return [];
+  try {
+    const response = await api.get(`/psychologist/${psychologistId}/booked`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener citas reservadas:", error);
+    throw error;
+  }
+}

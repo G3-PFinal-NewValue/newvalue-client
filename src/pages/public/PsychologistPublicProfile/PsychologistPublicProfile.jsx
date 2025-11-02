@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { getPsychologistProfileById } from "../../../services/psychologistsService"; 
+import { getPsychologistProfileById } from "../../../services/psychologistsService";
+import { getBookedSlotsForPsychologist } from "../../../services/appointmentService";
 import styles from "./PsychologistPublicProfile.module.css";
 
 // Importaciones de react-big-calendar y date-fns
-import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import addDays from 'date-fns/addDays';
-import addHours from 'date-fns/addHours';
-import isWithinInterval from 'date-fns/isWithinInterval';
-import setHours from 'date-fns/setHours';
-import setMinutes from 'date-fns/setMinutes';
-import setSeconds from 'date-fns/setSeconds';
-import es from 'date-fns/locale/es'; 
+import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
+import format from "date-fns/format";
+import parse from "date-fns/parse";
+import startOfWeek from "date-fns/startOfWeek";
+import getDay from "date-fns/getDay";
+import addDays from "date-fns/addDays";
+import addHours from "date-fns/addHours";
+import addMinutes from "date-fns/addMinutes";
+import isWithinInterval from "date-fns/isWithinInterval";
+import setHours from "date-fns/setHours";
+import setMinutes from "date-fns/setMinutes";
+import setSeconds from "date-fns/setSeconds";
+import es from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const locales = {
-  'es': es,
+  es: es,
 };
 const localizer = dateFnsLocalizer({
   format,
@@ -29,26 +31,24 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-
 const parseTime = (timeStr) => {
-  if (!timeStr || !timeStr.includes(':')) return { hours: 0, minutes: 0 }; // Manejo defensivo
-  const [hours, minutes] = timeStr.split(':').map(Number);
+  if (!timeStr || !timeStr.includes(":")) return { hours: 0, minutes: 0 }; // Manejo defensivo
+  const [hours, minutes] = timeStr.split(":").map(Number);
   return { hours, minutes };
 };
-
 
 export default function PsychologistPublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bookedAppointments, setBookedAppointments] = useState([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-       
-        const p = await getPsychologistProfileById(id); 
+        const p = await getPsychologistProfileById(id);
         setProfile(p || null);
       } catch (error) {
         console.error("Error cargando el perfil (mock):", error);
@@ -60,20 +60,19 @@ export default function PsychologistPublicProfile() {
     fetchProfile();
   }, [id]);
 
- 
   const calendarEvents = useMemo(() => {
     if (!profile?.availabilities) return [];
 
     const events = [];
     const today = new Date();
-    const startOfToday = setSeconds(setMinutes(setHours(today, 0), 0), 0); 
-    const futureLimit = addDays(startOfToday, 28); 
+    const startOfToday = setSeconds(setMinutes(setHours(today, 0), 0), 0);
+    const futureLimit = addDays(startOfToday, 28);
 
-
-    const mockBookedAppointments = [
-
-    ];
-    // Fin de la simulación
+    const realBookedSlots = bookedAppointments.map((app) => {
+      const startDate = new Date(app.date); // El backend envía un string ISO
+      const endDate = addMinutes(startDate, app.duration_minutes || 60);
+      return { start: startDate, end: endDate };
+    });
 
     let currentDate = startOfToday;
     while (currentDate < futureLimit) {
@@ -84,40 +83,56 @@ export default function PsychologistPublicProfile() {
       );
 
       dayAvailabilities.forEach((availability) => {
-        const { hours: startHour, minutes: startMinute } = parseTime(availability.start_time);
-        const { hours: endHour, minutes: endMinute } = parseTime(availability.end_time);
+        const { hours: startHour, minutes: startMinute } = parseTime(
+          availability.start_time
+        );
+        const { hours: endHour, minutes: endMinute } = parseTime(
+          availability.end_time
+        );
 
-        if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) return;
+        if (
+          isNaN(startHour) ||
+          isNaN(startMinute) ||
+          isNaN(endHour) ||
+          isNaN(endMinute)
+        )
+          return;
 
-        let slotStart = setSeconds(setMinutes(setHours(currentDate, startHour), startMinute), 0);
-        const slotEndLimit = setSeconds(setMinutes(setHours(currentDate, endHour), endMinute), 0);
+        let slotStart = setSeconds(
+          setMinutes(setHours(currentDate, startHour), startMinute),
+          0
+        );
+        const slotEndLimit = setSeconds(
+          setMinutes(setHours(currentDate, endHour), endMinute),
+          0
+        );
 
         while (slotStart < slotEndLimit) {
           const slotEnd = addHours(slotStart, 1); // Slots de 1 hora
 
-      
-          if (slotEnd <= today) { 
-             slotStart = slotEnd;
-             continue;
+          if (slotEnd <= today) {
+            slotStart = slotEnd;
+            continue;
           }
 
-          const isBooked = mockBookedAppointments.some(booked =>
-             // Comprobar si hay solapamiento exacto o parcial
-             (slotStart < booked.end && slotEnd > booked.start)
+          const isBooked = realBookedSlots.some(
+            (booked) =>
+              // Comprobar si hay solapamiento exacto o parcial
+              slotStart < booked.end && slotEnd > booked.start
           );
 
           events.push({
-            title: isBooked ? 'Reservado' : 'Disponible',
+            title: isBooked ? "Reservado" : "Disponible",
             start: slotStart,
             end: slotEnd,
             isAvailable: !isBooked,
-            resourceId: profile.id 
+            resourceId: profile.id,
           });
 
-          slotStart = slotEnd; 
+          slotStart = slotEnd;
         }
       });
-      currentDate = addDays(currentDate, 1); 
+      currentDate = addDays(currentDate, 1);
     }
     return events;
   }, [profile]);
@@ -125,7 +140,11 @@ export default function PsychologistPublicProfile() {
   // --- Manejador de clics en slots ---
   const handleSlotSelect = (event) => {
     if (event.isAvailable) {
-      alert(`Has seleccionado el horario: ${format(event.start, 'Pp', { locale: es })}. \n(Aquí iría la lógica para reservar)`);
+      alert(
+        `Has seleccionado el horario: ${format(event.start, "Pp", {
+          locale: es,
+        })}. \n(Aquí iría la lógica para reservar)`
+      );
       // Lógica futura: Abrir modal, confirmar, llamar API POST /appointments
     } else {
       alert("Este horario ya está reservado.");
@@ -135,14 +154,16 @@ export default function PsychologistPublicProfile() {
   // --- Estilo visual de los eventos ---
   const eventPropGetter = (event) => {
     const style = {
-      backgroundColor: event.isAvailable ? 'var(--color-brand-secondary)' : '#e0e0e0', // Gris más claro para reservado
-      borderRadius: '5px',
+      backgroundColor: event.isAvailable
+        ? "var(--color-brand-secondary)"
+        : "#e0e0e0", // Gris más claro para reservado
+      borderRadius: "5px",
       opacity: event.isAvailable ? 0.9 : 0.7, // Ligeramente más opaco si está disponible
-      color: event.isAvailable ? 'white' : '#757575', // Texto gris oscuro para reservado
-      border: 'none', // Sin borde
-      cursor: event.isAvailable ? 'pointer' : 'not-allowed', // Cambiar cursor
-      fontSize: '13px', // Tamaño de fuente del evento
-      padding: '2px 5px', // Padding interno
+      color: event.isAvailable ? "white" : "#757575", // Texto gris oscuro para reservado
+      border: "none", // Sin borde
+      cursor: event.isAvailable ? "pointer" : "not-allowed", // Cambiar cursor
+      fontSize: "13px", // Tamaño de fuente del evento
+      padding: "2px 5px", // Padding interno
     };
     return { style };
   };
@@ -152,20 +173,29 @@ export default function PsychologistPublicProfile() {
     return (
       <div className={styles.page}>
         <div className={styles.wrap}>
-          <div className={styles.section}><p>Cargando perfil...</p></div>
+          <div className={styles.section}>
+            <p>Cargando perfil...</p>
+          </div>
         </div>
       </div>
     );
   }
   if (profile === null) {
     return (
-       <div className={styles.page}>
+      <div className={styles.page}>
         <div className={styles.wrap}>
           <div className={styles.section}>
             <p>Perfil no encontrado.</p>
             <div className={styles.footerActions}>
-              <button className={styles.secondaryBtn} onClick={() => navigate(-1)}>Volver</button>
-              <Link className={styles.primaryBtn} to="/">Ir al Inicio</Link>
+              <button
+                className={styles.secondaryBtn}
+                onClick={() => navigate(-1)}
+              >
+                Volver
+              </button>
+              <Link className={styles.primaryBtn} to="/">
+                Ir al Inicio
+              </Link>
             </div>
           </div>
         </div>
@@ -180,41 +210,49 @@ export default function PsychologistPublicProfile() {
     specialities,
     professional_description,
     user_id,
-    user
+    user,
   } = profile;
 
-const psychologistName = user?.first_name && user?.last_name 
-      ? `${user.first_name} ${user.last_name}` 
+  const psychologistName =
+    user?.first_name && user?.last_name
+      ? `${user.first_name} ${user.last_name}`
       : `Psicólogo/a #${user_id ?? "N/D"}`;
-  
+
   // Elige la inicial desde el objeto 'user'
-  const fallbackInitial = user?.first_name ? user.first_name[0].toUpperCase() : 'P';
-  
+  const fallbackInitial = user?.first_name
+    ? user.first_name[0].toUpperCase()
+    : "P";
+
   // Elige la foto de perfil (la del perfil de psicólogo o la del avatar de google)
   const photoToShow = photo || user?.avatar;
 
   // Mapea las especialidades para mostrarlas
-  const specialtiesText = specialities && specialities.length > 0
-    ? specialities.map(s => s.name).join(', ')
-    : "Especialidad no especificada";
+  const specialtiesText =
+    specialities && specialities.length > 0
+      ? specialities.map((s) => s.name).join(", ")
+      : "Especialidad no especificada";
 
-return (
+  return (
     <div className={styles.page}>
       <div className={styles.wrap}>
         {/* --- Cabecera --- */}
         <div className={styles.headerCard}>
           <div className={styles.avatar}>
-            {photoToShow // <-- Variable actualizada
-              ? <img src={photoToShow} alt={`Foto de ${psychologistName}`} />
-              : <div className={styles.avatarFallback}>{fallbackInitial}</div>}
+            {photoToShow ? ( // <-- Variable actualizada
+              <img src={photoToShow} alt={`Foto de ${psychologistName}`} />
+            ) : (
+              <div className={styles.avatarFallback}>{fallbackInitial}</div>
+            )}
           </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.name}>
               {psychologistName} {/* <-- Variable actualizada */}
             </h1>
             {/* Usamos la variable de especialidades */}
-            <p className={styles.specialty}>{specialtiesText}</p> 
-            <p className={styles.license}>Licencia: {license_number || "N/D"}</p>
+            <p className={styles.specialty}>{specialtiesText}</p>
+            <p className={styles.license}>
+              Licencia: {license_number || "N/D"}
+            </p>
           </div>
         </div>
 
@@ -224,7 +262,8 @@ return (
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Sobre mí</h2>
             <p className={styles.description}>
-              {professional_description || "Este profesional aún no ha añadido su descripción."}
+              {professional_description ||
+                "Este profesional aún no ha añadido su descripción."}
             </p>
           </section>
 
@@ -232,42 +271,52 @@ return (
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Agenda tu cita</h2>
             {calendarEvents.length === 0 && !loading ? (
-                 <p className={styles.muted}>Este profesional no tiene horarios disponibles publicados en las próximas 4 semanas.</p>
+              <p className={styles.muted}>
+                Este profesional no tiene horarios disponibles publicados en las
+                próximas 4 semanas.
+              </p>
             ) : (
-              <div className={styles.calendarContainer} style={{ height: '65vh', minHeight: '550px' }}> {/* Ajustar altura si es necesario */}
+              <div
+                className={styles.calendarContainer}
+                style={{ height: "65vh", minHeight: "550px" }}
+              >
+                {" "}
+                {/* Ajustar altura si es necesario */}
                 <Calendar
                   localizer={localizer}
-                  culture='es'
+                  culture="es"
                   events={calendarEvents}
                   startAccessor="start"
                   endAccessor="end"
-                  defaultView={Views.WEEK} 
-                  views={[Views.WEEK, Views.DAY]} 
+                  defaultView={Views.WEEK}
+                  views={[Views.WEEK, Views.DAY]}
                   selectable={false} // Deshabilitar selección de rango de tiempo
                   onSelectEvent={handleSlotSelect} // Solo permitir clic en eventos
-                  eventPropGetter={eventPropGetter} 
-                  min={setHours(new Date(), 8)}  
+                  eventPropGetter={eventPropGetter}
+                  min={setHours(new Date(), 8)}
                   max={setHours(new Date(), 21)} // Extender hasta las 9 PM?
-                  step={60} 
-                  timeslots={1} 
-                  messages={{ 
+                  step={60}
+                  timeslots={1}
+                  messages={{
                     next: "Sig >", // Flechas más claras
                     previous: "< Ant",
                     today: "Hoy",
                     week: "Semana",
                     day: "Día",
                     // Ocultar textos no usados
-                    // month: "Mes", 
+                    // month: "Mes",
                     // agenda: "Agenda",
                     // date: "Fecha",
                     // time: "Hora",
-                    // event: "Evento", 
-                    noEventsInRange: "No hay horarios disponibles en esta vista.",
-                    showMore: total => `+ ${total} más` // Texto más corto
+                    // event: "Evento",
+                    noEventsInRange:
+                      "No hay horarios disponibles en esta vista.",
+                    showMore: (total) => `+ ${total} más`, // Texto más corto
                   }}
-                  formats={{ // Formato de hora en la columna izquierda
-                     timeGutterFormat: (date, culture, localizer) =>
-                       localizer.format(date, 'H:mm', culture), // Formato 24h
+                  formats={{
+                    // Formato de hora en la columna izquierda
+                    timeGutterFormat: (date, culture, localizer) =>
+                      localizer.format(date, "H:mm", culture), // Formato 24h
                   }}
                   dayLayoutAlgorithm="no-overlap" // Evitar solapamiento visual
                 />
@@ -278,7 +327,9 @@ return (
 
         {/* --- Acciones Footer --- */}
         <div className={styles.footerActions}>
-          <Link className={styles.secondaryBtn} to="/">Volver al inicio</Link>
+          <Link className={styles.secondaryBtn} to="/">
+            Volver al inicio
+          </Link>
         </div>
       </div>
     </div>
