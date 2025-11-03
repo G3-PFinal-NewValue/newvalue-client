@@ -38,7 +38,7 @@ export async function createAppointment(appointmentData) {
 export async function cancelAppointment(appointmentId) {
   try {
     const response = await api.put(`/appointment/${appointmentId}`, {
-      status: 'cancelled'
+      status: "cancelled",
     });
     return response.data;
   } catch (error) {
@@ -55,7 +55,9 @@ export async function cancelAppointment(appointmentId) {
 export async function getPsychologistAppointments(psychologistId) {
   if (!psychologistId) return [];
   try {
-    const response = await api.get(`/appointment?psychologist_id=${psychologistId}`);
+    const response = await api.get(
+      `/appointment?psychologist_id=${psychologistId}`
+    );
     return response.data.appointments || response.data || [];
   } catch (error) {
     console.error("Error al obtener citas del psicólogo:", error);
@@ -67,9 +69,13 @@ export async function getPsychologistAppointments(psychologistId) {
         psychologist_id: psychologistId,
         date: new Date(Date.now() + 86400000).toISOString(),
         duration_minutes: 45,
-        status: 'pending',
-        patient: { first_name: 'Ana', last_name: 'García', email: 'ana@email.com' }
-      }
+        status: "pending",
+        patient: {
+          first_name: "Ana",
+          last_name: "García",
+          email: "ana@email.com",
+        },
+      },
     ];
   }
 }
@@ -82,7 +88,7 @@ export async function getPsychologistAppointments(psychologistId) {
 export async function confirmAppointment(appointmentId) {
   try {
     const response = await api.patch(`/appointment/${appointmentId}`, {
-      status: 'confirmed'
+      status: "confirmed",
     });
     return response.data;
   } catch (error) {
@@ -99,7 +105,7 @@ export async function confirmAppointment(appointmentId) {
 export async function rejectAppointment(appointmentId) {
   try {
     const response = await api.patch(`/appointment/${appointmentId}`, {
-      status: 'cancelled'
+      status: "cancelled",
     });
     return response.data;
   } catch (error) {

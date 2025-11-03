@@ -1,9 +1,13 @@
 // src/pages/private/PsychologistDashboardPage/PsychologistDashboardPage.jsx
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
-import { getPsychologistAppointments, confirmAppointment, rejectAppointment } from '../../../services/appointmentService';
-import { getPatientsByPsychologist } from '../../../services/patientService';
-import styles from './PsychologistDashboardPage.module.css';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import {
+  getPsychologistAppointments,
+  confirmAppointment,
+  rejectAppointment,
+} from "../../../services/appointmentService";
+import { getPatientsByPsychologist } from "../../../services/patientService";
+import styles from "./PsychologistDashboardPage.module.css";
 
 export default function PsychologistDashboardPage() {
   const { user } = useAuth();
@@ -16,45 +20,51 @@ export default function PsychologistDashboardPage() {
   useEffect(() => {
     const loadDashboardData = async () => {
       if (!user?.id) return;
-      
+
       setLoading(true);
       setError(null);
-      
+
       try {
         const psychologistId = user.id;
         const [appointmentsData, patientsData] = await Promise.allSettled([
           getPsychologistAppointments(psychologistId),
-          getPatientsByPsychologist(psychologistId)
+          getPatientsByPsychologist(psychologistId),
         ]);
 
         // Procesar citas
-        if (appointmentsData.status === 'fulfilled') {
+        if (appointmentsData.status === "fulfilled") {
           const allAppointments = appointmentsData.value || [];
-          
+
           // Separar citas por estado
           const now = new Date();
           const pendingAppointments = allAppointments
-            .filter(app => app.status === 'pending' && new Date(app.date) > now)
-            .sort((a, b) => new Date(a.date) - new Date(b.date));
-          
-          const confirmedAppointments = allAppointments
-            .filter(app => app.status === 'confirmed' && new Date(app.date) > now)
+            .filter(
+              (app) => app.status === "pending" && new Date(app.date) > now
+            )
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          setAppointments({ pending: pendingAppointments, confirmed: confirmedAppointments });
+          const confirmedAppointments = allAppointments
+            .filter(
+              (app) => app.status === "confirmed" && new Date(app.date) > now
+            )
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+          setAppointments({
+            pending: pendingAppointments,
+            confirmed: confirmedAppointments,
+          });
         } else {
           console.error("Error cargando citas:", appointmentsData.reason);
           setAppointments({ pending: [], confirmed: [] });
         }
 
         // Procesar pacientes
-        if (patientsData.status === 'fulfilled') {
+        if (patientsData.status === "fulfilled") {
           setPatients(patientsData.value || []);
         } else {
           console.error("Error cargando pacientes:", patientsData.reason);
           setPatients([]);
         }
-
       } catch (err) {
         console.error("Error cargando datos del dashboard:", err);
         setError("No se pudieron cargar los datos del dashboard.");
@@ -72,19 +82,23 @@ export default function PsychologistDashboardPage() {
     setProcessingAppointment(appointmentId);
     try {
       await confirmAppointment(appointmentId);
-      
+
       // Actualizar las listas localmente
-      setAppointments(prev => {
-        const appointmentToConfirm = prev.pending.find(app => app.id === appointmentId);
+      setAppointments((prev) => {
+        const appointmentToConfirm = prev.pending.find(
+          (app) => app.id === appointmentId
+        );
         if (!appointmentToConfirm) return prev;
-        
+
         return {
-          pending: prev.pending.filter(app => app.id !== appointmentId),
-          confirmed: [...prev.confirmed, { ...appointmentToConfirm, status: 'confirmed' }]
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
+          pending: prev.pending.filter((app) => app.id !== appointmentId),
+          confirmed: [
+            ...prev.confirmed,
+            { ...appointmentToConfirm, status: "confirmed" },
+          ].sort((a, b) => new Date(a.date) - new Date(b.date)),
         };
       });
-      
+
       alert("Cita confirmada exitosamente");
     } catch (error) {
       console.error("Error al confirmar cita:", error);
@@ -96,17 +110,17 @@ export default function PsychologistDashboardPage() {
 
   const handleRejectAppointment = async (appointmentId) => {
     if (!confirm("¿Estás seguro de que quieres rechazar esta cita?")) return;
-    
+
     setProcessingAppointment(appointmentId);
     try {
       await rejectAppointment(appointmentId);
-      
+
       // Remover de las listas localmente
-      setAppointments(prev => ({
-        pending: prev.pending.filter(app => app.id !== appointmentId),
-        confirmed: prev.confirmed.filter(app => app.id !== appointmentId)
+      setAppointments((prev) => ({
+        pending: prev.pending.filter((app) => app.id !== appointmentId),
+        confirmed: prev.confirmed.filter((app) => app.id !== appointmentId),
       }));
-      
+
       alert("Cita rechazada");
     } catch (error) {
       console.error("Error al rechazar cita:", error);
@@ -118,13 +132,13 @@ export default function PsychologistDashboardPage() {
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleString("es-ES", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -159,7 +173,8 @@ export default function PsychologistDashboardPage() {
         {/* Sección Citas Pendientes */}
         <section className={`${styles.section} ${styles.pendingSection}`}>
           <h2 className={styles.sectionTitle}>
-            Citas Pendientes de Confirmación ({appointments.pending?.length || 0})
+            Citas Pendientes de Confirmación (
+            {appointments.pending?.length || 0})
           </h2>
           {appointments.pending?.length > 0 ? (
             <ul className={styles.appointmentsList}>
@@ -182,21 +197,27 @@ export default function PsychologistDashboardPage() {
                       onClick={() => handleConfirmAppointment(app.id)}
                       disabled={processingAppointment === app.id}
                     >
-                      {processingAppointment === app.id ? "Confirmando..." : "Confirmar"}
+                      {processingAppointment === app.id
+                        ? "Confirmando..."
+                        : "Confirmar"}
                     </button>
                     <button
                       className={styles.rejectButton}
                       onClick={() => handleRejectAppointment(app.id)}
                       disabled={processingAppointment === app.id}
                     >
-                      {processingAppointment === app.id ? "Rechazando..." : "Rechazar"}
+                      {processingAppointment === app.id
+                        ? "Rechazando..."
+                        : "Rechazar"}
                     </button>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className={styles.emptyMessage}>No tienes citas pendientes de confirmación.</p>
+            <p className={styles.emptyMessage}>
+              No tienes citas pendientes de confirmación.
+            </p>
           )}
         </section>
 
@@ -216,21 +237,23 @@ export default function PsychologistDashboardPage() {
                     <span className={styles.patientName}>
                       {getPatientName(app)}
                     </span>
-                    <span className={styles.status}>
-                      ✅ Confirmada
-                    </span>
+                    <span className={styles.status}>✅ Confirmada</span>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className={styles.emptyMessage}>No tienes próximas citas confirmadas.</p>
+            <p className={styles.emptyMessage}>
+              No tienes próximas citas confirmadas.
+            </p>
           )}
         </section>
 
         {/* Sección Mis Pacientes */}
         <section className={`${styles.section} ${styles.patientsSection}`}>
-          <h2 className={styles.sectionTitle}>Mis Pacientes ({patients.length})</h2>
+          <h2 className={styles.sectionTitle}>
+            Mis Pacientes ({patients.length})
+          </h2>
           {patients.length > 0 ? (
             <ul className={styles.patientsList}>
               {patients.map((patient) => (
@@ -238,14 +261,14 @@ export default function PsychologistDashboardPage() {
                   <span className={styles.patientName}>
                     {patient.first_name} {patient.last_name}
                   </span>
-                  <span className={styles.patientEmail}>
-                    {patient.email}
-                  </span>
+                  <span className={styles.patientEmail}>{patient.email}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className={styles.emptyMessage}>Aún no tienes pacientes asignados.</p>
+            <p className={styles.emptyMessage}>
+              Aún no tienes pacientes asignados.
+            </p>
           )}
         </section>
       </div>

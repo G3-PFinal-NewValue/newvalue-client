@@ -1,8 +1,8 @@
 import api from "./apiClient";
 
 /**
- * @param {string|number} userId 
- * @returns {Promise<object|null>} 
+ * @param {string|number} userId
+ * @returns {Promise<object|null>}
  */
 export async function getPatientProfileById(userId) {
   if (!userId) {
@@ -20,7 +20,7 @@ export async function getPatientProfileById(userId) {
       return null;
     }
     console.error(`Error al obtener el perfil del paciente ${userId}:`, error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -43,23 +43,31 @@ export async function createPatientProfile(formData) {
 
 /**
  * Actualiza un perfil de paciente existente.
- * @param {string|number} userId 
- * @param {FormData} formData 
- * @returns {Promise<object>} 
+ * @param {string|number} userId
+ * @param {FormData} formData
+ * @returns {Promise<object>}
  */
 export async function updatePatientProfile(userId, formData) {
-   if (!userId) {
+  if (!userId) {
     console.error("updatePatientProfile: Se requiere userId");
     throw new Error("User ID is required");
   }
   try {
-    console.log(`Enviando datos actualizados (FormData) a PUT /patient/${userId}...`);
+    console.log(
+      `Enviando datos actualizados (FormData) a PUT /patient/${userId}...`
+    );
     const response = await api.put(`/patient/${userId}`, formData);
-    console.log("Respuesta de actualización de perfil paciente:", response.data);
-   
+    console.log(
+      "Respuesta de actualización de perfil paciente:",
+      response.data
+    );
+
     return response.data.patient;
   } catch (error) {
-    console.error(`Error al actualizar el perfil del paciente ${userId}:`, error);
+    console.error(
+      `Error al actualizar el perfil del paciente ${userId}:`,
+      error
+    );
     throw error;
   }
 }
@@ -76,8 +84,20 @@ export async function getAllPatients() {
     console.error("Error al obtener pacientes:", error);
     // Datos de fallback
     return [
-      { id: 1, first_name: "Ana", last_name: "García", email: "ana@email.com", role: "patient" },
-      { id: 2, first_name: "Pedro", last_name: "Martín", email: "pedro@email.com", role: "patient" }
+      {
+        id: 1,
+        first_name: "Ana",
+        last_name: "García",
+        email: "ana@email.com",
+        role: "patient",
+      },
+      {
+        id: 2,
+        first_name: "Pedro",
+        last_name: "Martín",
+        email: "pedro@email.com",
+        role: "patient",
+      },
     ];
   }
 }
@@ -89,22 +109,34 @@ export async function getAllPatients() {
  */
 export async function getPatientsByPsychologist(psychologistId) {
   if (!psychologistId) return [];
-  
+
   try {
     // Intentar obtener pacientes específicos del psicólogo
     const response = await api.get(`/psychologist/${psychologistId}/patients`);
     return response.data || [];
   } catch (error) {
     console.error("Error al obtener pacientes del psicólogo:", error);
-    
+
     // Fallback: obtener todos los pacientes como respuesta por defecto
     try {
       const allPatients = await getAllPatients();
       return allPatients.slice(0, 3); // Limitar a 3 para simular relación
     } catch {
       return [
-        { id: 1, first_name: "Ana", last_name: "García", email: "ana@email.com", role: "patient" },
-        { id: 2, first_name: "Pedro", last_name: "Martín", email: "pedro@email.com", role: "patient" }
+        {
+          id: 1,
+          first_name: "Ana",
+          last_name: "García",
+          email: "ana@email.com",
+          role: "patient",
+        },
+        {
+          id: 2,
+          first_name: "Pedro",
+          last_name: "Martín",
+          email: "pedro@email.com",
+          role: "patient",
+        },
       ];
     }
   }
