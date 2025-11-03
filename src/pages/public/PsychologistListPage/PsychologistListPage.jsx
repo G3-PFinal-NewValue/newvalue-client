@@ -1,93 +1,68 @@
 import { useState, useEffect, useMemo } from 'react';
 import { getAllPsychologistProfiles } from '../../../services/psychologistsService';
+import { getAllSpecialities } from '../../../services/specialityService';
 import PsychologistCard from '../../../components/common/PsychologistCard/PsychologistCard';
 import styles from './PsychologistListPage.module.css';
 
 // Lista de especialidades (mantenida por si la necesitas más adelante)
-const SPECIALTIES = [
-  "Terapia Cognitivo-Conductual",
-  "Ansiedad y Estrés",
-  "Depresión",
-  "Terapia de Pareja",
-  "Mindfulness",
-  "Duelo",
-  "Trastornos del Sueño",
-  "Otro",
-];
-
 const ITEMS_PER_PAGE = 6;
 
 export default function PsychologistListPage() {
+  const [displayedPsychologists, setDisplayedPsychologists] = useState([]); // Lista filtrada por la API
   const [allPsychologists, setAllPsychologists] = useState([]); // Lista original
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [allSpecialties, setAllSpecialties] = useState([]); // Para poblar el dropdown
   const [selectedSpecialty, setSelectedSpecialty] = useState(''); // Estado para el filtro
   const [currentPage, setCurrentPage] = useState(1); // Estado para página actual
 
+
   useEffect(() => {
+    getAllSpecialities()
+      .then(data => {
+        setAllSpecialties(data);
+      })
+      .catch(err => {
+        console.error("Error cargando especialidades:", err);
+        // Opcional: mostrar un error al usuario
+      });
+  }, []); // El array vacío significa que solo se ejecuta al montar
+
+useEffect(() => {
     setLoading(true);
     setError(null);
-    getAllPsychologistProfiles() // Llama a la función del servicio
+    
+    // 7. Pasa el ID seleccionado (o null/undefined) al servicio
+    getAllPsychologistProfiles(selectedSpecialty)
       .then(profiles => {
-        console.log("API Response (raw):", profiles); // DEBUG 1
-        // Asegurémonos de que SIEMPRE sea un array
         const profilesArray = Array.isArray(profiles) ? profiles : [];
-        console.log("Setting allPsychologists to:", profilesArray); // DEBUG 2
-        setAllPsychologists(profilesArray);
+        setDisplayedPsychologists(profilesArray);
+        setCurrentPage(1); // Resetea a la página 1 cada vez que el filtro cambia
         setLoading(false);
       })
       .catch(err => {
         console.error("Error cargando psicólogos (API):", err);
         setError("No se pudieron cargar los perfiles.");
-        setAllPsychologists([]); // Asegura array vacío en error
+        setDisplayedPsychologists([]); 
         setLoading(false);
       });
-  }, []);
+  }, [selectedSpecialty]);
 
-  // Lista filtrada (Temporalmente devuelve todos)
-  const filteredPsychologists = useMemo(() => {
-    console.log("Calculating filteredPsychologists. allPsychologists:", allPsychologists, "selectedSpecialty:", selectedSpecialty); // DEBUG 3
-    setCurrentPage(1); // Reset page on filter change
 
-    // 👇 TEMPORALMENTE IGNORAMOS EL FILTRO 👇
-    return allPsychologists; // Siempre devuelve todos por ahora
-
-    /* Lógica original comentada:
-    if (!selectedSpecialty) {
-      return allPsychologists;
-    }
-    if (!Array.isArray(allPsychologists)) {
-        console.warn("allPsychologists is not an array in filteredPsychologists memo!");
-        return [];
-    }
-    // ESTA LÓGICA NECESITA AJUSTE PORQUE 'psy.specialty' NO EXISTE DIRECTAMENTE
-    return allPsychologists.filter(
-      (psy) => psy.specialty === selectedSpecialty // Esto necesitará cambiar
-    );
-    */
-  }, [allPsychologists /* , selectedSpecialty */]); // Quitamos selectedSpecialty de las dependencias temporalmente
-
-  // Datos para la paginación
-  const paginationData = useMemo(() => {
-    // DEBUG 4: Verifica el tipo JUSTO ANTES de usar .slice()
-    console.log("Calculating paginationData. filteredPsychologists:", filteredPsychologists, "Type:", typeof filteredPsychologists, "Is Array:", Array.isArray(filteredPsychologists));
-
-    // Guarda para evitar el crash si filteredPsychologists no es array
-    if (!Array.isArray(filteredPsychologists)) {
-        console.error("¡filteredPsychologists NO es un array justo antes de slice!");
+const paginationData = useMemo(() => {
+    if (!Array.isArray(displayedPsychologists)) {
         return {
-            totalItems: 0, totalPages: 0, startIndex: 0, endIndex: 0,
-            currentPage: 1, currentPsychologists: []
+            totalItems: 0, totalPages: 0, currentPage: 1, currentPsychologists: []
         };
     }
 
-    const totalItems = filteredPsychologists.length;
+    const totalItems = displayedPsychologists.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
     const validCurrentPage = Math.min(currentPage, totalPages > 0 ? totalPages : 1);
     const startIndex = (validCurrentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
 
-    const currentPsychologists = filteredPsychologists.slice(startIndex, endIndex); // <-- Línea 63 aprox.
+    const currentPsychologists = displayedPsychologists.slice(startIndex, endIndex);
 
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
@@ -98,12 +73,10 @@ export default function PsychologistListPage() {
     return {
       totalItems,
       totalPages,
-      startIndex,
-      endIndex,
       currentPage: validCurrentPage,
       currentPsychologists,
     };
-  }, [filteredPsychologists, currentPage]);
+  }, [displayedPsychologists, currentPage]); 
 
   // --- Manejadores ---
   const handleFilterChange = (event) => {
@@ -128,66 +101,55 @@ export default function PsychologistListPage() {
      return <div className={styles.pageContainer}><p className={styles.errorMessage}>{error}</p></div>;
   }
 
-  return (
+return (
     <div className={styles.pageContainer}>
       <h1 className={styles.pageTitle}>Encuentra a tu psicólogo</h1>
 
-      {/* Filtros */}
-      {!loading && !error && allPsychologists.length > 0 && (
-        <div className={styles.filtersContainer}>
-          <label htmlFor="specialtyFilter" className={styles.filterLabel}>Filtrar por especialidad:</label>
-          <select
-            id="specialtyFilter"
-            value={selectedSpecialty}
-            onChange={handleFilterChange}
-            className={styles.filterSelect}
-          >
-            <option value="">-- Todas las especialidades --</option>
-            {SPECIALTIES.map((spec) => (
-              <option key={spec} value={spec}>
-                {spec}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div className={styles.filtersContainer}>
+        <label htmlFor="specialtyFilter" className={styles.filterLabel}>Filtrar por especialidad:</label>
+        <select
+          id="specialtyFilter"
+          value={selectedSpecialty}
+          onChange={handleFilterChange}
+          className={styles.filterSelect}
+        >
+          <option value="">-- Todas las especialidades --</option>
+          {/* Mapea desde el estado 'allSpecialties' */}
+          {allSpecialties.map((spec) => (
+            <option key={spec.id} value={spec.id}> {/* <-- El valor es el ID */}
+              {spec.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Grid y Mensajes */}
       <>
-        <div className={styles.listGrid}>
-          {paginationData.currentPsychologists.length > 0 ? (
-            paginationData.currentPsychologists.map((psy) => (
-              // 👇 KEY CORREGIDA 👇
-              <PsychologistCard key={psy.user_id} psychologist={psy} />
-            ))
-          ) : (
-            <p className={styles.noResultsMessage}>
-              {/* Ajustar mensaje si es necesario */}
-              No hay psicólogos disponibles en este momento.
-            </p>
-          )}
-        </div>
+        {/* Mostramos 'loading' aquí si solo están cargando los psicólogos */}
+        {loading && <p className={styles.loadingMessage}>Filtrando psicólogos...</p>}
+
+        {!loading && (
+          <div className={styles.listGrid}>
+            {paginationData.currentPsychologists.length > 0 ? (
+              paginationData.currentPsychologists.map((psy) => (
+                <PsychologistCard key={psy.user_id} psychologist={psy} />
+              ))
+            ) : (
+              <p className={styles.noResultsMessage}>
+                {/* Mensaje dinámico */}
+                {selectedSpecialty
+                  ? "No hay psicólogos con la especialidad seleccionada."
+                  : "No hay psicólogos disponibles en este momento."
+                }
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Paginación */}
-        {paginationData.totalPages > 1 && (
+        {!loading && paginationData.totalPages > 1 && (
           <div className={styles.paginationContainer}>
-            <button
-              onClick={goToPreviousPage}
-              disabled={paginationData.currentPage === 1}
-              className={styles.paginationButton}
-            >
-              &lt; Anterior
-            </button>
-            <span className={styles.paginationInfo}>
-              Página {paginationData.currentPage} de {paginationData.totalPages}
-            </span>
-            <button
-              onClick={goToNextPage}
-              disabled={paginationData.currentPage === paginationData.totalPages}
-              className={styles.paginationButton}
-            >
-              Siguiente &gt;
-            </button>
+            {/* ... (botones de paginación sin cambios) ... */}
           </div>
         )}
       </>

@@ -1,12 +1,10 @@
 // src/pages/private/PatientAppointmentsPage/PatientAppointmentsPage.jsx
 import { useState, useEffect } from "react";
 import styles from "./PatientAppointmentsPage.module.css";
-
-// ... (DATETIME_FORMAT como antes) ...
-const DATETIME_FORMAT = {
-  dateStyle: "long", // ej: "23 de octubre de 2025"
-  timeStyle: "short", // ej: "10:30"
-};
+import {
+  getMyAppointments,
+  cancelAppointment,
+} from "../../../services/appointmentService";
 
 export default function PatientAppointmentsPage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
@@ -20,87 +18,120 @@ export default function PatientAppointmentsPage() {
   };
 
   useEffect(() => {
-    // --- Simulación de carga de datos de citas ---
     setLoading(true);
     setError(null);
-    console.log("Simulando carga de citas...");
+    console.log("Cargando citas reales...");
 
-    setTimeout(() => {
-      try {
-        const mockAppointments = [
-          {
-            id: 1,
-            psychologistName: "Dr. García",
-            dateTime: new Date(2025, 9, 28, 10, 30),
-            status: "confirmada",
-          },
-          {
-            id: 2,
-            psychologistName: "Dra. López",
-            dateTime: new Date(2025, 10, 5, 16, 0),
-            status: "confirmada",
-          },
-          {
-            id: 3,
-            psychologistName: "Dr. García",
-            dateTime: new Date(2025, 9, 15, 11, 0),
-            status: "completada",
-          },
-          {
-            id: 4,
-            psychologistName: "Dra. Martín",
-            dateTime: new Date(2025, 8, 20, 9, 30),
-            status: "completada",
-          },
-        ];
+    getMyAppointments()
+      .then((data) => {
+        // El backend devuelve un objeto { appointments: [...] }
+        const allAppointments = data.appointments || [];
 
+        // Parsear los datos reales
+        const parsedAppointments = allAppointments.map((app) => ({
+          id: app.id,
+          // El backend envía el objeto 'psychologist' anidado
+          psychologistName: app.psychologist
+            ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
+            : "Psicólogo no asignado",
+          // El backend envía 'date' como un string ISO (ej: "2025-10-28T10:30:00.000Z")
+          dateTime: new Date(app.date),
+          status: app.status,
+        }));
+
+        // La lógica de filtrado se mantiene, pero ahora usa los datos parseados
         const now = new Date();
-        const upcoming = mockAppointments
-          .filter((a) => a.dateTime >= now)
+        const upcoming = parsedAppointments
+          .filter(
+            (a) =>
+              a.dateTime >= now &&
+              (a.status === "confirmada" || a.status === "pending")
+          )
           .sort((a, b) => a.dateTime - b.dateTime);
 
-        const past = mockAppointments
-          .filter((a) => a.dateTime < now)
+        const past = parsedAppointments
+          .filter(
+            (a) =>
+              a.dateTime < now ||
+              a.status === "completada" ||
+              a.status === "cancelled"
+          )
           .sort((a, b) => b.dateTime - a.dateTime);
 
         setUpcomingAppointments(upcoming);
         setPastAppointments(past);
-        console.log("Citas simuladas cargadas:", { upcoming, past });
-      } catch (err) {
-        console.error("Error simulando carga de citas:", err);
+        console.log("Citas reales cargadas:", { upcoming, past });
+      })
+      .catch((err) => {
+        console.error("Error cargando citas:", err);
         setError("No se pudieron cargar tus citas.");
         setUpcomingAppointments([]);
         setPastAppointments([]);
-      } finally {
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    }, 800);
+      });
   }, []);
 
-  // --- Manejadores de Acciones (Simulados) ---
-  const handleCancelAppointment = (appointmentId) => {
-    // Simulación: Confirmar antes de cancelar
-    if (window.confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
-      alert(`Simulación: Cancelando cita con ID ${appointmentId}...`);
-      // Lógica real: Llamar a la API para cancelar
-      // y luego actualizar el estado local (ej. mover a pasadas o filtrar)
-      setUpcomingAppointments((prev) =>
-        prev.filter((app) => app.id !== appointmentId)
-      );
-      // Podríamos añadirla a 'pastAppointments' con estado 'cancelada'
-    }
-  };
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    console.log("Cargando citas reales...");
 
-  const handleRescheduleAppointment = (appointmentId) => {
-    alert(
-      `Simulación: Reprogramar cita con ID ${appointmentId}. (Esta función requiere más desarrollo, como mostrar un calendario)`
-    );
-    // Lógica real: Podría redirigir a la página del psicólogo
-    // o abrir un modal con su calendario para elegir nueva fecha/hora.
-  };
+    getMyAppointments()
+      .then((data) => {
+        // El backend devuelve un objeto { appointments: [...] }
+        const allAppointments = data.appointments || [];
+
+        // Parsear los datos reales
+        const parsedAppointments = allAppointments.map((app) => ({
+          id: app.id,
+          // El backend envía el objeto 'psychologist' anidado
+          psychologistName: app.psychologist
+            ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
+            : "Psicólogo no asignado",
+          // El backend envía 'date' como un string ISO (ej: "2025-10-28T10:30:00.000Z")
+          dateTime: new Date(app.date),
+          status: app.status,
+        }));
+
+        // La lógica de filtrado se mantiene, pero ahora usa los datos parseados
+        const now = new Date();
+        const upcoming = parsedAppointments
+          .filter(
+            (a) =>
+              a.dateTime >= now &&
+              (a.status === "confirmada" || a.status === "pending")
+          )
+          .sort((a, b) => a.dateTime - b.dateTime);
+
+        const past = parsedAppointments
+          .filter(
+            (a) =>
+              a.dateTime < now ||
+              a.status === "completada" ||
+              a.status === "cancelled"
+          )
+          .sort((a, b) => b.dateTime - a.dateTime);
+
+        setUpcomingAppointments(upcoming);
+        setPastAppointments(past);
+        console.log("Citas reales cargadas:", { upcoming, past });
+      })
+      .catch((err) => {
+        console.error("Error cargando citas:", err);
+        setError("No se pudieron cargar tus citas.");
+        setUpcomingAppointments([]);
+        setPastAppointments([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className={styles.pageContainer}>
+      {/* ... (El JSX de 'return' se mantiene exactamente igual) ... */}
       <h1 className={styles.pageTitle}>Mis Citas</h1>
 
       {loading && <p className={styles.loadingMessage}>Cargando citas...</p>}
@@ -116,8 +147,6 @@ export default function PatientAppointmentsPage() {
                 {upcomingAppointments.map((app) => (
                   <li key={app.id} className={styles.appointmentItem}>
                     <div className={styles.appointmentInfo}>
-                      {" "}
-                      {/* Agrupar info */}
                       <span className={styles.dateTime}>
                         {app.dateTime.toLocaleString(
                           undefined,
@@ -135,7 +164,6 @@ export default function PatientAppointmentsPage() {
                         {app.status}
                       </span>
                     </div>
-                    {/* 👇 Contenedor para botones de acción 👇 */}
                     <div className={styles.actionButtons}>
                       <button
                         onClick={() => handleRescheduleAppointment(app.id)}
@@ -170,17 +198,26 @@ export default function PatientAppointmentsPage() {
                     key={app.id}
                     className={`${styles.appointmentItem} ${styles.pastAppointment}`}
                   >
-                    <span className={styles.dateTime}>
-                      {app.dateTime.toLocaleString(undefined, DATETIME_FORMAT)}{" "}
-                    </span>
-                    <span className={styles.psychologistName}>
-                      con {app.psychologistName}
-                    </span>
-                    <span
-                      className={`${styles.statusBadge} ${styles[app.status]}`}
-                    >
-                      {app.status}
-                    </span>
+                    <div className={styles.appointmentInfo}>
+                      {" "}
+                      {/* Añadido div para consistencia */}
+                      <span className={styles.dateTime}>
+                        {app.dateTime.toLocaleString(
+                          undefined,
+                          DATETIME_FORMAT
+                        )}{" "}
+                      </span>
+                      <span className={styles.psychologistName}>
+                        con {app.psychologistName}
+                      </span>
+                      <span
+                        className={`${styles.statusBadge} ${
+                          styles[app.status]
+                        }`}
+                      >
+                        {app.status}
+                      </span>
+                    </div>
                   </li>
                 ))}
               </ul>

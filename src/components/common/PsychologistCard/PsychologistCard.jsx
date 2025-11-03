@@ -5,35 +5,40 @@ export default function PsychologistCard({ psychologist }) {
   console.log("Data received in PsychologistCard:", psychologist);
 
   const {
-    photo_url,
-    first_name,
-    last_name,
+    photo,
+    user,
     user_id,
-    professional_description
+    specialities
   } = psychologist;
 
 
-  const psychologistName = first_name && last_name
-    ? `${first_name} ${last_name}`
+const psychologistName = user?.first_name && user?.last_name
+    ? `${user.first_name} ${user.last_name}`
     : `Psicólogo/a #${user_id ?? 'N/D'}`;
 
-  const fallbackInitial = first_name ? first_name[0].toUpperCase() : 'P';
+const fallbackInitial = user?.first_name ? user.first_name[0].toUpperCase() : 'P';
 
-  return (
+const photoToShow = photo || user?.avatar;
+
+const specialtyText = specialities && specialities.length > 0
+    ? specialities[0].name // Mostramos solo la primera para que quepa
+    : 'Especialidad no definida'; // Fallback
+
+return (
     <Link to={`/profile/${user_id}`} className={styles.cardLink}>
       <article className={styles.card}>
         <div className={styles.avatarContainer}>
-          {photo_url ? (
-            <img src={photo_url} alt={`Foto de ${psychologistName}`} className={styles.avatarImage} />
+          {photoToShow ? ( // <-- Usar photoToShow
+            <img src={photoToShow} alt={`Foto de ${psychologistName}`} className={styles.avatarImage} />
           ) : (
-            <div className={styles.avatarFallback}>{fallbackInitial}</div>
+            <div className={styles.avatarFallback}>{fallbackInitial}</div> // <-- Usar fallbackInitial
           )}
         </div>
         <div className={styles.infoContainer}>
           <h3 className={styles.name}>{psychologistName}</h3>
           
           <p className={styles.specialty}>
-            {professional_description?.substring(0, 50) + (professional_description?.length > 50 ? '...' : '') || 'Descripción no disponible'}
+            {specialtyText} {/* <-- Mostrar la especialidad */}
           </p>
         </div>
       </article>

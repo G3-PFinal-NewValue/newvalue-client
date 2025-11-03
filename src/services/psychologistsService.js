@@ -1,10 +1,22 @@
 import api from "./apiClient";
 
 // --- OBTENER TODOS LOS PERFILES ---
-export async function getAllPsychologistProfiles() {
+export async function getAllPsychologistProfiles(specialtyId = null) {
   try {
-    console.log("Llamando a la API para obtener todos los psicólogos...");
-    const response = await api.get("/psychologist"); 
+    // 1. Define la URL base
+    let url = "/psychologist";
+
+    // 2. Si se proporciona un ID de especialidad, añádelo como query param
+    // El backend espera 'specialities' (en plural)
+    if (specialtyId) {
+      url += `?specialities=${specialtyId}`;
+    }
+    
+    console.log(`Llamando a la API para obtener psicólogos: GET ${url}`);
+    
+    // 3. Realiza la llamada con la URL construida
+    const response = await api.get(url); 
+    
     console.log("Psicólogos recibidos:", response.data);
     return response.data;
   } catch (error) {
@@ -12,7 +24,6 @@ export async function getAllPsychologistProfiles() {
     throw error;
   }
 }
-
 // --- OBTENER UN PERFIL POR ID ---
 export async function getPsychologistProfileById(id) {
  
@@ -50,9 +61,19 @@ export async function createPsychologistProfile(formData) {
   }
 }
 
-// --- ACTUALIZAR PERFIL (Placeholder/Mock) ---
-export async function updatePsychologistProfile(id, payload) {
-   console.warn(`Simulación: Actualizar perfil ${id} con datos:`, payload);
-   await new Promise(r => setTimeout(r, 300));
-   return { id: Number(id), ...payload };
+export async function updatePsychologistProfile(id, formData) {
+   if (!id) {
+     console.error("updatePsychologistProfile: ID inválido");
+     throw new Error("ID de psicólogo no válido");
+  }
+  try {
+    console.log(`Enviando datos actualizados (FormData) a PUT /psychologist/${id}...`);
+    // Axios se encargará del 'multipart/form-data'
+    const response = await api.put(`/psychologist/${id}`, formData);
+    console.log("Respuesta de actualización de perfil:", response.data);
+    return response.data.profile; // El backend devuelve el perfil actualizado
+  } catch (error) {
+    console.error(`Error al actualizar el perfil del psicólogo ${id}:`, error);
+    throw error;
+  }
 }

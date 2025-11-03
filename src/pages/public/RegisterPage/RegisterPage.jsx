@@ -12,21 +12,26 @@ import { registerRequest } from "../../../services/authService";
 import styles from "./RegisterPage.module.css";
 import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
 
-
-
+// --- 1. ESQUEMA ZOD ACTUALIZADO ---
 const schema = z
   .object({
     first_name: z.string().min(2, "El nombre es obligatorio"),
     last_name: z.string().min(2, "El apellido es obligatorio"),
     email: z.string().email("Correo inválido"),
+    
+    // --- Campos nuevos/actualizados ---
+    phone: z.string().min(8, "Teléfono inválido (mín. 8 dígitos)"),
+    dni_nie_cif: z.string().min(5, "DNI/NIE/CIF es obligatorio"),
+    full_address: z.string().min(5, "La dirección es obligatoria"),
+    city: z.string().min(2, "La ciudad es obligatoria"),
+    province: z.string().min(2, "La provincia es obligatoria"),
+    postal_code: z.string().min(4, "El código postal es obligatorio"),
+    country: z.string().min(2, "El país es obligatorio"),
+    // --- Fin campos nuevos ---
+
     password: z.string().min(6, "Mínimo 6 caracteres"),
     confirm: z.string().min(6, "Confirma tu contraseña"),
     role: z.enum(["patient", "psychologist"]),
-    phone_number: z
-      .string()
-      .min(8, "Teléfono inválido")
-      .optional()
-      .or(z.literal("")),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Las contraseñas no coinciden",
@@ -45,24 +50,40 @@ export default function RegisterPage() {
     setValue,
   } = useForm({
     resolver: zodResolver(schema),
+    // --- 2. VALORES POR DEFECTO ACTUALIZADOS ---
     defaultValues: {
       first_name: "",
       last_name: "",
       email: "",
+      phone: "",
+      dni_nie_cif: "",
+      full_address: "",
+      city: "",
+      province: "",
+      postal_code: "",
+      country: "",
       password: "",
       confirm: "",
       role: "patient",
-      phone_number: "",
     },
   });
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values); // mock temporal
+      // 'values' ahora contiene todos los campos nuevos
+      const user = await registerRequest(values); 
       login(user);
-      navigate("/");
-    } catch {
-      alert("Error al registrarse");
+      
+      // Si se registra como psicólogo, lo mandamos al setup
+      if (user.role === 'psychologist') {
+        navigate("/app/profile");
+      } else {
+        // Si es paciente, lo mandamos al setup de paciente
+        navigate("/app/profile-setup/patient");
+      }
+
+    } catch(err) {
+      alert(`Error al registrarse: ${err.message || 'Error desconocido'}`);
     }
   };
 
@@ -82,11 +103,14 @@ export default function RegisterPage() {
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <GoogleSignInButton mode="signup"/>
 
+            {/* --- 3. FORMULARIO JSX ACTUALIZADO --- */}
+
+            {/* Datos Personales */}
             <TextInput
               label="Nombre"
               placeholder="Nombre"
-              error={errors.first_name?.message} // <-- CAMBIADO
-              {...register("first_name")} // <-- CAMBIADO
+              error={errors.first_name?.message}
+              {...register("first_name")}
             />
 
             <TextInput
@@ -95,7 +119,15 @@ export default function RegisterPage() {
               error={errors.last_name?.message}
               {...register("last_name")}
             />
+            
+            <TextInput
+              label="DNI / NIE / CIF"
+              placeholder="00000000X"
+              error={errors.dni_nie_cif?.message}
+              {...register("dni_nie_cif")}
+            />
 
+            {/* Datos de Contacto */}
             <TextInput
               label="Correo electrónico"
               placeholder="tucorreo@ejemplo.com"
@@ -105,11 +137,44 @@ export default function RegisterPage() {
 
             <TextInput
               label="Teléfono de Contacto"
-              placeholder=""
-              error={errors.phone_number?.message}
-              {...register("phone_number")}
+              placeholder="+34 600 000 000"
+              error={errors.phone?.message}
+              {...register("phone")} 
             />
 
+            {/* Datos de Dirección (para facturación) */}
+            <TextInput
+              label="Dirección Completa"
+              placeholder="Calle Falsa, 123, 4B"
+              error={errors.full_address?.message}
+              {...register("full_address")}
+            />
+            <TextInput
+              label="Ciudad"
+              placeholder="Madrid"
+              error={errors.city?.message}
+              {...register("city")}
+            />
+            <TextInput
+              label="Provincia"
+              placeholder="Madrid"
+              error={errors.province?.message}
+              {...register("province")}
+            />
+             <TextInput
+              label="Código Postal"
+              placeholder="28001"
+              error={errors.postal_code?.message}
+              {...register("postal_code")}
+            />
+             <TextInput
+              label="País"
+              placeholder="España"
+              error={errors.country?.message}
+              {...register("country")}
+            />
+
+            {/* Datos de Seguridad */}
             <PasswordInput
               label="Contraseña"
               error={errors.password?.message}
