@@ -5,9 +5,9 @@
   background: var(--color-bg);
   padding: var(--space-6) var(--space-4); /* 24px 16px */
 }
-.wrap { 
-    width: 100%; 
-    max-width: 720px; /* Mantenemos el ancho */
+.wrap {
+  width: 100%;
+  max-width: 720px; /* Mantenemos el ancho */
 }
 .card {
   background: var(--color-surface);
@@ -27,7 +27,7 @@
   text-align: center; /* Centrar subtítulo */
   margin: 0 auto var(--space-5); /* Centrado y con margen inferior */
   color: var(--color-text);
-  opacity: .85;
+  opacity: 0.85;
   font-size: 16px;
   max-width: 500px; /* Limitar ancho */
   line-height: 1.5;
@@ -58,154 +58,173 @@
   text-align: center;
   padding: 5px; /* Padding interno por si el texto es largo */
 }
-.photoLabel:hover { 
-    background: var(--color-brand-secondary); 
-    color: #fff; 
-    border-style: solid; /* Borde sólido al hacer hover */
+.photoLabel:hover {
+  background: var(--color-brand-secondary);
+  color: #fff;
+  border-style: solid; /* Borde sólido al hacer hover */
 }
-.photoPreview { width: 100%; height: 100%; object-fit: cover; }
-.photoHint { 
-    font-size: 13px; 
-    color: var(--color-text); 
-    opacity: .75; 
-    margin-top: var(--space-2); /* 8px */
-    text-align: center; 
+.photoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoHint {
+  font-size: 13px;
+  color: var(--color-text);
+  opacity: 0.75;
+  margin-top: var(--space-2); /* 8px */
+  text-align: center;
 }
 
 .specialtyBox {
-    display: grid; 
-    gap: var(--space-3); /* 12px */
-    padding: var(--space-4); /* Padding interno */
-    background-color: var(--color-bg); /* Fondo base */
-    border-radius: var(--radius-xl);
+  display: grid;
+  gap: var(--space-3); /* 12px */
+  padding: var(--space-4); /* Padding interno */
+  background-color: var(--color-bg); /* Fondo base */
+  border-radius: var(--radius-xl);
 }
 
 .specialtyGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--space-3); /* 12px */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3); /* 12px */
 }
 
 .checkboxLabel {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2); /* 8px */
-    padding: var(--space-2);
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid var(--color-bg-alt);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2); /* 8px */
+  padding: var(--space-2);
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid var(--color-bg-alt);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 .checkboxLabel:hover {
-    border-color: var(--color-brand-secondary);
-    background: #fdfaf6;
+  border-color: var(--color-brand-secondary);
+  background: #fdfaf6;
 }
 .checkboxLabel input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--color-brand-primary);
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-brand-primary);
 }
 .checkboxLabel span {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
 }
 /* --- Formulario General --- */
-.form { display: grid; gap: var(--space-5); } /* Más espacio entre campos (20px) */
-.group { display: grid; gap: var(--space-2); } /* 8px entre label e input */
-.label { 
-    font-weight: 600; 
-    font-size: 15px; 
-    color: var(--color-text); 
+.form {
+  display: grid;
+  gap: var(--space-5);
+} /* Más espacio entre campos (20px) */
+.group {
+  display: grid;
+  gap: var(--space-2);
+} /* 8px entre label e input */
+.label {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text);
 }
 
 /* Estilos para Select, Time, Textarea (unificados) */
-.select, .time, .textarea {
+.select,
+.time,
+.textarea {
   width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 10px;
   /* padding: 10px 12px; */ /* Quitamos el padding general aquí si estaba agrupado */
   background: #fff;
-  font: inherit; 
+  font: inherit;
   color: var(--color-text);
   transition: border-color 0.2s ease;
   /* appearance: none;  */ /* No aplica a textarea */
 }
 .select {
-    /* Añadir flecha personalizada para select */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-position: right 12px center;
-    background-repeat: no-repeat;
-    background-size: 1em;
-padding: 10px 32px 10px 12px;
+  /* Añadir flecha personalizada para select */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 1em;
+  padding: 10px 32px 10px 12px;
 }
 
-.select:focus, .time:focus, .textarea:focus {
-outline: none;
-  border-color: var(--color-brand-primary); 
+.select:focus,
+.time:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
   box-shadow: 0 0 0 2px rgba(238, 146, 113, 0.2);
 }
-.textarea { 
-resize: vertical; 
-    min-height: 100px; 
-    padding: 10px 16px 10px 12px; /* AÑADIDO/AJUSTADO: Padding derecho de 16px */
-    line-height: 1.5; /* Asegurar buena legibilidad */
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  padding: 10px 16px 10px 12px; /* AÑADIDO/AJUSTADO: Padding derecho de 16px */
+  line-height: 1.5; /* Asegurar buena legibilidad */
 }
 
-.error { color: #dc2626; font-size: 13px; margin-top: -4px; } /* Error más visible */
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: -4px;
+} /* Error más visible */
 
 /* --- Sección Disponibilidades --- */
-.availBox { 
-    display: grid; 
-    gap: var(--space-4); /* 16px */
-    margin-top: var(--space-2); /* Espacio extra arriba */
-    padding: var(--space-4); /* Padding interno */
-    background-color: var(--color-bg); /* Fondo base */
-    border-radius: var(--radius-xl);
+.availBox {
+  display: grid;
+  gap: var(--space-4); /* 16px */
+  margin-top: var(--space-2); /* Espacio extra arriba */
+  padding: var(--space-4); /* Padding interno */
+  background-color: var(--color-bg); /* Fondo base */
+  border-radius: var(--radius-xl);
 }
-.availHeader { 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
-    gap: var(--space-3);
+.availHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+  gap: var(--space-3);
 }
-.sectionTitle { 
-    margin: 0; 
-    font-family: var(--font-title);
-    font-size: 20px; 
-    font-weight: 600; 
-    color: var(--color-brand-title); 
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-brand-title);
 }
 
 .availRow {
   display: grid;
   /* Ajustar columnas para mejor alineación */
-  grid-template-columns: 1.5fr 1fr 1fr auto; 
+  grid-template-columns: 1.5fr 1fr 1fr auto;
   gap: var(--space-3); /* 12px */
   align-items: center;
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--color-bg-alt);
 }
- .availRow:last-of-type {
-     border-bottom: none; /* Sin borde en la última fila */
- }
+.availRow:last-of-type {
+  border-bottom: none; /* Sin borde en la última fila */
+}
 
 /* Inputs de hora con ancho fijo */
 .time {
-padding: 10px 12px; /* Padding normal */
+  padding: 10px 12px; /* Padding normal */
 }
 
-.rowErrors { 
-    grid-column: 1 / -1; /* Ocupa toda la fila */
-    display: flex; 
-    gap: var(--space-3); 
-    margin-top: -8px; /* Pegarlo un poco más a los inputs */
-    padding-left: 5px; /* Indentación ligera */
+.rowErrors {
+  grid-column: 1 / -1; /* Ocupa toda la fila */
+  display: flex;
+  gap: var(--space-3);
+  margin-top: -8px; /* Pegarlo un poco más a los inputs */
+  padding-left: 5px; /* Indentación ligera */
 }
-.rowErrors .error { /* Errores de fila más pequeños */
-    font-size: 12px;
+.rowErrors .error {
+  /* Errores de fila más pequeños */
+  font-size: 12px;
 }
 
 /* Botones Añadir / Quitar */
@@ -240,9 +259,9 @@ padding: 10px 12px; /* Padding normal */
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.removeBtn:hover { 
-    background: #f3f4f6; /* Fondo gris claro */
-    color: #dc2626; /* Rojo al hacer hover */
+.removeBtn:hover {
+  background: #f3f4f6; /* Fondo gris claro */
+  color: #dc2626; /* Rojo al hacer hover */
 }
 
 /* Botón Submit */
@@ -256,44 +275,97 @@ padding: 10px 12px; /* Padding normal */
   background: var(--color-brand-primary);
   color: #fff;
   cursor: pointer;
-  transition: background .2s ease, transform .1s ease, box-shadow .2s ease;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
   margin-top: var(--space-4); /* Más margen superior */
 }
-.submitButton:hover:not(:disabled) { 
-    background: var(--color-brand-secondary); 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transform: translateY(-1px);
+.submitButton:hover:not(:disabled) {
+  background: var(--color-brand-secondary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
-.submitButton:disabled { opacity: .7; cursor: not-allowed; }
-.submitButton:active:not(:disabled) { 
-    transform: scale(.98); 
-    box-shadow: none;
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/* --- Disponibilidades con Calendario --- */
+.availBox {
+  margin-top: var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border-radius: var(--radius-xl);
+}
+
+.sectionDescription {
+  color: var(--color-text);
+  opacity: 0.8;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.calendar {
+  margin-top: var(--space-4);
 }
 
 /* --- Responsive --- */
 @media (max-width: 640px) {
-  .wrap { max-width: 100%; }
-  .card { padding: var(--space-5); } /* Menos padding */
-  .title { font-size: 30px; }
-  .subtitle { font-size: 15px; }
-  .form { gap: var(--space-4); } /* Menos gap */
+  .wrap {
+    max-width: 100%;
+  }
+  .card {
+    padding: var(--space-5);
+  } /* Menos padding */
+  .title {
+    font-size: 30px;
+  }
+  .subtitle {
+    font-size: 15px;
+  }
+  .form {
+    gap: var(--space-4);
+  } /* Menos gap */
   .availRow {
     /* Apilar día y horas, mantener botón quitar a la derecha */
-    grid-template-columns: 1fr auto; 
-    grid-template-areas: 
-        "day remove"
-        "start remove"
-        "end remove"
-        "errors errors";
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "day remove"
+      "start remove"
+      "end remove"
+      "errors errors";
     gap: var(--space-2);
     align-items: start; /* Alinear al inicio */
   }
-  .availRow select { grid-area: day; }
-  .availRow input[type="time"]:nth-of-type(1) { grid-area: start; }
-  .availRow input[type="time"]:nth-of-type(2) { grid-area: end; }
-  .removeBtn { grid-area: remove; align-self: center; } /* Centrar botón quitar */
-  .rowErrors { grid-area: errors; }
+  .availRow select {
+    grid-area: day;
+  }
+  .availRow input[type="time"]:nth-of-type(1) {
+    grid-area: start;
+  }
+  .availRow input[type="time"]:nth-of-type(2) {
+    grid-area: end;
+  }
+  .removeBtn {
+    grid-area: remove;
+    align-self: center;
+  } /* Centrar botón quitar */
+  .rowErrors {
+    grid-area: errors;
+  }
 
-  .availHeader { flex-direction: column; align-items: stretch; } /* Apilar título y botón Añadir */
-  .addBtn { width: 100%; text-align: center; } /* Botón añadir ocupa todo */
+  .availHeader {
+    flex-direction: column;
+    align-items: stretch;
+  } /* Apilar título y botón Añadir */
+  .addBtn {
+    width: 100%;
+    text-align: center;
+  } /* Botón añadir ocupa todo */
 }

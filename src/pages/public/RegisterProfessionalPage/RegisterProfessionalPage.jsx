@@ -175,7 +175,7 @@ export default function RegisterProfessionalPage() {
                 <h4>Registro como Profesional</h4>
                 <p>
                   Te estás registrando como psicólogo/a profesional. Podrás
-                  crear tu perfil, gestionar tu disponibilidad y ofrecer
+                  crear tu perfil, gestionar tu calendario de disponibilidad por fechas específicas y ofrecer
                   sesiones online.
                 </p>
               </div>
