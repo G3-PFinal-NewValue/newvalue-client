@@ -1,51 +1,57 @@
 import { createContext, useContext, useEffect, useState } from "react";
-// 👇 Importamos el servicio de logout (que ahora está simulado)
 import { logoutRequest } from "../services/authService";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [booting, setBooting] = useState(true);
 
-  // useEffect SIMPLIFICADO para mocks
   useEffect(() => {
-    // 1. Buscar la clave "cm_auth"
     const rawAuth = localStorage.getItem("cm_auth");
-    
     if (rawAuth) {
       try {
-        // 2. Si existe, confiamos en el usuario guardado
         const authData = JSON.parse(rawAuth);
-        if (authData?.user) {
+        if (authData?.user && authData?.token) {
           setUser(authData.user);
+          setToken(authData.token);
         }
       } catch (e) {
-        // Si está corrupto, lo limpiamos
+        console.error("Error leyendo cm_auth:", e);
         localStorage.removeItem("cm_auth");
       }
     }
-    // 3. Dejamos de "bootear"
     setBooting(false);
-  }, []); // Se ejecuta solo una vez al cargar la app
+  }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    // El servicio loginRequest (ahora simulado) ya guardó en localStorage
+  const login = (authData) => {
+    if (!authData?.user || !authData?.token) return;
+    setUser(authData.user);
+    setToken(authData.token);
+    localStorage.setItem("cm_auth", JSON.stringify(authData));
   };
-  
+
   const logout = async () => {
-    await logoutRequest(); // Llama al servicio simulado (que limpia localStorage)
-    setUser(null); // Quita el usuario del estado
+    await logoutRequest();
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("cm_auth");
   };
 
-  if (booting) return null; // evita parpadeo
+  const getToken = () => token;
+
+  if (booting) return <p>Cargando usuario...</p>;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  return context;
+};

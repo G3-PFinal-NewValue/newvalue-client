@@ -1,0 +1,187 @@
+/* ===== LAYOUT PRINCIPAL ===== */
+.article-form-page {
+  min-height: 100vh;
+  background: #f4f1e8;
+  
+}
+
+/* ===== TÍTULO DE LA PÁGINA ===== */
+.edit-title {
+  text-align: center;
+  color: #295b6e;
+  font-size: 2rem;
+  margin: 2rem auto 1.5rem;
+  padding: 0 1rem;
+  max-width: 800px;
+  font-weight: 700;
+}
+
+/* ===== CONTENEDOR DEL FORMULARIO ===== */
+.form-container {
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(40, 78, 91, 0.12);
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.error-message {
+  background-color: #fff5f2;
+  border: 2px solid #ee9271;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #d67a59;
+  font-weight: 500;
+  margin: 1rem auto 1.5rem;
+  max-width: 700px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message::before {
+  content: "⚠";
+  font-size: 1.25rem;
+}
+
+/* ===== BOTÓN DE CANCELAR ===== */
+.cancel-button {
+  display: block;
+  margin: 2rem auto 3rem;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #8fbbb0;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(143, 187, 176, 0.3);
+  letter-spacing: 0.5px;
+  max-width: 700px;
+  width: calc(100% - 2rem);
+}
+
+.cancel-button:hover {
+  background-color: #6fa598;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(143, 187, 176, 0.4);
+}
+
+.cancel-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(143, 187, 176, 0.3);
+}
+
+.cancel-button:focus-visible {
+  outline: 3px solid #8fbbb0;
+  outline-offset: 2px;
+}
+
+/* Alternativa: Botón con ícono */
+.cancel-button::before {
+  content: "←";
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.loading-container {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e0d7c6;
+  border-top-color: #ee9271;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: #295b6e;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .edit-title {
+    font-size: 1.5rem;
+    margin: 1.5rem auto 1rem;
+  }
+
+  .form-container {
+    margin: 0 1rem 1.5rem;
+    padding: 1.5rem;
+    width: calc(100% - 2rem);
+  }
+
+  .error-message {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+
+  .cancel-button {
+    margin: 1.5rem auto 2rem;
+    width: calc(100% - 2rem);
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-title {
+    font-size: 1.25rem;
+  }
+
+  .cancel-button::before {
+    margin-right: 0.25rem;
+  }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+.cancel-button:disabled {
+  background-color: #e0d7c6;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+.cancel-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+
+
+/* ===== VARIANTE: Si prefieres el botón sin ícono ===== */
+.cancel-button.no-icon::before {
+  content: none;
+}
+
+/* ===== VARIANTE: Botón estilo outline (opcional) ===== */
+.cancel-button.outline {
+  background-color: transparent;
+  border: 2px solid #8fbbb0;
+  color: #8fbbb0;
+}
+
+.cancel-button.outline:hover {
+  background-color: #8fbbb0;
+  color: white;
+}
