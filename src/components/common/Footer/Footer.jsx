@@ -121,6 +121,19 @@ export default function Footer() {
                         Dashboard
                       </Link>
                     </li>
+                  ) : user?.role === "psychologist" ? (
+                    <>
+                      <li>
+                        <Link to="/app/profile" className={styles.navLink}>
+                          Mi perfil profesional
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/app/dashboard" className={styles.navLink}>
+                          Mis citas
+                        </Link>
+                      </li>
+                    </>
                   ) : (
                     <>
                       <li>
@@ -129,10 +142,7 @@ export default function Footer() {
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          to="/app/my-appointments"
-                          className={styles.navLink}
-                        >
+                        <Link to="/app/my-appointments" className={styles.navLink}>
                           Mis citas
                         </Link>
                       </li>
@@ -141,24 +151,9 @@ export default function Footer() {
                 </>
               ) : (
                 <>
-                  <li>
-                    <Link to="/login" className={styles.navLink}>
-                      Inicio de sesión paciente
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/register" className={styles.navLink}>
-                      Unirse como paciente
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/register-professional"
-                      className={styles.navLink}
-                    >
-                      Trabaja con nosotros
-                    </Link>
-                  </li>
+                  <li><Link to="/login" className={styles.navLink}>Iniciar sesión</Link></li>
+                  <li><Link to="/register" className={styles.navLink}>Unirse como paciente</Link></li>
+                  <li><Link to="/register" className={styles.navLink}>Trabaja con nosotros</Link></li>
                 </>
               )}
             </ul>
