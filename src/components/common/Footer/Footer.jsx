@@ -63,46 +63,58 @@ export default function Footer() {
         </div>
 
         {/* Columna 4: Acceder / Gestión */}
-<div className={styles.column}>
-  <nav className={styles.navSection}>
-    <h4 className={styles.sectionTitle}>
-      {isAuthenticated ? "GESTIÓN" : "ACCEDER"}
-    </h4>
-    <ul className={styles.navList}>
-      {isAuthenticated ? (
-        <>
-          {user?.role === "admin" ? (
-            <li>
-              <Link to="/admin/dashboard" className={styles.navLink}>
-                Dashboard
-              </Link>
-            </li>
-          ) : (
-            <>
-              <li>
-                <Link to="/app/my-profile" className={styles.navLink}>
-                  Mi perfil
-                </Link>
-              </li>
-              <li>
-                <Link to="/app/my-appointments" className={styles.navLink}>
-                  Mis citas
-                </Link>
-              </li>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          <li><Link to="/login" className={styles.navLink}>Inicio de sesión paciente</Link></li>
-          <li><Link to="/register" className={styles.navLink}>Unirse como paciente</Link></li>
-          <li><Link to="/register" className={styles.navLink}>Trabaja con nosotros</Link></li>
-        </>
-      )}
-    </ul>
-  </nav>
-</div>
-
+        <div className={styles.column}>
+          <nav className={styles.navSection}>
+            <h4 className={styles.sectionTitle}>
+              {isAuthenticated ? "GESTIÓN" : "ACCEDER"}
+            </h4>
+            <ul className={styles.navList}>
+              {isAuthenticated ? (
+                <>
+                  {user?.role === "admin" ? (
+                    <li>
+                      <Link to="/admin/dashboard" className={styles.navLink}>
+                        Dashboard
+                      </Link>
+                    </li>
+                  ) : user?.role === "psychologist" ? (
+                    <>
+                      <li>
+                        <Link to="/app/profile" className={styles.navLink}>
+                          Mi perfil profesional
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/app/dashboard" className={styles.navLink}>
+                          Mis citas
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <Link to="/app/my-profile" className={styles.navLink}>
+                          Mi perfil
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/app/my-appointments" className={styles.navLink}>
+                          Mis citas
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <li><Link to="/login" className={styles.navLink}>Iniciar sesión</Link></li>
+                  <li><Link to="/register" className={styles.navLink}>Unirse como paciente</Link></li>
+                  <li><Link to="/register" className={styles.navLink}>Trabaja con nosotros</Link></li>
+                </>
+              )}
+            </ul>
+          </nav>
+        </div>
 
         {/* Copyright */}
         <div className={styles.copyright}>
