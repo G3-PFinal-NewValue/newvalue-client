@@ -9,11 +9,11 @@ import AuthTabs from "../../../components/auth/AuthTabs";
 import { useAuth } from "../../../context/AuthContext";
 import { registerRequest } from "../../../services/authService";
 
-import styles from "./RegisterPage.module.css";
+import styles from "../RegisterPage/RegisterPage.module.css";
 import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
 
-// Esquema específico para pacientes
-const patientSchema = z
+// Esquema específico para profesionales
+const professionalSchema = z
   .object({
     first_name: z.string().min(2, "El nombre es obligatorio"),
     last_name: z.string().min(2, "El apellido es obligatorio"),
@@ -27,14 +27,14 @@ const patientSchema = z
     country: z.string().min(2, "El país es obligatorio"),
     password: z.string().min(6, "Mínimo 6 caracteres"),
     confirm: z.string().min(6, "Confirma tu contraseña"),
-    role: z.literal("patient"),
+    role: z.literal("psychologist"),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Las contraseñas no coinciden",
     path: ["confirm"],
   });
 
-export default function RegisterPage() {
+export default function RegisterProfessionalPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export default function RegisterPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(patientSchema),
+    resolver: zodResolver(professionalSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -57,7 +57,7 @@ export default function RegisterPage() {
       country: "",
       password: "",
       confirm: "",
-      role: "patient",
+      role: "psychologist",
     },
   });
 
@@ -65,8 +65,8 @@ export default function RegisterPage() {
     try {
       const user = await registerRequest(values);
       login(user);
-      // Los pacientes siempre van al setup de paciente
-      navigate("/app/profile-setup/patient");
+      // Los profesionales siempre van al setup de perfil profesional
+      navigate("/app/profile");
     } catch (err) {
       alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
     }
@@ -78,15 +78,14 @@ export default function RegisterPage() {
         <AuthTabs />
 
         <div className={styles.card}>
-          <h1 className={styles.title}>Crear cuenta como Paciente</h1>
+          <h1 className={styles.title}>Únete como Profesional</h1>
           <p className={styles.subtitle}>
-            Únete a Cora Mind y comienza tu camino hacia el bienestar
+            Forma parte de nuestro equipo de psicólogos y genera impacto
+            positivo
           </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
             <GoogleSignInButton mode="signup" />
-
-            {/* --- 3. FORMULARIO JSX ACTUALIZADO --- */}
 
             {/* Datos Personales */}
             <TextInput
@@ -125,7 +124,7 @@ export default function RegisterPage() {
               {...register("phone")}
             />
 
-            {/* Datos de Dirección (para facturación) */}
+            {/* Datos de Dirección */}
             <TextInput
               label="Dirección Completa"
               placeholder="Calle Falsa, 123, 4B"
@@ -172,11 +171,12 @@ export default function RegisterPage() {
 
             {/* Información sobre el tipo de cuenta */}
             <div className={styles.roleGroup}>
-              <div className={styles.patientInfo}>
-                <h4>Registro como Paciente</h4>
+              <div className={styles.professionalInfo}>
+                <h4>Registro como Profesional</h4>
                 <p>
-                  Te estás registrando como paciente. Podrás buscar psicólogos,
-                  agendar sesiones y acceder a recursos para tu bienestar.
+                  Te estás registrando como psicólogo/a profesional. Podrás
+                  crear tu perfil, gestionar tu calendario de disponibilidad por fechas específicas y ofrecer
+                  sesiones online.
                 </p>
               </div>
             </div>
@@ -186,14 +186,12 @@ export default function RegisterPage() {
               className={styles.submitButton}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Registrando..." : "Registrarse como Paciente"}
+              {isSubmitting ? "Registrando..." : "Unirse como Profesional"}
             </button>
 
             <div className={styles.footerLink}>
-              <Link to="/register-professional">
-                ¿Eres profesional? Regístrate aquí
-              </Link>{" "}
-              | <Link to="/">Ir a Home</Link>
+              <Link to="/register">¿Eres paciente? Regístrate aquí</Link> |{" "}
+              <Link to="/">Ir a Home</Link>
             </div>
           </form>
         </div>

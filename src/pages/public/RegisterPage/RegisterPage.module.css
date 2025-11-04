@@ -6,16 +6,16 @@
   padding: var(--space-6) var(--space-4);
 }
 
-.wrap { 
+.wrap {
   width: 100%;
-  max-width: 680px; 
+  max-width: 680px;
 }
 
 .card {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
-  padding: var(--space-6); 
+  padding: var(--space-6);
 }
 
 .title {
@@ -35,25 +35,25 @@
   opacity: 0.85;
   font-size: 16px;
   line-height: 1.5;
-  max-width: 400px; 
+  max-width: 400px;
 }
 
-.form { 
+.form {
   display: grid;
-  gap: var(--space-4); 
+  gap: var(--space-4);
 }
 
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4); 
+  gap: var(--space-4);
 }
 .roleGroup {
   display: grid;
-  gap: var(--space-2); 
-  margin-top: var(--space-1); 
+  gap: var(--space-2);
+  margin-top: var(--space-1);
 }
-.label { 
+.label {
   font-weight: 600;
   font-size: 15px;
   color: var(--color-text);
@@ -64,36 +64,61 @@
   gap: var(--space-3); /* 12px */
 }
 .roleButton {
-  border: 2px solid var(--color-bg-alt); 
+  border: 2px solid var(--color-bg-alt);
   border-radius: 10px;
   padding: 10px 12px;
-  background: var(--color-bg-alt); 
+  background: var(--color-bg-alt);
   color: var(--color-text);
-  opacity: 0.8; 
+  opacity: 0.8;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
 }
-.roleButton:hover { 
-    border-color: var(--color-brand-secondary); 
-    opacity: 1;
-    background: #fff; 
- }
-.roleActive { 
-    background: var(--color-brand-primary); 
-    color:#fff; 
-    border-color: var(--color-brand-primary); 
-    opacity: 1; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-    transform: scale(1.02); 
+.roleButton:hover {
+  border-color: var(--color-brand-secondary);
+  opacity: 1;
+  background: #fff;
 }
-.errorText { 
-    color: #dc2626; 
-    font-size: 13px; 
-    margin-top: -4px;
- }
+.roleActive {
+  background: var(--color-brand-primary);
+  color: #fff;
+  border-color: var(--color-brand-primary);
+  opacity: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+}
+.errorText {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: -4px;
+}
+
+.patientInfo,
+.professionalInfo {
+  background: var(--color-bg);
+  padding: var(--space-4);
+  border-radius: 10px;
+  border-left: 4px solid var(--color-brand-primary);
+}
+
+.patientInfo h4,
+.professionalInfo h4 {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.patientInfo p,
+.professionalInfo p {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
 
 .submitButton {
   width: 100%;
@@ -105,34 +130,60 @@
   background: var(--color-brand-primary);
   color: #fff;
   cursor: pointer;
-  transition: background .2s ease, transform .1s ease, box-shadow .2s ease;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
   margin-top: var(--space-2);
 }
-.submitButton:hover:not(:disabled) { 
-    background: var(--color-brand-secondary); 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transform: translateY(-1px);
+.submitButton:hover:not(:disabled) {
+  background: var(--color-brand-secondary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
-.submitButton:disabled { opacity: .7; cursor: not-allowed; }
-.submitButton:active:not(:disabled) { 
-    transform: scale(.98); 
-    box-shadow: none;
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: none;
 }
 
-.footerLink { text-align: center; margin-top: var(--space-4); font-size: 14px; }
-.footerLink a { color: var(--color-brand-primary); text-decoration: none; font-weight: 600; }
-.footerLink a:hover { text-decoration: underline; }
+.footerLink {
+  text-align: center;
+  margin-top: var(--space-4);
+  font-size: 14px;
+}
+.footerLink a {
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.footerLink a:hover {
+  text-decoration: underline;
+}
 
-@media (max-width: 600px) { 
-  .wrap { max-width: 100%; }
-  .card { padding: var(--space-5); }
-  .title { font-size: 30px; }
-  .subtitle { font-size: 15px; margin-bottom: var(--space-4); }
-  .form { gap: var(--space-3); } 
-  .roleButtons { grid-template-columns: 1fr; } 
+@media (max-width: 600px) {
+  .wrap {
+    max-width: 100%;
+  }
+  .card {
+    padding: var(--space-5);
+  }
+  .title {
+    font-size: 30px;
+  }
+  .subtitle {
+    font-size: 15px;
+    margin-bottom: var(--space-4);
+  }
+  .form {
+    gap: var(--space-3);
+  }
+  .roleButtons {
+    grid-template-columns: 1fr;
+  }
 
-  .formRow { 
-    grid-template-columns: 1fr; 
-    gap: var(--space-3); 
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 }
