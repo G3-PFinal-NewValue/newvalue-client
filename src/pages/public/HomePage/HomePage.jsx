@@ -30,7 +30,7 @@ export default function HomePage() {
                 Buscar psicólogos
               </Link>
             ) : (
-              <Link to="/register" className={styles.primaryBtn}>
+              <Link to="/first-session" className={styles.primaryBtn}>
                 Empezar ahora
               </Link>
             )}
@@ -138,8 +138,8 @@ export default function HomePage() {
             <p className={styles.ctaText}>
               Únete a Cora Mind y da el primer paso hacia tu bienestar mientras ayudas a otros.
             </p>
-            <Link to="/register" className={styles.primaryBtn}>
-              Crear mi cuenta
+            <Link to="/first-session" className={styles.primaryBtn}>
+              Solicitar primera sesión gratuita
             </Link>
           </>
         )}
