@@ -72,6 +72,45 @@
     text-align: center; 
 }
 
+.specialtyBox {
+    display: grid; 
+    gap: var(--space-3); /* 12px */
+    padding: var(--space-4); /* Padding interno */
+    background-color: var(--color-bg); /* Fondo base */
+    border-radius: var(--radius-xl);
+}
+
+.specialtyGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-3); /* 12px */
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2); /* 8px */
+    padding: var(--space-2);
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--color-bg-alt);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.checkboxLabel:hover {
+    border-color: var(--color-brand-secondary);
+    background: #fdfaf6;
+}
+.checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-brand-primary);
+}
+.checkboxLabel span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+}
 /* --- Formulario General --- */
 .form { display: grid; gap: var(--space-5); } /* Más espacio entre campos (20px) */
 .group { display: grid; gap: var(--space-2); } /* 8px entre label e input */

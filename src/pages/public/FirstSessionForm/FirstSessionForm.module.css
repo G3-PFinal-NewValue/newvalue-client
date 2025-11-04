@@ -58,6 +58,10 @@
     min-width: 180px;
 }
 
+.accessRow {
+    row-gap: 0;
+}
+
 .inputGroup {
     position: relative;
     flex: 1;
@@ -149,10 +153,35 @@
     box-sizing: border-box;
 }
 
+.checkboxContainer {
+    margin: 1.5rem 0 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkboxLabel {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #333;
+}
+
+.checkboxLabel a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.checkboxLabel input {
+    margin-right: 0.6rem;
+    margin-top: 0.2rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .row {
+        display: flex;
         flex-direction: column;
+        /* flex-wrap: nowrap; */
         gap: 0rem;
         padding-left: 0;
         padding-right: 0;
@@ -160,6 +189,51 @@
 
     .column {
         max-width: 100%;
+        display: contents;
+    }
+
+    .column {
+        display: contents;
+    }
+
+    .inputGroup[data-order="1"] {
+        order: 1;
+    }
+
+    .inputGroup[data-order="2"] {
+        order: 2;
+    }
+
+    .inputGroup[data-order="3"] {
+        order: 3;
+    }
+
+    .inputGroup[data-order="4"] {
+        order: 4;
+    }
+
+    .inputGroup[data-order="5"] {
+        order: 5;
+    }
+
+    .inputGroup[data-order="6"] {
+        order: 6;
+    }
+
+    .inputGroup[data-order="7"] {
+        order: 7;
+    }
+
+    .inputGroup[data-order="8"] {
+        order: 8;
+    }
+
+    .inputGroup[data-order="9"] {
+        order: 9;
+    }
+
+    .inputGroup[data-order="10"] {
+        order: 10;
     }
 
     .fullWidthInput {

@@ -1,6 +1,6 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TreatmentsPage.module.css";
+import { useAuth } from "../../../context/AuthContext"; 
 
 const treatments = [
   {
@@ -37,10 +37,18 @@ const treatments = [
 
 const TreatmentsPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); 
 
-  const handleReserveClick = () => {
-    navigate("/first-session");
+  const handleClick = () => {
+    if (user) {
+      navigate("/reserve-session");
+    } else {
+      navigate("/first-session");
+    }
   };
+
+  const shouldShowButton =
+    !user || (user.role !== "admin" && user.role !== "psychologist");
 
   return (
     <div className={styles.pageContainer}>
@@ -71,12 +79,14 @@ const TreatmentsPage = () => {
           </div>
         </div>
 
-        <div className={styles.sessionCardsFooter}>
-          <p>Agenda tu cita y descubre el tratamiento más adecuado para ti.</p>
-          <button className={styles.primaryBtn} onClick={handleReserveClick}>
-            Reserva tu primera sesión
-          </button>
-        </div>
+        {shouldShowButton && (
+          <div className={styles.sessionCardsFooter}>
+            <p>Agenda tu cita y descubre el tratamiento más adecuado para ti.</p>
+            <button className={styles.primaryBtn} onClick={handleClick}>
+              {user ? "Reservar sesión" : "Solicitar primera sesión"}
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
