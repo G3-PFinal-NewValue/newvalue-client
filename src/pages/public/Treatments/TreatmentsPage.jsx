@@ -47,6 +47,9 @@ const TreatmentsPage = () => {
     }
   };
 
+  const shouldShowButton =
+    !user || (user.role !== "admin" && user.role !== "psychologist");
+
   return (
     <div className={styles.pageContainer}>
       <section className={styles.sessionCardsSection}>
@@ -76,12 +79,14 @@ const TreatmentsPage = () => {
           </div>
         </div>
 
-        <div className={styles.sessionCardsFooter}>
-          <p>Agenda tu cita y descubre el tratamiento más adecuado para ti.</p>
-          <button className={styles.primaryBtn} onClick={handleClick}>
-            {user ? "Reservar sesión" : "Solicitar primera sesión"}
-          </button>
-        </div>
+        {shouldShowButton && (
+          <div className={styles.sessionCardsFooter}>
+            <p>Agenda tu cita y descubre el tratamiento más adecuado para ti.</p>
+            <button className={styles.primaryBtn} onClick={handleClick}>
+              {user ? "Reservar sesión" : "Solicitar primera sesión"}
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
