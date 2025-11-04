@@ -4,7 +4,7 @@ import styles from "./AuthTabs.module.css";
 export default function AuthTabs() {
   const { pathname } = useLocation();
   const isLogin = pathname === "/login";
-  const isRegister = pathname === "/register";
+  const isRegister = pathname === "/register" || pathname === "/register-professional";
 
   return (
     <div className={styles.wrapper}>

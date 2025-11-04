@@ -5,6 +5,7 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/public/HomePage/HomePage.jsx";
 import LoginPage from "../pages/public/LoginPage/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
+import RegisterProfessionalPage from "../pages/public/RegisterProfessionalPage/RegisterProfessionalPage";
 import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
@@ -46,6 +47,7 @@ export default function AppRouter() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register-professional" element={<RegisterProfessionalPage />} />
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:id" element={<BlogArticlePage />} />
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />

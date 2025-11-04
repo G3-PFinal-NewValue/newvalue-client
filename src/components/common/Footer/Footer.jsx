@@ -96,7 +96,7 @@ export default function Footer() {
         <>
           <li><Link to="/login" className={styles.navLink}>Inicio de sesión paciente</Link></li>
           <li><Link to="/register" className={styles.navLink}>Unirse como paciente</Link></li>
-          <li><Link to="/register" className={styles.navLink}>Trabaja con nosotros</Link></li>
+          <li><Link to="/register-professional" className={styles.navLink}>Trabaja con nosotros</Link></li>
         </>
       )}
     </ul>

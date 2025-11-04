@@ -95,6 +95,28 @@
     margin-top: -4px;
  }
 
+.patientInfo, .professionalInfo {
+  background: var(--color-bg);
+  padding: var(--space-4);
+  border-radius: 10px;
+  border-left: 4px solid var(--color-brand-primary);
+}
+
+.patientInfo h4, .professionalInfo h4 {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.patientInfo p, .professionalInfo p {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
 .submitButton {
   width: 100%;
   padding: 12px;
