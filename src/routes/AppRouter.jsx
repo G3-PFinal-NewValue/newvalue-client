@@ -5,6 +5,7 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/public/HomePage/HomePage.jsx";
 import LoginPage from "../pages/public/LoginPage/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
+import RegisterProfessionalPage from "../pages/public/RegisterProfessionalPage/RegisterProfessionalPage";
 import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
 import BlogArticlePage from "../pages/public/BlogArticlePage";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
@@ -16,8 +17,8 @@ import FirstSessionForm from "../pages/public/FirstSessionForm/FirstSessionForm.
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
 import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
-import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile"; 
-import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard"; 
+import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile";
+import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard";
 import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
 import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
 import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
@@ -46,6 +47,10 @@ export default function AppRouter() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/register-professional"
+            element={<RegisterProfessionalPage />}
+          />
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:id" element={<BlogArticlePage />} />
           <Route path="/profile/:id" element={<PsychologistPublicProfile />} />
@@ -83,9 +88,9 @@ export default function AppRouter() {
             }
           />
           <Route
-            path="/app/dashboard" 
+            path="/app/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['psychologist']}>
+              <ProtectedRoute allowedRoles={["psychologist"]}>
                 <PsychologistDashboardPage />
               </ProtectedRoute>
             }
@@ -111,14 +116,19 @@ export default function AppRouter() {
           <Route
             path="/app/my-appointments"
             element={
-              <ProtectedRoute allowedRoles={['patient']}>
+              <ProtectedRoute allowedRoles={["patient"]}>
                 <PatientAppointmentsPage />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/admin/dashboard" 
-            element={ <ProtectedRoute allowedRoles={['admin']}> <AdminDashboard /> </ProtectedRoute> }
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                {" "}
+                <AdminDashboard />{" "}
+              </ProtectedRoute>
+            }
           />
         </Route>
 
