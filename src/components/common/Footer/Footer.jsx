@@ -30,19 +30,39 @@ export default function Footer() {
           <nav className={styles.navSection}>
             <h4 className={styles.sectionTitle}>CORA MIND</h4>
             <ul className={styles.navList}>
-              <li><Link to="/" className={styles.navLink}>Quiénes somos</Link></li>
-              <li><Link to="/psychologists" className={styles.navLink}>Equipo</Link></li>
-              <li><Link to="/contacto" className={styles.navLink}>Contáctanos</Link></li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Quiénes somos
+                </Link>
+              </li>
+              <li>
+                <Link to="/psychologists" className={styles.navLink}>
+                  Equipo
+                </Link>
+              </li>
+              <li>
+                <Link to="/contacto" className={styles.navLink}>
+                  Contáctanos
+                </Link>
+              </li>
             </ul>
 
             <h4 className={styles.sectionTitle}>PROYECTO SOCIAL</h4>
             <ul className={styles.navList}>
-              <li><Link to="/" className={styles.navLink}>Con Cora Mind</Link></li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Con Cora Mind
+                </Link>
+              </li>
             </ul>
 
             <h4 className={styles.sectionTitle}>RECURSOS GRATUITOS</h4>
             <ul className={styles.navList}>
-              <li><Link to="/blog" className={styles.navLink}>Blog de psicología</Link></li>
+              <li>
+                <Link to="/blog" className={styles.navLink}>
+                  Blog de psicología
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -52,64 +72,117 @@ export default function Footer() {
           <nav className={styles.navSection}>
             <h4 className={styles.sectionTitle}>TRATAMIENTOS</h4>
             <ul className={styles.navList}>
-              <li><Link to="/" className={styles.navLink}>Ansiedad y estrés</Link></li>
-              <li><Link to="/" className={styles.navLink}>Estado de ánimo</Link></li>
-              <li><Link to="/" className={styles.navLink}>Autoestima</Link></li>
-              <li><Link to="/" className={styles.navLink}>Relaciones afectivas</Link></li>
-              <li><Link to="/" className={styles.navLink}>Pareja y familia</Link></li>
-              <li><Link to="/" className={styles.navLink}>Dependencia emocional</Link></li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Ansiedad y estrés
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Estado de ánimo
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Autoestima
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Relaciones afectivas
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Pareja y familia
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Dependencia emocional
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
 
         {/* Columna 4: Acceder / Gestión */}
-<div className={styles.column}>
-  <nav className={styles.navSection}>
-    <h4 className={styles.sectionTitle}>
-      {isAuthenticated ? "GESTIÓN" : "ACCEDER"}
-    </h4>
-    <ul className={styles.navList}>
-      {isAuthenticated ? (
-        <>
-          {user?.role === "admin" ? (
-            <li>
-              <Link to="/admin/dashboard" className={styles.navLink}>
-                Dashboard
-              </Link>
-            </li>
-          ) : (
-            <>
-              <li>
-                <Link to="/app/my-profile" className={styles.navLink}>
-                  Mi perfil
-                </Link>
-              </li>
-              <li>
-                <Link to="/app/my-appointments" className={styles.navLink}>
-                  Mis citas
-                </Link>
-              </li>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          <li><Link to="/login" className={styles.navLink}>Inicio de sesión paciente</Link></li>
-          <li><Link to="/register" className={styles.navLink}>Unirse como paciente</Link></li>
-          <li><Link to="/register-professional" className={styles.navLink}>Trabaja con nosotros</Link></li>
-        </>
-      )}
-    </ul>
-  </nav>
-</div>
-
+        <div className={styles.column}>
+          <nav className={styles.navSection}>
+            <h4 className={styles.sectionTitle}>
+              {isAuthenticated ? "GESTIÓN" : "ACCEDER"}
+            </h4>
+            <ul className={styles.navList}>
+              {isAuthenticated ? (
+                <>
+                  {user?.role === "admin" ? (
+                    <li>
+                      <Link to="/admin/dashboard" className={styles.navLink}>
+                        Dashboard
+                      </Link>
+                    </li>
+                  ) : (
+                    <>
+                      <li>
+                        <Link to="/app/my-profile" className={styles.navLink}>
+                          Mi perfil
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/app/my-appointments"
+                          className={styles.navLink}
+                        >
+                          Mis citas
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link to="/login" className={styles.navLink}>
+                      Inicio de sesión paciente
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/register" className={styles.navLink}>
+                      Unirse como paciente
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/register-professional"
+                      className={styles.navLink}
+                    >
+                      Trabaja con nosotros
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+          </nav>
+        </div>
 
         {/* Copyright */}
         <div className={styles.copyright}>
           <ul>
-            <li><Link to="/" className={styles.navLink}>Aviso legal</Link></li>
-            <li><Link to="/" className={styles.navLink}>Política de cookies</Link></li>
-            <li><Link to="/" className={styles.navLink}>Protección de datos</Link></li>
+            <li>
+              <Link to="/" className={styles.navLink}>
+                Aviso legal
+              </Link>
+            </li>
+            <li>
+              <Link to="/" className={styles.navLink}>
+                Política de cookies
+              </Link>
+            </li>
+            <li>
+              <Link to="/" className={styles.navLink}>
+                Protección de datos
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

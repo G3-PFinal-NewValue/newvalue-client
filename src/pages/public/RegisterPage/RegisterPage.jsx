@@ -63,12 +63,12 @@ export default function RegisterPage() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values); 
+      const user = await registerRequest(values);
       login(user);
       // Los pacientes siempre van al setup de paciente
       navigate("/app/profile-setup/patient");
-    } catch(err) {
-      alert(`Error al registrarse: ${err.message || 'Error desconocido'}`);
+    } catch (err) {
+      alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
     }
   };
 
@@ -84,7 +84,7 @@ export default function RegisterPage() {
           </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-            <GoogleSignInButton mode="signup"/>
+            <GoogleSignInButton mode="signup" />
 
             {/* --- 3. FORMULARIO JSX ACTUALIZADO --- */}
 
@@ -102,7 +102,7 @@ export default function RegisterPage() {
               error={errors.last_name?.message}
               {...register("last_name")}
             />
-            
+
             <TextInput
               label="DNI / NIE / CIF"
               placeholder="00000000X"
@@ -122,7 +122,7 @@ export default function RegisterPage() {
               label="Teléfono de Contacto"
               placeholder="+34 600 000 000"
               error={errors.phone?.message}
-              {...register("phone")} 
+              {...register("phone")}
             />
 
             {/* Datos de Dirección (para facturación) */}
@@ -144,13 +144,13 @@ export default function RegisterPage() {
               error={errors.province?.message}
               {...register("province")}
             />
-             <TextInput
+            <TextInput
               label="Código Postal"
               placeholder="28001"
               error={errors.postal_code?.message}
               {...register("postal_code")}
             />
-             <TextInput
+            <TextInput
               label="País"
               placeholder="España"
               error={errors.country?.message}
@@ -174,7 +174,10 @@ export default function RegisterPage() {
             <div className={styles.roleGroup}>
               <div className={styles.patientInfo}>
                 <h4>Registro como Paciente</h4>
-                <p>Te estás registrando como paciente. Podrás buscar psicólogos, agendar sesiones y acceder a recursos para tu bienestar.</p>
+                <p>
+                  Te estás registrando como paciente. Podrás buscar psicólogos,
+                  agendar sesiones y acceder a recursos para tu bienestar.
+                </p>
               </div>
             </div>
 
@@ -187,7 +190,10 @@ export default function RegisterPage() {
             </button>
 
             <div className={styles.footerLink}>
-              <Link to="/register-professional">¿Eres profesional? Regístrate aquí</Link> | <Link to="/">Ir a Home</Link>
+              <Link to="/register-professional">
+                ¿Eres profesional? Regístrate aquí
+              </Link>{" "}
+              | <Link to="/">Ir a Home</Link>
             </div>
           </form>
         </div>

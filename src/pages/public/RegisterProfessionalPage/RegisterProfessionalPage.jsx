@@ -63,12 +63,12 @@ export default function RegisterProfessionalPage() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values); 
+      const user = await registerRequest(values);
       login(user);
       // Los profesionales siempre van al setup de perfil profesional
       navigate("/app/profile");
-    } catch(err) {
-      alert(`Error al registrarse: ${err.message || 'Error desconocido'}`);
+    } catch (err) {
+      alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
     }
   };
 
@@ -80,11 +80,12 @@ export default function RegisterProfessionalPage() {
         <div className={styles.card}>
           <h1 className={styles.title}>Únete como Profesional</h1>
           <p className={styles.subtitle}>
-            Forma parte de nuestro equipo de psicólogos y genera impacto positivo
+            Forma parte de nuestro equipo de psicólogos y genera impacto
+            positivo
           </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-            <GoogleSignInButton mode="signup"/>
+            <GoogleSignInButton mode="signup" />
 
             {/* Datos Personales */}
             <TextInput
@@ -100,7 +101,7 @@ export default function RegisterProfessionalPage() {
               error={errors.last_name?.message}
               {...register("last_name")}
             />
-            
+
             <TextInput
               label="DNI / NIE / CIF"
               placeholder="00000000X"
@@ -120,7 +121,7 @@ export default function RegisterProfessionalPage() {
               label="Teléfono de Contacto"
               placeholder="+34 600 000 000"
               error={errors.phone?.message}
-              {...register("phone")} 
+              {...register("phone")}
             />
 
             {/* Datos de Dirección */}
@@ -142,13 +143,13 @@ export default function RegisterProfessionalPage() {
               error={errors.province?.message}
               {...register("province")}
             />
-             <TextInput
+            <TextInput
               label="Código Postal"
               placeholder="28001"
               error={errors.postal_code?.message}
               {...register("postal_code")}
             />
-             <TextInput
+            <TextInput
               label="País"
               placeholder="España"
               error={errors.country?.message}
@@ -172,7 +173,11 @@ export default function RegisterProfessionalPage() {
             <div className={styles.roleGroup}>
               <div className={styles.professionalInfo}>
                 <h4>Registro como Profesional</h4>
-                <p>Te estás registrando como psicólogo/a profesional. Podrás crear tu perfil, gestionar tu disponibilidad y ofrecer sesiones online.</p>
+                <p>
+                  Te estás registrando como psicólogo/a profesional. Podrás
+                  crear tu perfil, gestionar tu disponibilidad y ofrecer
+                  sesiones online.
+                </p>
               </div>
             </div>
 
@@ -185,7 +190,8 @@ export default function RegisterProfessionalPage() {
             </button>
 
             <div className={styles.footerLink}>
-              <Link to="/register">¿Eres paciente? Regístrate aquí</Link> | <Link to="/">Ir a Home</Link>
+              <Link to="/register">¿Eres paciente? Regístrate aquí</Link> |{" "}
+              <Link to="/">Ir a Home</Link>
             </div>
           </form>
         </div>

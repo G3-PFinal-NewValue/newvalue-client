@@ -4,15 +4,19 @@ import styles from "./AuthTabs.module.css";
 export default function AuthTabs() {
   const { pathname } = useLocation();
   const isLogin = pathname === "/login";
-  const isRegister = pathname === "/register" || pathname === "/register-professional";
+  const isRegister =
+    pathname === "/register" || pathname === "/register-professional";
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <div className={styles.logo} >
-         <img className={styles.logo} src="/images/LongLogo.png" alt="Cora Mind Logo" />
-          </div>
-
+        <div className={styles.logo}>
+          <img
+            className={styles.logo}
+            src="/images/LongLogo.png"
+            alt="Cora Mind Logo"
+          />
+        </div>
       </div>
 
       <div className={styles.tabsBar}>
