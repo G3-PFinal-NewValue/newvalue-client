@@ -10,20 +10,24 @@ import { useAuth } from "../../../context/AuthContext";
 import { registerRequest } from "../../../services/authService";
 
 import styles from "./RegisterPage.module.css";
+import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
 
-const schema = z
+// Esquema específico para pacientes
+const patientSchema = z
   .object({
     first_name: z.string().min(2, "El nombre es obligatorio"),
     last_name: z.string().min(2, "El apellido es obligatorio"),
     email: z.string().email("Correo inválido"),
+    phone: z.string().min(8, "Teléfono inválido (mín. 8 dígitos)"),
+    dni_nie_cif: z.string().min(5, "DNI/NIE/CIF es obligatorio"),
+    full_address: z.string().min(5, "La dirección es obligatoria"),
+    city: z.string().min(2, "La ciudad es obligatoria"),
+    province: z.string().min(2, "La provincia es obligatoria"),
+    postal_code: z.string().min(4, "El código postal es obligatorio"),
+    country: z.string().min(2, "El país es obligatorio"),
     password: z.string().min(6, "Mínimo 6 caracteres"),
     confirm: z.string().min(6, "Confirma tu contraseña"),
-    role: z.enum(["patient", "psychologist"]),
-    phone_number: z
-      .string()
-      .min(8, "Teléfono inválido")
-      .optional()
-      .or(z.literal("")),
+    role: z.literal("patient"),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Las contraseñas no coinciden",
@@ -38,32 +42,35 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    setValue,
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(patientSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
       email: "",
+      phone: "",
+      dni_nie_cif: "",
+      full_address: "",
+      city: "",
+      province: "",
+      postal_code: "",
+      country: "",
       password: "",
       confirm: "",
       role: "patient",
-      phone_number: "",
     },
   });
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values); // mock temporal
+      const user = await registerRequest(values);
       login(user);
-      navigate("/");
-    } catch {
-      alert("Error al registrarse");
+      // Los pacientes siempre van al setup de paciente
+      navigate("/app/profile-setup/patient");
+    } catch (err) {
+      alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
     }
   };
-
-  const role = watch("role");
 
   return (
     <div className={styles.page}>
@@ -71,17 +78,22 @@ export default function RegisterPage() {
         <AuthTabs />
 
         <div className={styles.card}>
-          <h1 className={styles.title}>Crear cuenta</h1>
+          <h1 className={styles.title}>Crear cuenta como Paciente</h1>
           <p className={styles.subtitle}>
-            Únete a Cora Mind y comienza tu camino
+            Únete a Cora Mind y comienza tu camino hacia el bienestar
           </p>
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+            <GoogleSignInButton mode="signup" />
+
+            {/* --- 3. FORMULARIO JSX ACTUALIZADO --- */}
+
+            {/* Datos Personales */}
             <TextInput
               label="Nombre"
               placeholder="Nombre"
-              error={errors.first_name?.message} // <-- CAMBIADO
-              {...register("first_name")} // <-- CAMBIADO
+              error={errors.first_name?.message}
+              {...register("first_name")}
             />
 
             <TextInput
@@ -92,6 +104,14 @@ export default function RegisterPage() {
             />
 
             <TextInput
+              label="DNI / NIE / CIF"
+              placeholder="00000000X"
+              error={errors.dni_nie_cif?.message}
+              {...register("dni_nie_cif")}
+            />
+
+            {/* Datos de Contacto */}
+            <TextInput
               label="Correo electrónico"
               placeholder="tucorreo@ejemplo.com"
               error={errors.email?.message}
@@ -100,11 +120,44 @@ export default function RegisterPage() {
 
             <TextInput
               label="Teléfono de Contacto"
-              placeholder=""
-              error={errors.phone_number?.message}
-              {...register("phone_number")}
+              placeholder="+34 600 000 000"
+              error={errors.phone?.message}
+              {...register("phone")}
             />
 
+            {/* Datos de Dirección (para facturación) */}
+            <TextInput
+              label="Dirección Completa"
+              placeholder="Calle Falsa, 123, 4B"
+              error={errors.full_address?.message}
+              {...register("full_address")}
+            />
+            <TextInput
+              label="Ciudad"
+              placeholder="Madrid"
+              error={errors.city?.message}
+              {...register("city")}
+            />
+            <TextInput
+              label="Provincia"
+              placeholder="Madrid"
+              error={errors.province?.message}
+              {...register("province")}
+            />
+            <TextInput
+              label="Código Postal"
+              placeholder="28001"
+              error={errors.postal_code?.message}
+              {...register("postal_code")}
+            />
+            <TextInput
+              label="País"
+              placeholder="España"
+              error={errors.country?.message}
+              {...register("country")}
+            />
+
+            {/* Datos de Seguridad */}
             <PasswordInput
               label="Contraseña"
               error={errors.password?.message}
@@ -117,36 +170,15 @@ export default function RegisterPage() {
               {...register("confirm")}
             />
 
-            {/* Selector de tipo de cuenta */}
+            {/* Información sobre el tipo de cuenta */}
             <div className={styles.roleGroup}>
-              <label className={styles.label}>Tipo de cuenta</label>
-              <div className={styles.roleButtons}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setValue("role", "patient", { shouldValidate: true })
-                  }
-                  className={`${styles.roleButton} ${
-                    role === "patient" ? styles.roleActive : ""
-                  }`}
-                >
-                  Paciente
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setValue("role", "psychologist", { shouldValidate: true })
-                  }
-                  className={`${styles.roleButton} ${
-                    role === "psychologist" ? styles.roleActive : ""
-                  }`}
-                >
-                  Profesional
-                </button>
+              <div className={styles.patientInfo}>
+                <h4>Registro como Paciente</h4>
+                <p>
+                  Te estás registrando como paciente. Podrás buscar psicólogos,
+                  agendar sesiones y acceder a recursos para tu bienestar.
+                </p>
               </div>
-              {errors.role && (
-                <p className={styles.errorText}>{errors.role.message}</p>
-              )}
             </div>
 
             <button
@@ -154,11 +186,14 @@ export default function RegisterPage() {
               className={styles.submitButton}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Registrando..." : "Registrarse"}
+              {isSubmitting ? "Registrando..." : "Registrarse como Paciente"}
             </button>
 
             <div className={styles.footerLink}>
-              <Link to="/">Ir a Home</Link>
+              <Link to="/register-professional">
+                ¿Eres profesional? Regístrate aquí
+              </Link>{" "}
+              | <Link to="/">Ir a Home</Link>
             </div>
           </form>
         </div>

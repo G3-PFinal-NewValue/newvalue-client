@@ -1,0 +1,158 @@
+.pageContainer {
+  width: 100%;
+}
+
+/* --- Sección de Tarjetas de Tratamientos --- */
+.sessionCardsSection {
+  padding: 0rem 2rem;
+}
+
+.sessionCardsHeader,
+.sessionCardsFooter {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sessionCardsTitle {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-brand-title);
+}
+
+.sessionCardsSubtitle {
+  font-size: 1rem;
+  color: #333333;
+}
+
+.sessionCardsWrapper {
+  background-color: #ede3d2;
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  margin: 3rem auto;
+  max-width: 1200px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Contenedor principal de tarjetas --- */
+.sessionCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  align-items: stretch;
+}
+
+/* --- Tarjeta individual --- */
+.treatmentCard {
+  background: #f9f7f2; 
+  border-radius: 3rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2rem 1.5rem;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+.treatmentCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Título --- */
+.treatmentTitle {
+  font-family: var(--font-title);
+  color: var(--color-brand-title);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+/* --- Icono decorativo --- */
+.treatmentIcon {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin: 0.5rem auto 1.5rem;
+  display: block;
+  opacity: 0.9;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.treatmentCard:hover .treatmentIcon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* --- Texto descriptivo --- */
+.treatmentText {
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+  opacity: 0.9;
+}
+
+/* --- Botón --- */
+.treatmentBtn {
+  background: var(--color-brand-3rd);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.treatmentBtn:hover {
+  background: var(--color-brand-5th);
+  transform: translateY(-2px);
+}
+
+.primaryBtn {
+  background: var(--color-brand-primary); 
+  color: #fff;
+  border: 2px solid var(--color-brand-primary);
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.primaryBtn:hover {
+  background: var(--color-brand-secondary);
+  border-color: var(--color-brand-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .sessionCardsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sessionCardsContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .sessionCardsWrapper {
+    padding: 2rem 1rem;
+  }
+
+  .sessionCardsTitle {
+    font-size: 1.6rem;
+  }
+
+  .sessionCardsSubtitle {
+    font-size: 1rem;
+  }
+}

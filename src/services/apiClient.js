@@ -1,14 +1,14 @@
 import axios from "axios";
 
+//solo cambié esto: Mariana
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL,
 });
+
 
 api.interceptors.request.use((config) => {
   const raw = localStorage.getItem("cm_auth");
-  
-  // AÑADIMOS UN TRY...CATCH
-  // Esto evita que la app crashee si 'raw' es un JSON inválido (ej: "undefined" o null)
+
   if (raw) {
     try {
       const { token } = JSON.parse(raw);
@@ -16,14 +16,12 @@ api.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (e) {
-      // Si falla el parseo, simplemente no adjuntes el token
       console.error("Error parsing auth token from localStorage", e);
     }
   }
   return config;
 });
 
-// ⬇️ Normaliza errores
 api.interceptors.response.use(
   (res) => res,
   (err) => {

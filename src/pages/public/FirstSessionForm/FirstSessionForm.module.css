@@ -1,0 +1,248 @@
+.formContainer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f9f7f3;
+    border-radius: 1rem;
+    font-family: var(--font-body);
+    color: #333;
+}
+
+.formTitle {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sectionTitle {
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-brand-title);
+    margin-bottom: 1rem;
+}
+
+.row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-sizing: border-box;
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+    max-width: 46%;
+}
+
+.accessRow .inputGroup {
+    flex: 1;
+    max-width: 46%;
+    min-width: 180px;
+}
+
+.accessRow {
+    row-gap: 0;
+}
+
+.inputGroup {
+    position: relative;
+    flex: 1;
+    margin-bottom: 28px;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+    width: 100%;
+    padding: 0.8rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+}
+
+.inputGroup textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.inputGroup label {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #888;
+    transition: 0.2s all;
+    font-size: 0.9rem;
+    background: transparent;
+    padding: 0 0.25rem;
+}
+
+.inputGroup input:focus+label,
+.inputGroup input:not(:placeholder-shown)+label,
+.inputGroup textarea:focus+label,
+.inputGroup textarea:not(:placeholder-shown)+label {
+    top: -0.6rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-brand-5th);
+    background-color: #f9f7f3;
+    padding: 0 0.25rem;
+}
+
+.togglePassword {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.inputGroup input[type="date"] {
+    color: #333333a3;
+    background-color: #fff;
+}
+
+.inputGroup input[type="date"]:placeholder-shown+label {
+    color: #888;
+}
+
+.submitBtnForm {
+    align-self: center;
+    width: 50%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    background-color: var(--color-brand-primary);
+    color: #fff;
+    border: 2px solid var(--color-brand-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submitBtnForm:hover {
+    background-color: var(--color-brand-secondary);
+    border-color: var(--color-brand-secondary);
+    transform: translateY(-2px);
+}
+
+.fullWidthInput {
+    width: calc(100% - 4rem);
+    margin: 0 2rem 28px;
+    box-sizing: border-box;
+}
+
+.checkboxContainer {
+    margin: 1.5rem 0 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkboxLabel {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #333;
+}
+
+.checkboxLabel a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.checkboxLabel input {
+    margin-right: 0.6rem;
+    margin-top: 0.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .row {
+        display: flex;
+        flex-direction: column;
+        /* flex-wrap: nowrap; */
+        gap: 0rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .column {
+        max-width: 100%;
+        display: contents;
+    }
+
+    .column {
+        display: contents;
+    }
+
+    .inputGroup[data-order="1"] {
+        order: 1;
+    }
+
+    .inputGroup[data-order="2"] {
+        order: 2;
+    }
+
+    .inputGroup[data-order="3"] {
+        order: 3;
+    }
+
+    .inputGroup[data-order="4"] {
+        order: 4;
+    }
+
+    .inputGroup[data-order="5"] {
+        order: 5;
+    }
+
+    .inputGroup[data-order="6"] {
+        order: 6;
+    }
+
+    .inputGroup[data-order="7"] {
+        order: 7;
+    }
+
+    .inputGroup[data-order="8"] {
+        order: 8;
+    }
+
+    .inputGroup[data-order="9"] {
+        order: 9;
+    }
+
+    .inputGroup[data-order="10"] {
+        order: 10;
+    }
+
+    .fullWidthInput {
+        width: 100%;
+        margin: 0 0 28px;
+    }
+
+    .accessRow .inputGroup {
+        flex: 1;
+        max-width: 100%;
+    }
+}

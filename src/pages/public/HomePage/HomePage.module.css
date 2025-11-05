@@ -359,8 +359,9 @@
 
 @media (max-width: 768px) {
   .sessionCardsContainer {
-    flex-direction: column; /* Las cards se apilan verticalmente */
-    align-items: center; /* Centra las cards */
+    flex-direction: column; 
+    align-items: center; 
+    gap: 1.5rem;
   }
 
   .sessionCardsWrapper {
@@ -373,6 +374,11 @@
 
   .sessionCardsSubtitle {
     font-size: 1rem;
+  }
+
+  .session-card {
+    max-width: 100%;  
+    min-width: auto;
   }
 }
 
