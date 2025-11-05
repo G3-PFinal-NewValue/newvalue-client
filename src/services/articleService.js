@@ -28,15 +28,22 @@ function handleAxiosError(error) {
 }
 
 // Función auxiliar para obtener headers
-const getAuthHeaders = (token) => {
+const getAuthHeaders = (token, isFormData = false) => {
   if (!token) {
     throw new Error("No hay token de autenticación disponible");
   }
   
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`, // 👈 Asegúrate que tu backend espera "Bearer"
+  const headers = {
+    Authorization: `Bearer ${token}`,
   };
+
+  // 🔹 Si NO es FormData, establecemos Content-Type como JSON
+  // Si ES FormData, axios lo maneja automáticamente con el boundary correcto
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
 };
 
 // ✅ Crear un artículo
@@ -44,8 +51,12 @@ export const createArticle = async (articleData, token) => {
   try {
     console.log('Creando artículo con token:', token ? 'Sí existe' : 'NO EXISTE'); // 👈 Debug
     
+    // 🔹 Detectar si es FormData (con imagen) o JSON
+    const isFormData = articleData instanceof FormData;
+    console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
+    
     const { data } = await axios.post(API_URL, articleData, {
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(token, isFormData),
     });
     return data;
   } catch (error) {
@@ -53,27 +64,6 @@ export const createArticle = async (articleData, token) => {
   }
 };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    const token = localStorage.getItem('token');
-    console.log('Token obtenido:', token); // 👈 Verifica que no sea null
-    
-    if (!token) {
-      alert('Debes iniciar sesión primero');
-      // navigate('/login');
-      return;
-    }
-
-    const result = await createArticle(articleData, token);
-    console.log('Artículo creado:', result);
-    
-  } catch (error) {
-    console.error('Error al crear artículo:', error.message);
-    alert(error.message);
-  }
-};
 // ✅ Obtener todos los artículos
 export const getArticles = async () => {
   try {
@@ -97,11 +87,14 @@ export const getArticleById = async (id) => {
 // ✅ Editar (actualizar) artículo
 export const updateArticle = async (id, articleData, token) => {
   try {
+    console.log('Actualizando artículo con token:', token ? 'Sí existe' : 'NO EXISTE');
+    
+    // 🔹 Detectar si es FormData (con imagen) o JSON
+    const isFormData = articleData instanceof FormData;
+    console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
+
     const { data } = await axios.put(`${API_URL}/${id}`, articleData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(token, isFormData),
     });
     return data;
   } catch (error) {

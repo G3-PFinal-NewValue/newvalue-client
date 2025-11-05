@@ -24,7 +24,7 @@ export default function EditArticlePage() {
           title: data.title || "",
           content: data.content || "",
           category_id: data.category_id || "",
-          image: data.image || "",
+          image: data.image || "", // URL de Cloudinary o anterior imagen
         });
       } catch (err) {
         console.error(err);
@@ -48,7 +48,31 @@ export default function EditArticlePage() {
     setError(null);
 
     try {
-      await updateArticle(id, formData, authToken);
+      // 🔹 Convertir a FormData si hay imagen nueva, si no, enviar como JSON
+      let payloadToSend;
+
+      if (formData.image && formData.image instanceof File) {
+        // 🔹 Si hay imagen nueva (File object), usar FormData
+        payloadToSend = new FormData();
+        payloadToSend.append("title", formData.title);
+        payloadToSend.append("content", formData.content);
+        payloadToSend.append("category_id", formData.category_id);
+        payloadToSend.append("image", formData.image);
+        console.log("📸 Actualizando con imagen nueva (FormData)");
+      } else {
+        // 🔹 Si NO hay imagen nueva, enviar como JSON (mantiene imagen anterior)
+        payloadToSend = {
+          title: formData.title,
+          content: formData.content,
+          category_id: formData.category_id,
+          // No incluir 'image' para que backend mantenga la anterior
+        };
+        console.log("📄 Actualizando sin imagen nueva (JSON)");
+      }
+
+      console.log("📝 Datos enviados al backend:", payloadToSend);
+
+      await updateArticle(id, payloadToSend, authToken);
       alert("Artículo actualizado exitosamente ✅");
       navigate("/blog");
     } catch (err) {

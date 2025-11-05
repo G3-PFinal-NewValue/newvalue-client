@@ -37,12 +37,27 @@ export default function CreateArticlePage() {
     setError(null);
 
     try {
-      // ✅ Enviar category_id como número
-      const payloadToSend = {
-        ...formData,
-        category_id: Number(formData.category_id),
-        author_id: user.id, // agregar el autor
-      };
+      // 🔹 Convertir a FormData si hay imagen, si no, enviar como JSON
+      let payloadToSend;
+
+      if (formData.image && formData.image instanceof File) {
+        // 🔹 Si hay imagen (File object), usar FormData
+        payloadToSend = new FormData();
+        payloadToSend.append("title", formData.title);
+        payloadToSend.append("content", formData.content);
+        payloadToSend.append("category_id", Number(formData.category_id));
+        payloadToSend.append("author_id", user.id);
+        payloadToSend.append("image", formData.image);
+        console.log("📸 Enviando con imagen (FormData)");
+      } else {
+        // 🔹 Si NO hay imagen, enviar como JSON
+        payloadToSend = {
+          ...formData,
+          category_id: Number(formData.category_id),
+          author_id: user.id,
+        };
+        console.log("📄 Enviando sin imagen (JSON)");
+      }
 
       console.log("📝 Datos enviados al backend:", payloadToSend);
 
@@ -66,7 +81,7 @@ export default function CreateArticlePage() {
 
       <BlogArticleForm onSubmit={handleSubmit} loading={loading} />
 
-      <button  className="cancel-button" onClick={() => navigate("/blog")}>Cancelar</button>
+      <button className="cancel-button" onClick={() => navigate("/blog")}>Cancelar</button>
       <Footer />
     </div>
   );
