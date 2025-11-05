@@ -7,7 +7,7 @@ import LoginPage from "../pages/public/LoginPage/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage/RegisterPage";
 import RegisterProfessionalPage from "../pages/public/RegisterProfessionalPage/RegisterProfessionalPage";
 import BlogListPage from "../pages/public/Blog/BlogListPage.jsx";
-import BlogArticlePage from "../pages/public/BlogArticlePage";
+import BlogArticlePage from "../pages/public/Blog/BlogArticlePage.jsx";
 import PsychologistPublicProfile from "../pages/public/PsychologistPublicProfile/PsychologistPublicProfile";
 import PsychologistListPage from "../pages/public/PsychologistListPage/PsychologistListPage";
 import ContactPage from "../pages/public/ContactPage/ContactPage";
@@ -22,6 +22,8 @@ import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard";
 import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
 import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
 import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
+import CreateArticlePage from "../pages/private/BlogPages/CreateArticlePage.jsx";
+import EditArticlePage from "../pages/private/BlogPages/EditArticlePage.jsx";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -131,6 +133,9 @@ export default function AppRouter() {
             }
           />
         </Route>
+        <Route path="/blog/:id" element={<BlogArticlePage />} />
+        <Route path="/admin/article/create" element={<CreateArticlePage />} />
+        <Route path="/admin/article/edit/:id" element={<EditArticlePage />} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
