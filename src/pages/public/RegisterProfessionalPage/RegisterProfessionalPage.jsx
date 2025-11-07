@@ -89,21 +89,21 @@ export default function RegisterProfessionalPage() {
 
             {/* Datos Personales */}
             <TextInput
-              label="Nombre"
+              label="Nombre *"
               placeholder="Nombre"
               error={errors.first_name?.message}
               {...register("first_name")}
             />
 
             <TextInput
-              label="Apellido"
+              label="Apellido *"
               placeholder="Apellido"
               error={errors.last_name?.message}
               {...register("last_name")}
             />
 
             <TextInput
-              label="DNI / NIE / CIF"
+              label="DNI / NIE / CIF *"
               placeholder="00000000X"
               error={errors.dni_nie_cif?.message}
               {...register("dni_nie_cif")}
@@ -111,14 +111,14 @@ export default function RegisterProfessionalPage() {
 
             {/* Datos de Contacto */}
             <TextInput
-              label="Correo electrónico"
+              label="Correo electrónico *"
               placeholder="tucorreo@ejemplo.com"
               error={errors.email?.message}
               {...register("email")}
             />
 
             <TextInput
-              label="Teléfono de Contacto"
+              label="Teléfono de Contacto *"
               placeholder="+34 600 000 000"
               error={errors.phone?.message}
               {...register("phone")}
@@ -126,31 +126,31 @@ export default function RegisterProfessionalPage() {
 
             {/* Datos de Dirección */}
             <TextInput
-              label="Dirección Completa"
+              label="Dirección Completa *"
               placeholder="Calle Falsa, 123, 4B"
               error={errors.full_address?.message}
               {...register("full_address")}
             />
             <TextInput
-              label="Ciudad"
+              label="Ciudad *"
               placeholder="Madrid"
               error={errors.city?.message}
               {...register("city")}
             />
             <TextInput
-              label="Provincia"
+              label="Provincia *"
               placeholder="Madrid"
               error={errors.province?.message}
               {...register("province")}
             />
             <TextInput
-              label="Código Postal"
+              label="Código Postal *"
               placeholder="28001"
               error={errors.postal_code?.message}
               {...register("postal_code")}
             />
             <TextInput
-              label="País"
+              label="País *"
               placeholder="España"
               error={errors.country?.message}
               {...register("country")}
@@ -158,13 +158,13 @@ export default function RegisterProfessionalPage() {
 
             {/* Datos de Seguridad */}
             <PasswordInput
-              label="Contraseña"
+              label="Contraseña *"
               error={errors.password?.message}
               {...register("password")}
             />
 
             <PasswordInput
-              label="Confirmar contraseña"
+              label="Confirmar contraseña *"
               error={errors.confirm?.message}
               {...register("confirm")}
             />
