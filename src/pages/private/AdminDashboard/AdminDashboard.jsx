@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import Button from '../../../components/Button';
 // 1. Importar los servicios del admin
 import {
   adminGetAllUsers,
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
       await adminValidatePsychologist(psychologistId);
       // Actualizar estado local (optimista)
       setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
-      
+
       // Actualizamos la lista principal
       const newPsychologists = psychologists.map(p =>
         p.user_id === psychologistId ? { ...p, validated: true } : p
@@ -96,16 +97,16 @@ export default function AdminDashboard() {
     if (window.confirm("¿Estás seguro de que deseas eliminar este perfil? Esta acción también eliminará al usuario asociado.")) {
       try {
         await adminRejectPsychologist(psychologistId);
-        
+
         setUsers(prev => prev.filter(u => u.id !== psychologistId));
         setPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
         setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
 
         const newPsychologists = psychologists.filter(p => p.user_id !== psychologistId);
         setStats(prev => ({
-            totalUsers: prev.totalUsers - 1,
-            pending: newPsychologists.filter(p => !p.validated).length,
-            activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
+          totalUsers: prev.totalUsers - 1,
+          pending: newPsychologists.filter(p => !p.validated).length,
+          activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
         }));
 
       } catch (err) {
@@ -117,7 +118,7 @@ export default function AdminDashboard() {
   const handleToggleUserStatus = async (userToToggle) => {
     const isActivating = userToToggle.status !== 'active';
     const actionText = isActivating ? "activar" : "desactivar";
-    
+
     if (window.confirm(`¿Estás seguro de que deseas ${actionText} a este usuario?`)) {
       try {
         if (isActivating) {
@@ -127,10 +128,10 @@ export default function AdminDashboard() {
         }
 
         // Actualizar el estado local (optimista)
-        setUsers(prevUsers => 
-          prevUsers.map(u => 
-            u.id === userToToggle.id 
-              ? { ...u, status: isActivating ? 'active' : 'inactive' } 
+        setUsers(prevUsers =>
+          prevUsers.map(u =>
+            u.id === userToToggle.id
+              ? { ...u, status: isActivating ? 'active' : 'inactive' }
               : u
           )
         );
@@ -148,9 +149,9 @@ export default function AdminDashboard() {
     return <div className={styles.page}><p className={`${styles.card} ${styles.errorMessage}`}>{error}</p></div>;
   }
 
-   return (
-      <div className={styles.page}>
-         <h1 className={styles.mainTitle}>Panel de Administración</h1>
+  return (
+    <div className={styles.page}>
+      <h1 className={styles.mainTitle}>Panel de Administración</h1>
 
       {/* --- Sección Estadísticas --- */}
       <section className={styles.statsGrid}>
@@ -176,7 +177,7 @@ export default function AdminDashboard() {
         ) : (
           <table className={styles.dataTable}>
             <thead>
-<tr>
+              <tr>
                 <th>Nombre</th>
                 <th>Email (Usuario)</th>
                 <th>Especialidades</th>
@@ -200,7 +201,7 @@ export default function AdminDashboard() {
                         : 'No especificada'}
                     </td>
                     <td>{p.license_number}</td>
-                    <td>{new Date(p.created_at).toLocaleDateString()}</td> 
+                    <td>{new Date(p.created_at).toLocaleDateString()}</td>
                     <td className={styles.actionsCell}>
                       <Link
                         to={`/profile/${p.user_id}`}
@@ -234,15 +235,18 @@ export default function AdminDashboard() {
       {/* --- Sección Últimos Usuarios (Tabla) --- */}
       <section className={styles.card}>
         <h2 className={styles.sectionTitle}>Últimos Usuarios Registrados ({users.length})</h2>
+        <Link to="/create-user">
+      <Button>Crear Nuevo Usuario</Button>
+      </Link>
         <table className={styles.dataTable}>
           <thead>
-<tr>
+            <tr>
               <th>Nombre</th>
               <th>Email</th>
               <th>Rol</th>
-              {/* <th>Fecha Registro</th> */} {/* Sigue comentado, ¡está bien! */}
-              <th>Estado</th> 
-              <th>Acciones</th> 
+              {/* <th>Fecha Registro</th> */}
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -255,7 +259,7 @@ export default function AdminDashboard() {
                     {u.role?.name || 'N/A'}
                   </span>
                 </td>
-                <td>{u.status}</td> { /* <-- Nuevo Campo */ }
+                <td>{u.status}</td> { /* <-- Nuevo Campo */}
                 <td className={styles.actionsCell}>
                   {/* Solo mostrar "Ver Perfil" si es psicólogo */}
                   {u.role?.name === 'psychologist' && (

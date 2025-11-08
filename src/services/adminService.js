@@ -95,3 +95,17 @@ export async function adminActivateUser(userId) {
     throw error;
   }
 }
+
+/**
+ * Crea un nuevo usuario (solo admin).
+ * @param {Object} userData - Objeto con los datos del usuario a crear
+ */
+export async function adminCreateUser(userData) {
+  try {
+    const response = await api.post("/user", userData);
+    return response.data;
+  } catch (error) {
+    console.error("Error en adminCreateUser:", error);
+    throw error;
+  }
+}
