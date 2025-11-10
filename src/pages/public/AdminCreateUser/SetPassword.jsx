@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../services/apiClient";
-import "./SetPassword.module.css";
+import styles from "./SetPassword.module.css"; 
 
 function SetPassword() {
     const { token } = useParams();
@@ -35,16 +35,16 @@ function SetPassword() {
     };
 
     return (
-        <div className="setPasswordWrapper">
-            <div className="formContainer">
-                <h2 className="formTitle">🔐 Establecer Nueva Contraseña</h2>
+        <div className={styles.setPasswordWrapper}>
+            <div className={styles.formContainer}>
+                <h2 className={styles.formTitle}>🔐 Establecer Nueva Contraseña</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="formGrid">
-                        <div className="formField">
-                            <label className="label">Nueva contraseña</label>
+                    <div className={styles.formGrid}>
+                        <div className={styles.formField}>
+                            <label className={styles.label}>Nueva contraseña</label>
                             <input
-                                className="input"
+                                className={styles.input}
                                 type="password"
                                 placeholder="Ingresa tu nueva contraseña"
                                 value={password}
@@ -53,10 +53,10 @@ function SetPassword() {
                             />
                         </div>
 
-                        <div className="formField">
-                            <label className="label">Confirmar contraseña</label>
+                        <div className={styles.formField}>
+                            <label className={styles.label}>Confirmar contraseña</label>
                             <input
-                                className="input"
+                                className={styles.input}
                                 type="password"
                                 placeholder="Repite tu contraseña"
                                 value={confirm}
@@ -66,18 +66,18 @@ function SetPassword() {
                         </div>
                     </div>
 
-                    <div className="buttonContainer">
+                    <div className={styles.buttonContainer}>
                         <button
                             type="submit"
-                            className="primaryButton"
+                            className={styles.primaryButton}
                             disabled={loading}
                         >
                             {loading ? "Guardando..." : "Guardar contraseña"}
                         </button>
                     </div>
 
-                    {error && <p className="errorMessage">{error}</p>}
-                    {success && <p className="successMessage">{success}</p>}
+                    {error && <p className={styles.errorMessage}>{error}</p>}
+                    {success && <p className={styles.successMessage}>{success}</p>}
                 </form>
             </div>
         </div>
