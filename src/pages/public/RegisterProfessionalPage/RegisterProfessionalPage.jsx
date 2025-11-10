@@ -63,8 +63,8 @@ export default function RegisterProfessionalPage() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values);
-      login(user);
+      const authData = await registerRequest(values); // CA: recibir token + usuario
+      login(authData); // CA: iniciar sesión de inmediato
       // Los profesionales siempre van al setup de perfil profesional
       navigate("/app/profile");
     } catch (err) {
