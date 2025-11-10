@@ -5,11 +5,10 @@ export async function loginRequest({ email, password }) {
   try {
     const response = await api.post("/auth/login", { email, password });
     const { token, user } = response.data;
-
-    localStorage.setItem("cm_auth", JSON.stringify({ token, user }));
-    console.log("Login exitoso. Usuario:", user.role);
-
-    return user; 
+    
+    console.log("Login exitoso. Usuario:", user.role); // CA: mantener log informativo
+    
+    return { token, user }; // CA: devolver datos completos para AuthContext
   } catch (error) {
     console.error("Error en loginRequest:", error);
     throw error;
@@ -21,9 +20,8 @@ export async function registerRequest(userData) {
   try {
     const response = await api.post("/auth/register", userData);
     const { token, user } = response.data; 
-    localStorage.setItem("cm_auth", JSON.stringify({ token, user }));
-    console.log("Registro exitoso. Usuario:", user.role);
-    return user; 
+    console.log("Registro exitoso. Usuario:", user.role); // CA: mantener log
+    return { token, user }; // CA: devolver estructura compatible con login()
   } catch (error) {
     console.error("Error en registerRequest:", error);
     throw error;
@@ -72,11 +70,10 @@ export async function googleLoginRequest(token) {
       throw new Error('El servidor no devolvió un token válido');
     }
 
-    localStorage.setItem("cm_auth", JSON.stringify({ token: jwt, user }));
     console.log("Login con Google exitoso. Usuario:", user.email, "Rol:", user.role);
     
     // Devolver el objeto completo con token para que el frontend lo maneje
-    return { ...user, token: jwt };
+    return { token: jwt, user }; // CA: misma forma que login/register
   } catch (error) {
     console.error("Error en googleLoginRequest:", error);
     

@@ -63,8 +63,8 @@ export default function RegisterPage() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerRequest(values);
-      login(user);
+      const authData = await registerRequest(values); // CA: recibir token + usuario
+      login(authData); // CA: setear contexto sin refrescar
       // Los pacientes siempre van al setup de paciente
       navigate("/app/profile-setup/patient");
     } catch (err) {

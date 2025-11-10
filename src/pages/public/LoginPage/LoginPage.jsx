@@ -34,8 +34,8 @@ export default function LoginPage() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await loginRequest(values); // Mock temporal
-      login(user);
+      const authData = await loginRequest(values); // CA: obtener token y usuario
+      login(authData); // CA: actualizar contexto inmediatamente
       navigate("/");
     } catch {
       alert("Error al iniciar sesión");
