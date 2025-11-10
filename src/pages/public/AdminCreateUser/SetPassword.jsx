@@ -28,44 +28,56 @@ function SetPassword() {
             setSuccess("✅ Contraseña establecida correctamente. Redirigiendo...");
             setTimeout(() => navigate("/login"), 2000);
         } catch (err) {
-            setError(err.response?.data?.message || "Error estableciendo contraseña");
+            setError(err.response?.data?.message || "Error al establecer la contraseña.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="setpassword-page">
-            <div className="setpassword-card">
-                <h2 className="setpassword-title">🔐 Establecer nueva contraseña</h2>
+        <div className="setPasswordWrapper">
+            <div className="formContainer">
+                <h2 className="formTitle">🔐 Establecer Nueva Contraseña</h2>
 
-                <form onSubmit={handleSubmit} className="setpassword-form">
-                    <div className="form-group">
-                        <label>Nueva contraseña</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
+                <form onSubmit={handleSubmit}>
+                    <div className="formGrid">
+                        <div className="formField">
+                            <label className="label">Nueva contraseña</label>
+                            <input
+                                className="input"
+                                type="password"
+                                placeholder="Ingresa tu nueva contraseña"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="formField">
+                            <label className="label">Confirmar contraseña</label>
+                            <input
+                                className="input"
+                                type="password"
+                                placeholder="Repite tu contraseña"
+                                value={confirm}
+                                onChange={(e) => setConfirm(e.target.value)}
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <div className="form-group">
-                        <label>Confirmar contraseña</label>
-                        <input
-                            type="password"
-                            value={confirm}
-                            onChange={(e) => setConfirm(e.target.value)}
-                            required
-                        />
+                    <div className="buttonContainer">
+                        <button
+                            type="submit"
+                            className="primaryButton"
+                            disabled={loading}
+                        >
+                            {loading ? "Guardando..." : "Guardar contraseña"}
+                        </button>
                     </div>
 
-                    {error && <p className="error-message">{error}</p>}
-                    {success && <p className="success-message">{success}</p>}
-
-                    <button type="submit" disabled={loading}>
-                        {loading ? "Guardando..." : "Guardar contraseña"}
-                    </button>
+                    {error && <p className="errorMessage">{error}</p>}
+                    {success && <p className="successMessage">{success}</p>}
                 </form>
             </div>
         </div>
