@@ -3,9 +3,10 @@ import api from "./apiClient";
 /**
  * Obtiene todos los usuarios (solo admin).
  */
-export async function adminGetAllUsers() {
+export async function adminGetAllUsers(query = "") {
   try {
-    const response = await api.get("/user");
+    // Permite pasar parámetros opcionales como "?role=admin&search=juan"
+    const response = await api.get(`/user${query}`);
     return response.data;
   } catch (error) {
     console.error("Error en adminGetAllUsers:", error);
@@ -13,7 +14,7 @@ export async function adminGetAllUsers() {
   }
 }
 
-/**
+/*
  * Obtiene todos los pacientes (solo admin).
  */
 export async function adminGetAllPatients() {

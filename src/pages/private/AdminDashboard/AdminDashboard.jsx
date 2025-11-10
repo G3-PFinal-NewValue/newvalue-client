@@ -14,7 +14,7 @@ import {
 } from '../../../services/adminService'; // Ajusta la ruta si es necesario
 import styles from './AdminDashboard.module.css';
 import AdminExportExcel from '../../../components/AdminExportExcel';
-import CreateUserForm from './CreateUserForm';
+import UserSearchFilter from './UserSearchFilter';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -187,6 +187,7 @@ export default function AdminDashboard() {
         {pendingPsychologists.length === 0 ? (
           <p className={styles.emptyMessage}>No hay psicólogos pendientes.</p>
         ) : (
+
           <table className={styles.dataTable}>
             <thead>
               <tr>
@@ -204,8 +205,8 @@ export default function AdminDashboard() {
                 return (
                   <tr key={p.user_id}>
                     <td>
-                      {userInfo 
-                        ? `${userInfo.first_name} ${userInfo.last_name}` 
+                      {userInfo
+                        ? `${userInfo.first_name} ${userInfo.last_name}`
                         : 'Usuario no encontrado'}
                     </td>
                     <td>{userInfo ? userInfo.email : 'N/A'}</td>
@@ -251,9 +252,24 @@ export default function AdminDashboard() {
         <h2 className={styles.sectionTitle}>
           Últimos Usuarios Registrados ({users.length})
         </h2>
+        <div className={styles.usersGrid}>
         <Link to="/admin/create-user">
           <Button>Crear Nuevo Usuario</Button>
         </Link>
+        {/* --- FILTRO DE BÚSQUEDA Y ROL --- */}
+        <UserSearchFilter
+          onFilter={async ({ search, role }) => {
+            try {
+              const query = new URLSearchParams();
+              if (search) query.append('search', search);
+              if (role) query.append('role', role);
+              const filtered = await adminGetAllUsers(`?${query.toString()}`);
+              setUsers(filtered);
+            } catch (err) {
+              console.error('Error filtrando usuarios:', err);
+            }
+          }}
+        /></div>
         <table className={styles.dataTable}>
           <thead>
             <tr>
