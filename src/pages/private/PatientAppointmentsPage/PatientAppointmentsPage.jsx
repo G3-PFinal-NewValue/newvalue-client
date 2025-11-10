@@ -1,6 +1,5 @@
 // src/pages/private/PatientAppointmentsPage/PatientAppointmentsPage.jsx
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import styles from "./PatientAppointmentsPage.module.css";
 import {
   getMyAppointments,
@@ -13,7 +12,6 @@ import addDays from "date-fns/addDays";
 import startOfDay from "date-fns/startOfDay";
 
 export default function PatientAppointmentsPage() {
-  const navigate = useNavigate();
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -209,6 +207,11 @@ export default function PatientAppointmentsPage() {
     }
   }, []);
 
+  const openCallWindow = (appointmentId) => {
+    if (!appointmentId) return;
+    window.open(`/consulta/${appointmentId}`, "_blank", "noopener,noreferrer");
+  };
+
   useEffect(() => {
     loadAppointments();
   }, [loadAppointments]);
@@ -352,7 +355,7 @@ export default function PatientAppointmentsPage() {
                     <div className={styles.actionButtons}>
                       {app.isConfirmed && (
                         <button
-                          onClick={() => navigate(`/consulta/${app.id}`)}
+                          onClick={() => openCallWindow(app.id)}
                           className={`${styles.actionButton} ${styles.joinButton}`}
                         >
                           Entrar a la consulta

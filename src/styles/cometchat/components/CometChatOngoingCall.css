@@ -8,3 +8,11 @@
     top: 0px;
     z-index: 10;
 }
+
+.cometchat-ongoing-call__background {
+    display: none !important;
+}
+
+.cometchat-ongoing-call__container {
+    background-image: none !important;
+}

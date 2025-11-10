@@ -191,20 +191,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
+  background: var(--color-brand-primary);
+  color: #ffffff;
   text-decoration: none;
   padding: 8px 18px;
   border-radius: 999px;
   font-size: 0.875rem;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 10px 22px rgba(238, 146, 113, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .joinButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 14px 30px rgba(238, 146, 113, 0.4);
 }
 
 .appointmentItem:last-child {

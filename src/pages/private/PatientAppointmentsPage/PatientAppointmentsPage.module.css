@@ -184,14 +184,14 @@
 }
 
 .joinButton {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+  background: var(--color-brand-primary);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(238, 146, 113, 0.25);
 }
 
 .joinButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 12px 28px rgba(238, 146, 113, 0.35);
 }
 
 .pendiente {
