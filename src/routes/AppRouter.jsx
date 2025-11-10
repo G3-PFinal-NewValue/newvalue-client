@@ -25,6 +25,7 @@ import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPag
 import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
 import CreateArticlePage from "../pages/private/BlogPages/CreateArticlePage.jsx";
 import EditArticlePage from "../pages/private/BlogPages/EditArticlePage.jsx";
+import VideoCallPage from '../pages/private/VideoCallPage/VideoCallPage';
 
 import { useAuth } from "../context/AuthContext";
 
@@ -141,11 +142,20 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+          
+          
         </Route>
         <Route path="/blog/:id" element={<BlogArticlePage />} />
         <Route path="/admin/article/create" element={<CreateArticlePage />} />
         <Route path="/admin/article/edit/:id" element={<EditArticlePage />} />
-
+        <Route
+          path="/consulta/:appointmentId"
+          element={
+            <ProtectedRoute allowedRoles={['patient', 'psychologist']}>
+              <VideoCallPage />
+            </ProtectedRoute>
+          }
+        />
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
