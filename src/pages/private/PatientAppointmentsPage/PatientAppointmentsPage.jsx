@@ -1,133 +1,298 @@
 // src/pages/private/PatientAppointmentsPage/PatientAppointmentsPage.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "./PatientAppointmentsPage.module.css";
 import {
   getMyAppointments,
   cancelAppointment,
+  rescheduleAppointment,
+  getBookedSlotsForPsychologist,
 } from "../../../services/appointmentService";
+import { getPsychologistProfileById } from "../../../services/psychologistsService";
+import addDays from "date-fns/addDays";
+import startOfDay from "date-fns/startOfDay";
 
 export default function PatientAppointmentsPage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rescheduleModal, setRescheduleModal] = useState({
+    open: false,
+    appointment: null,
+    slots: [],
+    loading: false,
+    error: null,
+  });
 
   const DATETIME_FORMAT = {
     dateStyle: "long",
     timeStyle: "short",
   };
 
-  useEffect(() => {
+  const SLOT_DURATION = 45;
+
+  const normalizeBookedSlots = (booked = []) =>
+    booked.map((slot) => {
+      const start = new Date(slot.date);
+      const end = new Date(
+        start.getTime() + (slot.duration_minutes || SLOT_DURATION) * 60000
+      );
+      return { start, end };
+    });
+
+  const createSlotsForDate = (
+    availability,
+    baseDate,
+    bookedSlots,
+    now = new Date()
+  ) => {
+    const [startHour, startMinute] = (availability.start_time || "00:00")
+      .split(":")
+      .map(Number);
+    const [endHour, endMinute] = (availability.end_time || "00:00")
+      .split(":")
+      .map(Number);
+
+    if (
+      [startHour, startMinute, endHour, endMinute].some((value) =>
+        Number.isNaN(value)
+      )
+    ) {
+      return [];
+    }
+
+    const startDate = new Date(baseDate);
+    startDate.setHours(startHour, startMinute, 0, 0);
+    const endDate = new Date(baseDate);
+    endDate.setHours(endHour, endMinute, 0, 0);
+
+    const slots = [];
+    let slotStart = new Date(startDate);
+
+    while (slotStart < endDate) {
+      const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION * 60000);
+
+      if (slotEnd <= now) {
+        slotStart = slotEnd;
+        continue;
+      }
+      if (slotEnd > endDate) break;
+
+      const overlaps = bookedSlots.some(
+        (booked) => slotStart < booked.end && slotEnd > booked.start
+      );
+      if (!overlaps) {
+        slots.push({
+          availabilityId: availability.id,
+          start: new Date(slotStart),
+          end: new Date(slotEnd),
+          label: slotStart.toLocaleString(undefined, DATETIME_FORMAT),
+        });
+      }
+      slotStart = slotEnd;
+    }
+    return slots;
+  };
+
+  const generateAvailableSlots = (profile, bookedSlots) => {
+    if (!profile?.availabilities) return [];
+    const now = new Date();
+    const limit = addDays(now, 28);
+    const startCursor = startOfDay(now);
+    const normalizedBooked = normalizeBookedSlots(bookedSlots);
+    const slots = [];
+
+    profile.availabilities.forEach((availability) => {
+      if (!availability?.is_available) return;
+
+      if (availability.specific_date) {
+        const baseDate = startOfDay(
+          new Date(`${availability.specific_date}T00:00:00`)
+        );
+        if (baseDate >= now) {
+          slots.push(
+            ...createSlotsForDate(
+              availability,
+              baseDate,
+              normalizedBooked,
+              now
+            )
+          );
+        }
+        return;
+      }
+
+      let cursor = new Date(startCursor);
+      while (cursor <= limit) {
+        const jsDay = cursor.getDay() === 0 ? 7 : cursor.getDay();
+        if (availability.weekday === jsDay) {
+          slots.push(
+            ...createSlotsForDate(
+              availability,
+              cursor,
+              normalizedBooked,
+              now
+            )
+          );
+        }
+        cursor = addDays(cursor, 1);
+      }
+    });
+
+    return slots.sort((a, b) => a.start - b.start);
+  };
+
+  const loadAppointments = useCallback(async () => {
     setLoading(true);
     setError(null);
-    console.log("Cargando citas reales...");
+    try {
+      const data = await getMyAppointments();
+      const allAppointments = data.appointments || [];
 
-    getMyAppointments()
-      .then((data) => {
-        // El backend devuelve un objeto { appointments: [...] }
-        const allAppointments = data.appointments || [];
+      const parsedAppointments = allAppointments.map((app) => ({
+        id: app.id,
+        psychologistName: app.psychologist
+          ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
+          : "Psicólogo no asignado",
+        dateTime: new Date(app.date),
+        status: app.status,
+        psychologistId: app.psychologist_id,
+      }));
 
-        // Parsear los datos reales
-        const parsedAppointments = allAppointments.map((app) => ({
-          id: app.id,
-          // El backend envía el objeto 'psychologist' anidado
-          psychologistName: app.psychologist
-            ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
-            : "Psicólogo no asignado",
-          // El backend envía 'date' como un string ISO (ej: "2025-10-28T10:30:00.000Z")
-          dateTime: new Date(app.date),
-          status: app.status,
-        }));
+      const now = new Date();
+      const upcoming = parsedAppointments
+        .filter(
+          (a) =>
+            a.dateTime >= now &&
+            (a.status === "confirmada" || a.status === "pending")
+        )
+        .sort((a, b) => a.dateTime - b.dateTime);
 
-        // La lógica de filtrado se mantiene, pero ahora usa los datos parseados
-        const now = new Date();
-        const upcoming = parsedAppointments
-          .filter(
-            (a) =>
-              a.dateTime >= now &&
-              (a.status === "confirmada" || a.status === "pending")
-          )
-          .sort((a, b) => a.dateTime - b.dateTime);
+      const past = parsedAppointments
+        .filter(
+          (a) =>
+            a.dateTime < now ||
+            a.status === "completada" ||
+            a.status === "cancelled"
+        )
+        .sort((a, b) => b.dateTime - a.dateTime);
 
-        const past = parsedAppointments
-          .filter(
-            (a) =>
-              a.dateTime < now ||
-              a.status === "completada" ||
-              a.status === "cancelled"
-          )
-          .sort((a, b) => b.dateTime - a.dateTime);
-
-        setUpcomingAppointments(upcoming);
-        setPastAppointments(past);
-        console.log("Citas reales cargadas:", { upcoming, past });
-      })
-      .catch((err) => {
-        console.error("Error cargando citas:", err);
-        setError("No se pudieron cargar tus citas.");
-        setUpcomingAppointments([]);
-        setPastAppointments([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      setUpcomingAppointments(upcoming);
+      setPastAppointments(past);
+    } catch (err) {
+      console.error("Error cargando citas:", err);
+      setError("No se pudieron cargar tus citas.");
+      setUpcomingAppointments([]);
+      setPastAppointments([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    console.log("Cargando citas reales...");
+    loadAppointments();
+  }, [loadAppointments]);
 
-    getMyAppointments()
-      .then((data) => {
-        // El backend devuelve un objeto { appointments: [...] }
-        const allAppointments = data.appointments || [];
+  const handleCancelAppointment = async (appointmentId) => {
+    const confirmed = window.confirm(
+      "¿Estás seguro de que quieres cancelar esta cita?"
+    );
+    if (!confirmed) return;
+    try {
+      await cancelAppointment(appointmentId);
+      await loadAppointments();
+      alert("Cita cancelada correctamente.");
+    } catch (err) {
+      console.error("Error al cancelar cita:", err);
+      alert("No se pudo cancelar la cita. Inténtalo de nuevo.");
+    }
+  };
 
-        // Parsear los datos reales
-        const parsedAppointments = allAppointments.map((app) => ({
-          id: app.id,
-          // El backend envía el objeto 'psychologist' anidado
-          psychologistName: app.psychologist
-            ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
-            : "Psicólogo no asignado",
-          // El backend envía 'date' como un string ISO (ej: "2025-10-28T10:30:00.000Z")
-          dateTime: new Date(app.date),
-          status: app.status,
-        }));
+  const handleRescheduleAppointment = async (appointment) => {
+    if (!appointment?.psychologistId) {
+      alert("No se puede reprogramar esta cita.");
+      return;
+    }
+    setRescheduleModal({
+      open: true,
+      appointment,
+      slots: [],
+      loading: true,
+      error: null,
+    });
 
-        // La lógica de filtrado se mantiene, pero ahora usa los datos parseados
-        const now = new Date();
-        const upcoming = parsedAppointments
-          .filter(
-            (a) =>
-              a.dateTime >= now &&
-              (a.status === "confirmada" || a.status === "pending")
-          )
-          .sort((a, b) => a.dateTime - b.dateTime);
+    try {
+      const [profile, booked] = await Promise.all([
+        getPsychologistProfileById(appointment.psychologistId),
+        getBookedSlotsForPsychologist(appointment.psychologistId),
+      ]);
+      const slots = generateAvailableSlots(profile, booked);
+      setRescheduleModal((prev) => ({
+        ...prev,
+        slots,
+        loading: false,
+        error:
+          slots.length === 0
+            ? "No hay horarios disponibles para reprogramar."
+            : null,
+      }));
+    } catch (err) {
+      console.error("Error cargando horarios:", err);
+      setRescheduleModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: "No se pudieron cargar los horarios disponibles.",
+      }));
+    }
+  };
 
-        const past = parsedAppointments
-          .filter(
-            (a) =>
-              a.dateTime < now ||
-              a.status === "completada" ||
-              a.status === "cancelled"
-          )
-          .sort((a, b) => b.dateTime - a.dateTime);
+  const handleSelectNewSlot = async (slot) => {
+    if (!slot || !rescheduleModal.appointment) return;
 
-        setUpcomingAppointments(upcoming);
-        setPastAppointments(past);
-        console.log("Citas reales cargadas:", { upcoming, past });
-      })
-      .catch((err) => {
-        console.error("Error cargando citas:", err);
-        setError("No se pudieron cargar tus citas.");
-        setUpcomingAppointments([]);
-        setPastAppointments([]);
-      })
-      .finally(() => {
-        setLoading(false);
+    const readableSlot = slot.start.toLocaleString(undefined, DATETIME_FORMAT); // CA: informar fecha amigable
+    const confirmed = window.confirm(
+      `¿Confirmas reprogramar la cita para ${readableSlot}?`
+    );
+    if (!confirmed) return;
+
+    try {
+      setRescheduleModal((prev) => ({ ...prev, loading: true, error: null }));
+      await rescheduleAppointment(rescheduleModal.appointment.id, {
+        availability_id: slot.availabilityId,
+        date: slot.start.toISOString(),
+        duration_minutes: SLOT_DURATION,
       });
-  }, []);
+      setRescheduleModal({
+        open: false,
+        appointment: null,
+        slots: [],
+        loading: false,
+        error: null,
+      });
+      await loadAppointments();
+      alert("Cita reprogramada correctamente.");
+    } catch (err) {
+      console.error("Error al reprogramar:", err);
+      setRescheduleModal((prev) => ({
+        ...prev,
+        loading: false,
+        error:
+          err?.response?.data?.message ||
+          err?.message ||
+          "No se pudo reprogramar la cita.",
+      }));
+    }
+  };
+
+  const closeRescheduleModal = () => {
+    setRescheduleModal({
+      open: false,
+      appointment: null,
+      slots: [],
+      loading: false,
+      error: null,
+    });
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -166,7 +331,7 @@ export default function PatientAppointmentsPage() {
                     </div>
                     <div className={styles.actionButtons}>
                       <button
-                        onClick={() => handleRescheduleAppointment(app.id)}
+                        onClick={() => handleRescheduleAppointment(app)}
                         className={`${styles.actionButton} ${styles.rescheduleButton}`}
                       >
                         Reprogramar
@@ -228,6 +393,58 @@ export default function PatientAppointmentsPage() {
             )}
           </section>
         </>
+      )}
+
+      {rescheduleModal.open && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h3>Reprogramar cita</h3>
+            <p className={styles.modalSubtitle}>
+              Selecciona uno de los horarios disponibles para{" "}
+              {rescheduleModal.appointment?.psychologistName}.
+            </p>
+
+            {rescheduleModal.loading && <p>Cargando horarios...</p>}
+
+            {!rescheduleModal.loading && rescheduleModal.error && (
+              <p className={styles.errorMessage}>{rescheduleModal.error}</p>
+            )}
+
+            {!rescheduleModal.loading &&
+              !rescheduleModal.error &&
+              rescheduleModal.slots.length > 0 && (
+                <div className={styles.slotList}>
+                  {rescheduleModal.slots.map((slot) => (
+                    <button
+                      key={`${slot.availabilityId}-${slot.start.toISOString()}`}
+                      onClick={() => handleSelectNewSlot(slot)}
+                      className={styles.slotButton}
+                    >
+                      {slot.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+            {!rescheduleModal.loading &&
+              !rescheduleModal.error &&
+              rescheduleModal.slots.length === 0 && (
+                <p className={styles.noAppointmentsMessage}>
+                  No hay horarios disponibles en este momento.
+                </p>
+              )}
+
+            <div className={styles.modalActions}>
+              <button
+                onClick={closeRescheduleModal}
+                className={styles.cancelButton}
+                type="button"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

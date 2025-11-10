@@ -1,5 +1,6 @@
 // src/pages/private/PsychologistDashboardPage/PsychologistDashboardPage.jsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import {
   getPsychologistAppointments,
@@ -60,7 +61,19 @@ export default function PsychologistDashboardPage() {
 
         // Procesar pacientes
         if (patientsData.status === "fulfilled") {
-          setPatients(patientsData.value || []);
+          const formattedPatients = (patientsData.value || []).map(
+            (patient) => ({
+              id: patient.user_id || patient.id,
+              firstName:
+                patient.user?.first_name ||
+                patient.first_name ||
+                "Paciente",
+              lastName:
+                patient.user?.last_name || patient.last_name || "",
+              email: patient.user?.email || patient.email || "Sin correo",
+            })
+          );
+          setPatients(formattedPatients);
         } else {
           console.error("Error cargando pacientes:", patientsData.reason);
           setPatients([]);
@@ -257,11 +270,20 @@ export default function PsychologistDashboardPage() {
           {patients.length > 0 ? (
             <ul className={styles.patientsList}>
               {patients.map((patient) => (
-                <li key={patient.id} className={styles.patientItem}>
+                <li
+                  key={patient.id || `${patient.firstName}-${patient.email}`}
+                  className={styles.patientItem}
+                >
                   <span className={styles.patientName}>
-                    {patient.first_name} {patient.last_name}
+                    {patient.firstName} {patient.lastName}
                   </span>
                   <span className={styles.patientEmail}>{patient.email}</span>
+                  <Link
+                    to={`/app/patients/${patient.id}`}
+                    className={styles.patientLink}
+                  >
+                    Ver perfil
+                  </Link>
                 </li>
               ))}
             </ul>
