@@ -1,63 +1,105 @@
-import { useState } from "react";
-import BlogCard from "../../../components/BlogCard";
-import "./blog.css";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+import BlogCard from "../../..//components/blogcard.jsx";
+import {  getArticles,
+  getArticleById,
+  createArticle,
+  updateArticle,
+  deleteArticle, } from "../../../services/articleService.js";
+import "../Blog/BlogListPage.css";
 
-const articles = [
-  {
-    image: "../images/mujer-reflexionando.png",
-    label: "Estrés",
-    title: "Aprende a respirar y liberar el estrés",
-    description: "Date permiso para pausar. La calma no es ausencia de desafíos...",
-    author: "Dra. Andrea Molina",
-    slug: "guia-respira-y-libera-el-estres",
-  },
-  {
-    image: "../images/mujer-meditando.png",
-    label: "Ansiedad",
-    title: "Pasos para superar la ansiedad",
-    description: "Conoce técnicas para reducir y manejar la ansiedad...",
-    author: "Dra. Clara Martín",
-    slug: "primeros-pasos-superar-ansiedad",
-  },
-  {
-    image: "../images/comunicacion-efectiva.png",
-    label: "Comunicación",
-    title: "Aprende a hablar desde la escucha",
-    description: "La comunicación empática fortalece tus vínculos personales y laborales.",
-    author: "Dr. Oswaldo López",
-    slug: "aprender-hablar-desde-la-escucha",
-  },
+const categories = [
+  "Todos", "Mindfulness", "Estrés", "Terapia", "Salud Mental",
+  "Bienestar", "Ansiedad", "Comunicación"
 ];
 
-const categories = ["Todos", "Mindfulness", "Estrés", "Terapia", "Salud Mental", "Bienestar", "Ansiedad", "Comunicación"];
-
 export default function BlogCardList() {
+  const { user, token } = useAuth();
+  const navigate = useNavigate();
+  const [articles, setArticles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Filtrado por categoría
+  // --- Fetch artículos desde backend ---
+  const fetchArticles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getArticles();
+      setArticles(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  // --- Función para eliminar artículo ---
+  const handleDeleteArticle = async (id) => {
+    if (!token) {
+      alert("No estás autenticado");
+      return;
+    }
+    
+    if (!window.confirm("¿Seguro que quieres eliminar este artículo?")) {
+      return;
+    }
+
+    try {
+      await deleteArticle(id, token);
+      setArticles((prev) => prev.filter((a) => a.id !== id));
+      alert("Artículo eliminado exitosamente");
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar artículo: " + err.message);
+    }
+  };
+
+  // --- Filtrado ---
   const filteredByCategory =
     selectedCategory === "Todos"
       ? articles
-      : articles.filter((a) => a.label.toLowerCase() === selectedCategory.toLowerCase());
+      : articles.filter((a) => 
+          a.category?.name?.toLowerCase() === selectedCategory.toLowerCase()
+        );
 
-  // Filtrado por búsqueda
   const filteredArticles = filteredByCategory.filter((a) => {
     const term = searchTerm.toLowerCase();
     return (
-      a.title.toLowerCase().includes(term) ||
-      a.description.toLowerCase().includes(term) ||
-      a.author.toLowerCase().includes(term)
+      a.title?.toLowerCase().includes(term) ||
+      a.content?.toLowerCase().includes(term) ||
+      a.author?.name?.toLowerCase().includes(term)
     );
   });
+
+  if (loading) return <p className="loading-message">Cargando artículos...</p>;
+  if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="blog-page-container">
       <header className="blog-header-full">
         <div className="header-content">
-          <img className="icon-charity" src="/icons/charity.png" alt="icon"/>
+          <img className="icon-charity" src="/icons/charity.png" alt="icon" />
           <h1>Blog y recursos</h1>
           <p>Artículos, guías y recursos para tu bienestar mental</p>
+
+          {user?.role === "admin" && (
+            <button
+              className="create-article-button"
+              onClick={() => navigate("/admin/article/create")}
+            >
+              Crear Artículo
+            </button>
+          )}
+
           <input
             type="text"
             placeholder="Buscar artículos..."
@@ -69,33 +111,63 @@ export default function BlogCardList() {
       </header>
 
       <div className="blog-main">
-        <aside className="blog-sidebar">
-          <h3>Categorías</h3>
-          <ul>
-            {categories.map((cat, i) => (
-              <li
-                key={i}
-                className={selectedCategory === cat ? "active" : ""}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <div className="blog-dropdown">
+          <button 
+            className="dropdown-toggle" 
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            {selectedCategory} ▼
+          </button>
+          {dropdownOpen && (
+            <ul className="dropdown-menu">
+              {categories.map((cat, i) => (
+                <li
+                  key={i}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setDropdownOpen(false);
+                  }}
+                  className={selectedCategory === cat ? "active" : ""}
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className="blogcard-list">
-          {filteredArticles.map((a, i) => (
-            <BlogCard
-              key={i}
-              image={a.image}
-              label={a.label}
-              title={a.title}
-              description={a.description}
-              author={a.author}
-              slug={a.slug}
-            />
-          ))}
+          {filteredArticles.length === 0 ? (
+            <p>No se encontraron artículos</p>
+          ) : (
+            filteredArticles.map((a) => (
+              <div key={a.id} className="blogcard-wrapper">
+                <BlogCard
+                  image={a.image}
+                  label={a.category?.name || "Sin categoría"}
+                  title={a.title}
+                  description={a.content}
+                  author={a.author?.name || "Anónimo"}
+                  slug={a.slug || a.id}
+                />
+                {user?.role === "admin" && (
+                  <div className="admin-article-actions">
+                    <button 
+                      onClick={() => navigate(`/admin/article/edit/${a.id}`)}
+                    >
+                      Editar
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteArticle(a.id)}
+                      className="delete-btn"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

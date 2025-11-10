@@ -5,10 +5,12 @@ import { BiDonateHeart } from "react-icons/bi";
 import { useAuth } from "../../../context/AuthContext";
 import SessionCard from "../../../components/SessionCard.jsx";
 
-
 export default function HomePage() {
   const { user } = useAuth();
   const isAuthenticated = Boolean(user);
+
+  const isRestrictedRole =
+    user?.role === "admin" || user?.role === "psychologist";
 
   return (
     <div className={styles.pageContainer}>
@@ -27,10 +29,12 @@ export default function HomePage() {
           <div className={styles.heroActions}>
             {isAuthenticated ? (
               <Link to="/psychologists" className={styles.primaryBtn}>
-                Buscar psicólogos
+                {user?.role === "admin" || user?.role === "psychologist"
+                  ? "Ver psicólogos"
+                  : "Buscar psicólogos"}
               </Link>
             ) : (
-              <Link to="/register" className={styles.primaryBtn}>
+              <Link to="/first-session" className={styles.primaryBtn}>
                 Empezar ahora
               </Link>
             )}
@@ -124,12 +128,35 @@ export default function HomePage() {
       <section className={styles.ctaSection}>
         {isAuthenticated ? (
           <>
-            <h2 className={styles.ctaTitle}>Mis próximas citas</h2>
+            <h2 className={styles.ctaTitle}>
+              {user?.role === "admin"
+                ? "Panel de administración"
+                : user?.role === "psychologist"
+                  ? "Gestión de sesiones"
+                  : "Mis próximas citas"}
+            </h2>
             <p className={styles.ctaText}>
-              Revisa tu agenda, gestiona tus sesiones y mantén el equilibrio día a día.
+              {user?.role === "admin"
+                ? "Accede al panel principal para gestionar usuarios, sesiones y configuración general del sistema."
+                : user?.role === "psychologist"
+                  ? "Accede a tu panel de gestión para revisar tus sesiones y atender a tus pacientes."
+                  : "Revisa tu agenda, gestiona tus sesiones y mantén el equilibrio día a día."}
             </p>
-            <Link to="/app/my-appointments" className={styles.primaryBtn}>
-              Ver mis citas
+            <Link
+              to={
+                user?.role === "admin"
+                  ? "/admin/dashboard"
+                  : user?.role === "psychologist"
+                    ? "/app/dashboard"
+                    : "/app/my-appointments"
+              }
+              className={styles.primaryBtn}
+            >
+              {user?.role === "admin"
+                ? "Administración"
+                : user?.role === "psychologist"
+                  ? "Mi panel profesional"
+                  : "Ver mis citas"}
             </Link>
           </>
         ) : (
@@ -138,69 +165,79 @@ export default function HomePage() {
             <p className={styles.ctaText}>
               Únete a Cora Mind y da el primer paso hacia tu bienestar mientras ayudas a otros.
             </p>
-            <Link to="/register" className={styles.primaryBtn}>
-              Crear mi cuenta
+            <Link to="/first-session" className={styles.primaryBtn}>
+              Solicitar primera sesión gratuita
             </Link>
           </>
         )}
       </section>
-      <section className={styles.sessionCardsSection}>
-        <div className={styles.sessionCardsWrapper}>
-          <div className={styles.sessionCardsHeader}>
-            <p className={styles.sessionCardsSubtitle}>La terapia que transforma más de una vida.</p>
-            <h2 className={styles.sessionCardsTitle}>Reserva tu sesión de psicología online con propósito</h2>
-            <p className={styles.sessionCardsSubtitle}>
-              En Cora Mind, cada sesión que tomas ayudaa que otra persona con menos  también reciba acompañamiento psicológico.
-            </p>
-            <p className={styles.sessionCardsSubtitle}>💙Cuidarte también puede cambiar vidas.</p>
-          </div>
-          <div className={styles.sessionCardsContainer}>
-            <SessionCard
-              title={["Terapia Individual"]}
-              subtitle="45€/sesión"
-              firstDescription={[
-                "Única sesión",
-                "Pensada para acompañarte en momentos de cambio, estrés o confusión emocional"
-              ]}
-              secondDescription="Con esta sesión, destinas 5€ a ofrecer apoyo psicológico a personas con menos recursos"
-              buttonText="Reservar ahora"
-              onButtonClick={() => console.log("Reservar")}
-            />
-            <SessionCard
-              highlighted={true}
-              title={["Pack 5", "Terapia Individual"]}
-              subtitle="40€/sesión"
-              firstDescription={[
-                "5 sesiones por 200€",
-                "Pensado para acompañarte en un proceso más estable y consciente"
-              ]}
-              secondDescription="Con este pack, destinas 25€ a ofrecer terapia a personas con menos recursos"
-              buttonText="Elegir pack"
-              onButtonClick={() => console.log("Reservar")}
-            />
-            <SessionCard
-              title={["Terapia", "familiar/pareja"]}
-              subtitle="60€/sesión"
-              firstDescription={[
-                "Única sesión",
-                "Pensada para acompañarte en un momentos de cambio, estrés o confusión emocional"
-              ]}
-              secondDescription="Con vuestra sesión, contribuís con 5€ a ofrecer terapia a personas con menos recursos."
-              buttonText="Reserva sesión"
-              onButtonClick={() => console.log("Reservar")}
-            />
-          </div>
 
-          {/* Texto debajo de las cards */}
-          <div className={styles.sessionCardsFooter}>
-            <p>
-              🌱Con Cora Mind, tu bienestar también genera impacto. <br></br>
-              Reserva tu sesión hoy y forma parte de una red de empatía y apoyo
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* --- Sección Cards precios, si el user es admin o psicólogo no lo ve --- */}
+      {!isRestrictedRole && (
+        <section className={styles.sessionCardsSection}>
+          <div className={styles.sessionCardsWrapper}>
+            <div className={styles.sessionCardsHeader}>
+              <p className={styles.sessionCardsSubtitle}>
+                La terapia que transforma más de una vida.
+              </p>
+              <h2 className={styles.sessionCardsTitle}>
+                Reserva tu sesión de psicología online con propósito
+              </h2>
+              <p className={styles.sessionCardsSubtitle}>
+                En Cora Mind, cada sesión que tomas ayuda a que otra persona con menos recursos también reciba acompañamiento psicológico.
+              </p>
+              <p className={styles.sessionCardsSubtitle}>
+                💙 Cuidarte también puede cambiar vidas.
+              </p>
+            </div>
 
+            <div className={styles.sessionCardsContainer}>
+              <SessionCard
+                title={["Terapia Individual"]}
+                subtitle="45€/sesión"
+                firstDescription={[
+                  "Única sesión",
+                  "Pensada para acompañarte en momentos de cambio, estrés o confusión emocional"
+                ]}
+                secondDescription="Con esta sesión, destinas 5€ a ofrecer apoyo psicológico a personas con menos recursos"
+                buttonText="Reservar ahora"
+                onButtonClick={() => console.log("Reservar")}
+              />
+              <SessionCard
+                highlighted={true}
+                title={["Pack 5", "Terapia Individual"]}
+                subtitle="40€/sesión"
+                firstDescription={[
+                  "5 sesiones por 200€",
+                  "Pensado para acompañarte en un proceso más estable y consciente"
+                ]}
+                secondDescription="Con este pack, destinas 25€ a ofrecer terapia a personas con menos recursos"
+                buttonText="Elegir pack"
+                onButtonClick={() => console.log("Reservar")}
+              />
+              <SessionCard
+                title={["Terapia", "familiar/pareja"]}
+                subtitle="60€/sesión"
+                firstDescription={[
+                  "Única sesión",
+                  "Pensada para acompañarte en un momento de cambio, estrés o confusión emocional"
+                ]}
+                secondDescription="Con vuestra sesión, contribuís con 5€ a ofrecer terapia a personas con menos recursos."
+                buttonText="Reserva sesión"
+                onButtonClick={() => console.log("Reservar")}
+              />
+            </div>
+
+            {/* Texto debajo de las cards */}
+            <div className={styles.sessionCardsFooter}>
+              <p>
+                🌱 Con Cora Mind, tu bienestar también genera impacto. <br />
+                Reserva tu sesión hoy y forma parte de una red de empatía y apoyo
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );

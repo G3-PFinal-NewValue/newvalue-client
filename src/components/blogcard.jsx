@@ -2,6 +2,7 @@ import React from "react";
 import "./blogcard.css";
 import { Link } from "react-router-dom";
 
+
 function BlogCard({ image, label, title, description, author, slug }) {
   return (
     <div className="blogcard">
