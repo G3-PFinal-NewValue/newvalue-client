@@ -248,6 +248,13 @@ export default function PatientAppointmentsPage() {
 
   const handleSelectNewSlot = async (slot) => {
     if (!slot || !rescheduleModal.appointment) return;
+
+    const readableSlot = slot.start.toLocaleString(undefined, DATETIME_FORMAT); // CA: informar fecha amigable
+    const confirmed = window.confirm(
+      `¿Confirmas reprogramar la cita para ${readableSlot}?`
+    );
+    if (!confirmed) return;
+
     try {
       setRescheduleModal((prev) => ({ ...prev, loading: true, error: null }));
       await rescheduleAppointment(rescheduleModal.appointment.id, {

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/article";
+const BASE_URL = "http://localhost:4000/article";
+const BLOG_URL = `${BASE_URL}/blog`;
 
 /**
  * Maneja errores de Axios y mensajes claros
@@ -55,7 +56,7 @@ export const createArticle = async (articleData, token) => {
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
     
-    const { data } = await axios.post(API_URL, articleData, {
+    const { data } = await axios.post(BASE_URL, articleData, {
       headers: getAuthHeaders(token, isFormData),
     });
     return data;
@@ -67,7 +68,7 @@ export const createArticle = async (articleData, token) => {
 // ✅ Obtener todos los artículos
 export const getArticles = async () => {
   try {
-    const { data } = await axios.get(API_URL);
+    const { data } = await axios.get(BLOG_URL);
     return data;
   } catch (error) {
     handleAxiosError(error);
@@ -77,7 +78,7 @@ export const getArticles = async () => {
 // ✅ Obtener artículo por ID
 export const getArticleById = async (id) => {
   try {
-    const { data } = await axios.get(`${API_URL}/${id}`);
+    const { data } = await axios.get(`${BLOG_URL}/${id}`);
     return data;
   } catch (error) {
     handleAxiosError(error);
@@ -93,7 +94,7 @@ export const updateArticle = async (id, articleData, token) => {
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
 
-    const { data } = await axios.put(`${API_URL}/${id}`, articleData, {
+    const { data } = await axios.put(`${BASE_URL}/${id}`, articleData, {
       headers: getAuthHeaders(token, isFormData),
     });
     return data;
@@ -122,7 +123,7 @@ export const deleteArticle = async (id, token) => {
     
     console.log('📤 Enviando DELETE con headers:', config.headers);
 
-    const response = await axios.delete(`${API_URL}/${id}`, config);
+    const response = await axios.delete(`${BASE_URL}/${id}`, config);
     
     console.log('✅ Respuesta del servidor:', response.data);
     return response.data;
