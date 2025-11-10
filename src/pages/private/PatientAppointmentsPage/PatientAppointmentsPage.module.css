@@ -183,6 +183,27 @@
   border-color: #ef4444;
 }
 
+.joinButton {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+}
+
+.joinButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(99, 102, 241, 0.35);
+}
+
+.pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.confirmed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
 .modalOverlay {
   position: fixed;
   inset: 0;

@@ -1,5 +1,6 @@
 // src/pages/private/PatientAppointmentsPage/PatientAppointmentsPage.jsx
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./PatientAppointmentsPage.module.css";
 import {
   getMyAppointments,
@@ -12,6 +13,7 @@ import addDays from "date-fns/addDays";
 import startOfDay from "date-fns/startOfDay";
 
 export default function PatientAppointmentsPage() {
+  const navigate = useNavigate();
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,13 +151,30 @@ export default function PatientAppointmentsPage() {
       const data = await getMyAppointments();
       const allAppointments = data.appointments || [];
 
+      const normalizeStatus = (status) => {
+        const normalized = (status || "").toLowerCase();
+        if (normalized === "confirmed") return "confirmada";
+        if (normalized === "pending") return "pendiente";
+        if (normalized === "completed") return "completada";
+        if (normalized === "cancelled") return "cancelada";
+        return normalized || "sin estado";
+      };
+
+      const isConfirmedStatus = (status) =>
+        ["confirmed", "confirmada"].includes((status || "").toLowerCase());
+      const isPendingStatus = (status) =>
+        ["pending", "pendiente"].includes((status || "").toLowerCase());
+
       const parsedAppointments = allAppointments.map((app) => ({
         id: app.id,
         psychologistName: app.psychologist
           ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
           : "Psicólogo no asignado",
         dateTime: new Date(app.date),
-        status: app.status,
+        statusRaw: app.status,
+        statusLabel: normalizeStatus(app.status),
+        isConfirmed: isConfirmedStatus(app.status),
+        isPending: isPendingStatus(app.status),
         psychologistId: app.psychologist_id,
       }));
 
@@ -164,7 +183,7 @@ export default function PatientAppointmentsPage() {
         .filter(
           (a) =>
             a.dateTime >= now &&
-            (a.status === "confirmada" || a.status === "pending")
+            (a.isConfirmed || a.isPending)
         )
         .sort((a, b) => a.dateTime - b.dateTime);
 
@@ -172,8 +191,9 @@ export default function PatientAppointmentsPage() {
         .filter(
           (a) =>
             a.dateTime < now ||
-            a.status === "completada" ||
-            a.status === "cancelled"
+            ["completada", "completed", "cancelled", "cancelada"].includes(
+              (a.statusRaw || "").toLowerCase()
+            )
         )
         .sort((a, b) => b.dateTime - a.dateTime);
 
@@ -323,13 +343,21 @@ export default function PatientAppointmentsPage() {
                       </span>
                       <span
                         className={`${styles.statusBadge} ${
-                          styles[app.status]
+                          styles[app.statusLabel.replace(/\s+/g, "")]
                         }`}
                       >
-                        {app.status}
+                        {app.statusLabel}
                       </span>
                     </div>
                     <div className={styles.actionButtons}>
+                      {app.isConfirmed && (
+                        <button
+                          onClick={() => navigate(`/consulta/${app.id}`)}
+                          className={`${styles.actionButton} ${styles.joinButton}`}
+                        >
+                          Entrar a la consulta
+                        </button>
+                      )}
                       <button
                         onClick={() => handleRescheduleAppointment(app)}
                         className={`${styles.actionButton} ${styles.rescheduleButton}`}
@@ -377,10 +405,10 @@ export default function PatientAppointmentsPage() {
                       </span>
                       <span
                         className={`${styles.statusBadge} ${
-                          styles[app.status]
+                          styles[app.statusLabel.replace(/\s+/g, "")]
                         }`}
                       >
-                        {app.status}
+                        {app.statusLabel}
                       </span>
                     </div>
                   </li>
