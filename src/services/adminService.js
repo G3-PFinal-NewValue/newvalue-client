@@ -102,7 +102,7 @@ export async function adminActivateUser(userId) {
  */
 export async function adminCreateUser(userData) {
   try {
-    const response = await api.post("/user", userData);
+    const response = await api.post("/user/create-user", userData);
     return response.data;
   } catch (error) {
     console.error("Error en adminCreateUser:", error);

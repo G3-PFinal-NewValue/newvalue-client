@@ -90,3 +90,13 @@ export async function googleLoginRequest(token) {
     }
   }
 }
+
+export async function setUserPassword(token, password) {
+  console.log({ token, password })
+  const response = await api.post(`/auth/set-password/${token}`, { token, password }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}
