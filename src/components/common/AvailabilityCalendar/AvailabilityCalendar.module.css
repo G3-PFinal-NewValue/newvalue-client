@@ -1,0 +1,214 @@
+.calendar {
+  border: 1px solid #e3e5ea;
+  border-radius: 18px;
+  padding: 1.5rem;
+  background: #fff;
+  display: grid;
+  grid-template-columns: minmax(360px, 1.1fr) minmax(320px, 1fr);
+  gap: 1.75rem;
+}
+
+.calendarPanel {
+  min-height: 480px;
+}
+
+.calendarPanel :global(.rbc-calendar) {
+  border: none;
+  font-family: inherit;
+}
+
+.calendarPanel :global(.rbc-toolbar) {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.calendarPanel :global(.rbc-toolbar button) {
+  border-radius: 999px;
+  border: 1px solid #dcdff0;
+  padding: 0.35rem 0.85rem;
+  background: #fff;
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.calendarPanel :global(.rbc-toolbar button.rbc-active) {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+
+.calendarPanel :global(.rbc-month-view),
+.calendarPanel :global(.rbc-time-view) {
+  border-radius: 16px;
+  border: 1px solid #eef0f7;
+  overflow: hidden;
+}
+
+.calendarPanel :global(.rbc-month-row + .rbc-month-row) {
+  border-top: 1px solid #eef0f7;
+}
+
+.calendarPanel :global(.rbc-date-cell) {
+  text-transform: capitalize;
+  font-weight: 600;
+  color: #475569;
+}
+
+.calendarPanel :global(.rbc-off-range) {
+  color: #c6cad8;
+}
+
+.calendarPanel :global(.rbc-today) {
+  background: rgba(79, 70, 229, 0.08);
+}
+
+.calendarPanel :global(.rbc-event) {
+  border-radius: 12px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.78rem;
+  text-align: center;
+  background: rgba(79, 70, 229, 0.15);
+  border: none;
+  color: #312e81;
+}
+
+.calendarPanel :global(.rbc-event-content) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detailPanel {
+  border-left: 1px solid #e3e5ea;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detailTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #1f2937;
+}
+
+.detailSubtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.addButton {
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.55rem 1.2rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.addButton:disabled {
+  opacity: 0.5;
+}
+
+.emptyState {
+  border: 1px dashed #d4d7e2;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.slotList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.slotCard {
+  border: 1px solid #e5e7f2;
+  border-radius: 14px;
+  padding: 1rem;
+  background: #fdfdff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.slotFields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+  color: #4b5563;
+}
+
+.field input {
+  border-radius: 10px;
+  border: 1px solid #d8dbe8;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.field[data-span="notes"] {
+  grid-column: span 2;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.deleteButton {
+  border: none;
+  background: transparent;
+  color: #c0392b;
+  font-weight: 600;
+  align-self: flex-end;
+  cursor: pointer;
+}
+
+@media (max-width: 960px) {
+  .calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .detailPanel {
+    border-left: none;
+    border-top: 1px solid #e3e5ea;
+    padding-left: 0;
+    padding-top: 1.25rem;
+  }
+}
