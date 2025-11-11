@@ -7,7 +7,7 @@ export default function BlogArticleForm({ initialData = {}, onSubmit, loading })
     author: "",
     content: "",
     category_id: "",
-    image: null, // 👈 ahora guardamos el archivo, no una URL
+    image: null, 
   });
 
   const [errors, setErrors] = useState({});
@@ -68,7 +68,6 @@ export default function BlogArticleForm({ initialData = {}, onSubmit, loading })
     return category ? category.name : "";
   };
 
-  // 🔹 Manejador de imagen: solo vista previa y almacenamiento temporal
   const handleFileInput = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -93,27 +92,46 @@ export default function BlogArticleForm({ initialData = {}, onSubmit, loading })
       setErrors(validationErrors);
       return;
     }
-    if (onSubmit) await onSubmit(formData); // 👈 se envía todo al backend
+    if (onSubmit) await onSubmit(formData); 
   };
 
   return (
     <div className="form-container">
       <form className="blog-form" onSubmit={handleSubmit}>
-        <label>Título</label>
-        <input type="text" name="title" value={formData.title} onChange={handleChange} />
+        <label htmlFor="title">Título</label>
+        <input
+          id="title"
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+        />
         {errors.title && <p className="error">{errors.title}</p>}
 
-        <label>Autor</label>
-        <input type="text" name="author" value={formData.author} onChange={handleChange} />
+        <label htmlFor="author">Autor</label>
+        <input
+          id="author"
+          type="text"
+          name="author"
+          value={formData.author}
+          onChange={handleChange}
+        />
         {errors.author && <p className="error">{errors.author}</p>}
 
-        <label>Contenido</label>
-        <textarea name="content" value={formData.content} onChange={handleChange} rows="6" />
+        <label htmlFor="content">Contenido</label>
+        <textarea
+          id="content"
+          name="content"
+          value={formData.content}
+          onChange={handleChange}
+          rows="6"
+        />
         {errors.content && <p className="error">{errors.content}</p>}
 
-        <label>Categoría</label>
+        <label htmlFor="category_id">Categoría</label>
         <div className="dropdown-container" ref={dropdownRef}>
           <input
+            id="category_id"
             type="text"
             name="category_id"
             value={getSelectedCategoryName()}
@@ -133,8 +151,7 @@ export default function BlogArticleForm({ initialData = {}, onSubmit, loading })
         </div>
         {errors.category_id && <p className="error">{errors.category_id}</p>}
 
-        {/* 🔹 Imagen (solo preview y drag & drop) */}
-        <label>Imagen</label>
+        <label htmlFor="imageInput">Imagen</label>
         <div
           className="image-upload-zone"
           onDragOver={(e) => e.preventDefault()}
