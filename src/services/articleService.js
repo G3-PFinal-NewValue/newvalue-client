@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:4000/article";
-const BLOG_URL = `${BASE_URL}/blog`;
+const API_URL = "http://localhost:4000/article";
 
 function handleAxiosError(error) {
   console.error('Error completo:', error); 
@@ -87,7 +86,7 @@ export const updateArticle = async (id, articleData, token) => {
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
 
-    const { data } = await axios.put(`${BASE_URL}/${id}`, articleData, {
+    const { data } = await axios.put(`${API_URL}/${id}`, articleData, {
       headers: getAuthHeaders(token, isFormData),
     });
     return data;
@@ -116,7 +115,7 @@ export const deleteArticle = async (id, token) => {
     
     console.log('📤 Enviando DELETE con headers:', config.headers);
 
-    const response = await axios.delete(`${BASE_URL}/${id}`, config);
+    const response = await axios.delete(`${API_URL}/${id}`, config);
     
     console.log('✅ Respuesta del servidor:', response.data);
     return response.data;
