@@ -14,6 +14,7 @@ import {
   updatePsychologistProfile,
 } from "../../../services/psychologistsService";
 import { getAllSpecialities } from "../../../services/specialityService.js";
+import { getAllLanguages } from "../../../services/languageService.js"; 
 
 // --- Schemas y Constantes ---
 const availabilitySchema = z
@@ -26,7 +27,6 @@ const availabilitySchema = z
     is_holiday: z.boolean().default(false),
     is_vacation: z.boolean().default(false),
     notes: z.string().optional(),
-    // Mantener compatibilidad con el sistema anterior
     weekday: z.number().optional(),
   })
   .refine((a) => a.start_time < a.end_time, {
@@ -39,17 +39,19 @@ const schema = z.object({
   specialities: z
     .array(z.string())
     .min(1, "Selecciona al menos una especialidad"),
+  languages: z 
+    .array(z.string())
+    .min(1, "Selecciona al menos un idioma"),
   professional_description: z
     .string()
     .min(20, "Describe tu enfoque (mín. 20 caracteres)"),
   availabilities: z.array(availabilitySchema).optional().default([]),
 });
 
-// WEEKDAYS ya no se usa con el nuevo sistema de calendario
-
 const defaultFormValues = {
   license_number: "",
   specialities: [],
+  languages: [],
   professional_description: "",
   availabilities: [],
 };
@@ -58,12 +60,12 @@ export default function PsychologistProfileSetup() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Estado para la foto
   const [existingProfile, setExistingProfile] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); //
+  const [isLoading, setIsLoading] = useState(true);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
   const [allSpecialties, setAllSpecialties] = useState([]);
+  const [allLanguages, setAllLanguages] = useState([]); 
 
   const {
     register,
@@ -74,7 +76,7 @@ export default function PsychologistProfileSetup() {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: defaultFormValues, // <-- 2. Usar la variable
+    defaultValues: defaultFormValues,
   });
 
   useEffect(() => {
@@ -86,8 +88,15 @@ export default function PsychologistProfileSetup() {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const specialtiesData = await getAllSpecialities();
+        
+        // Cargar especialidades e idiomas en paralelo
+        const [specialtiesData, languagesData] = await Promise.all([
+          getAllSpecialities(),
+          getAllLanguages() 
+        ]);
+        
         setAllSpecialties(specialtiesData);
+        setAllLanguages(languagesData); 
 
         const profileData = await getPsychologistProfileById(user.id);
 
@@ -101,20 +110,23 @@ export default function PsychologistProfileSetup() {
             specialities: profileData.specialities
               ? profileData.specialities.map((s) => String(s.id))
               : [],
+            languages: profileData.languages 
+              ? profileData.languages.map((l) => String(l.id))
+              : [],
             availabilities:
               profileData.availabilities &&
               profileData.availabilities.length > 0
                 ? profileData.availabilities.map((a) => ({
                     id: a.id,
                     specific_date:
-                      a.specific_date || new Date().toISOString().split("T")[0], // Fecha por defecto si no existe
+                      a.specific_date || new Date().toISOString().split("T")[0],
                     start_time: a.start_time.substring(0, 5),
                     end_time: a.end_time.substring(0, 5),
                     is_available: a.is_available ?? true,
                     is_holiday: a.is_holiday ?? false,
                     is_vacation: a.is_vacation ?? false,
                     notes: a.notes || "",
-                    weekday: a.weekday, // Mantener compatibilidad
+                    weekday: a.weekday,
                   }))
                 : defaultFormValues.availabilities,
           };
@@ -183,6 +195,7 @@ export default function PsychologistProfileSetup() {
       values.professional_description
     );
     formData.append("specialities", JSON.stringify(values.specialities));
+    formData.append("languages", JSON.stringify(values.languages)); 
     formData.append("availabilities", JSON.stringify(values.availabilities));
 
     if (photoFile) {
@@ -217,7 +230,7 @@ export default function PsychologistProfileSetup() {
           confirmButtonColor: '#10b981',
           timer: 3000
         }).then(() => {
-          navigate(`/profile/${newProfile.user_id}`);// Ir al perfil público
+          navigate(`/profile/${newProfile.user_id}`);
         });
       } 
     } catch (e) {
@@ -243,24 +256,23 @@ export default function PsychologistProfileSetup() {
       </div>
     );
   }
+
   return (
     <div className={styles.page}>
       <div className={styles.wrap}>
         <div className={styles.card}>
           <h1 className={styles.title}>
-            {/* Texto dinámico */}
             {existingProfile
               ? "Editar perfil profesional"
               : "Crear perfil profesional"}
           </h1>
           <p className={styles.subtitle}>
-            {/* Texto dinámico */}
             {existingProfile
               ? "Actualiza tu foto, información profesional y horarios."
               : "Sube tu foto, añade tu información profesional y tus horarios disponibles."}
           </p>
 
-          {/* Sección Foto (sin cambios) */}
+          {/* Sección Foto */}
           <div className={styles.photoSection}>
             <label className={styles.photoLabel}>
               {photoPreview ? (
@@ -291,6 +303,7 @@ export default function PsychologistProfileSetup() {
               {...register("license_number")}
             />
 
+            {/* ESPECIALIDADES */}
             <div className={styles.specialtyBox}>
               <h2 className={styles.sectionTitle}>Especialidades</h2>
               {allSpecialties.length === 0 ? (
@@ -311,6 +324,30 @@ export default function PsychologistProfileSetup() {
               )}
               {errors.specialities && (
                 <p className={styles.error}>{errors.specialities.message}</p>
+              )}
+            </div>
+
+            {/* IDIOMAS - NUEVO */}
+            <div className={styles.specialtyBox}>
+              <h2 className={styles.sectionTitle}>Idiomas</h2>
+              {allLanguages.length === 0 ? (
+                <p>Cargando idiomas...</p>
+              ) : (
+                <div className={styles.specialtyGrid}>
+                  {allLanguages.map((lang) => (
+                    <label key={lang.id} className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        value={lang.id}
+                        {...register("languages")}
+                      />
+                      <span>{lang.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              {errors.languages && (
+                <p className={styles.error}>{errors.languages.message}</p>
               )}
             </div>
 
