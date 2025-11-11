@@ -9,6 +9,7 @@ import {
 } from "../../../services/appointmentService";
 import { getPatientsByPsychologist } from "../../../services/patientService";
 import styles from "./PsychologistDashboardPage.module.css";
+import Swal from 'sweetalert2';
 
 export default function PsychologistDashboardPage() {
   const { user } = useAuth();
@@ -112,17 +113,41 @@ export default function PsychologistDashboardPage() {
         };
       });
 
-      alert("Cita confirmada exitosamente");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Confirmada!',
+        text: 'Cita confirmada exitosamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (error) {
       console.error("Error al confirmar cita:", error);
-      alert("Error al confirmar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al confirmar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setProcessingAppointment(null);
     }
   };
 
   const handleRejectAppointment = async (appointmentId) => {
-    if (!confirm("¿Estás seguro de que quieres rechazar esta cita?")) return;
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Rechazar cita?',
+      text: '¿Estás seguro de que quieres rechazar esta cita?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, rechazar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
 
     setProcessingAppointment(appointmentId);
     try {
@@ -134,10 +159,23 @@ export default function PsychologistDashboardPage() {
         confirmed: prev.confirmed.filter((app) => app.id !== appointmentId),
       }));
 
-      alert("Cita rechazada");
+      Swal.fire({
+        icon: 'success',
+        title: 'Rechazada',
+        text: 'Cita rechazada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (error) {
       console.error("Error al rechazar cita:", error);
-      alert("Error al rechazar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al rechazar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setProcessingAppointment(null);
     }

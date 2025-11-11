@@ -7,6 +7,7 @@ import {  getArticles,
   createArticle,
   updateArticle,
   deleteArticle, } from "../../../services/articleService.js";
+import Swal from 'sweetalert2';
 import "../Blog/BlogListPage.css";
 
 const categories = [
@@ -33,6 +34,13 @@ export default function BlogCardList() {
       setArticles(data);
     } catch (err) {
       setError(err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar',
+        text: 'No se pudieron cargar los artículos',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setLoading(false);
     }
@@ -45,21 +53,50 @@ export default function BlogCardList() {
   // --- Función para eliminar artículo ---
   const handleDeleteArticle = async (id) => {
     if (!token) {
-      alert("No estás autenticado");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sin autenticación',
+        text: 'No estás autenticado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
     
-    if (!window.confirm("¿Seguro que quieres eliminar este artículo?")) {
-      return;
-    }
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Eliminar artículo?',
+      text: '¿Seguro que quieres eliminar este artículo? Esta acción no se puede deshacer.',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteArticle(id, token);
       setArticles((prev) => prev.filter((a) => a.id !== id));
-      alert("Artículo eliminado exitosamente");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Eliminado!',
+        text: 'Artículo eliminado exitosamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (err) {
       console.error(err);
-      alert("Error al eliminar artículo: " + err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al eliminar',
+        text: err.message || 'No se pudo eliminar el artículo',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 

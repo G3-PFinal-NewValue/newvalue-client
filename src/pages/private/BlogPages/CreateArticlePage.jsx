@@ -6,6 +6,7 @@ import BlogArticleForm from "../../../components/ArticleForm.jsx";
 import Navbar from "../../../components/common/Navbar/Navbar.jsx"
 import Footer from "../../../components/common/Footer/Footer.jsx"
 import "./CreateArticlePage.css"
+import Swal from 'sweetalert2';
 
 export default function CreateArticlePage() {
   const { user, getToken } = useAuth();
@@ -17,7 +18,13 @@ export default function CreateArticlePage() {
     const token = getToken();
 
     if (!token) {
-      alert("No estás autenticado o el token no está disponible.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'No estás autenticado o el token no está disponible.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
 
@@ -26,8 +33,15 @@ export default function CreateArticlePage() {
       const tokenParts = token.split(".");
       const payload = JSON.parse(atob(tokenParts[1]));
       if (payload.exp * 1000 < Date.now()) {
-        alert("⚠️ El token ha expirado. Por favor, inicia sesión nuevamente.");
-        navigate("/login");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Sesión expirada',
+          text: 'El token ha expirado. Por favor, inicia sesión nuevamente.',
+          confirmButtonText: 'Ir a login',
+          confirmButtonColor: '#3b82f6'
+        }).then(() => {
+          navigate("/login");
+        });
         return;
       }
     } catch (decodeError) {
@@ -47,8 +61,7 @@ export default function CreateArticlePage() {
         payloadToSend.append("title", formData.title);
         payloadToSend.append("content", formData.content);
         payloadToSend.append("category_id", Number(formData.category_id));
-       payloadToSend.append("author", formData.author);
-
+        payloadToSend.append("author", formData.author);
         payloadToSend.append("image", formData.image);
         console.log("📸 Enviando con imagen (FormData)");
       } else {
@@ -63,12 +76,26 @@ export default function CreateArticlePage() {
       console.log("📝 Datos enviados al backend:", payloadToSend);
 
       const response = await createArticle(payloadToSend, token);
-      alert("Artículo creado exitosamente ✅");
-      navigate("/blog");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Artículo creado exitosamente',
+        confirmButtonText: 'Ver blog',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      }).then(() => {
+        navigate("/blog");
+      });
     } catch (err) {
       console.error("Error al crear artículo:", err);
       setError(err.message || "Error al crear artículo");
-      alert("Error: " + err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al crear artículo',
+        text: err.message || 'Ha ocurrido un error inesperado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setLoading(false);
     }

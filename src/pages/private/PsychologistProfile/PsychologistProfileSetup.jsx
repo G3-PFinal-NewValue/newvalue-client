@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
 import AvailabilityCalendar from "../../../components/common/AvailabilityCalendar/AvailabilityCalendar.jsx";
+import Swal from 'sweetalert2';
 import styles from "./PsychologistProfileSetup.module.css";
 import {
   createPsychologistProfile,
@@ -13,6 +14,7 @@ import {
   updatePsychologistProfile,
 } from "../../../services/psychologistsService";
 import { getAllSpecialities } from "../../../services/specialityService.js";
+
 // --- Schemas y Constantes ---
 const availabilitySchema = z
   .object({
@@ -133,6 +135,13 @@ export default function PsychologistProfileSetup() {
           reset(defaultFormValues);
         } else {
           console.error("Error cargando datos del perfil:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al cargar',
+            text: 'No se pudieron cargar los datos del perfil',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#ef4444'
+          });
         }
       } finally {
         setIsLoading(false);
@@ -157,7 +166,13 @@ export default function PsychologistProfileSetup() {
 
   const onSubmit = async (values) => {
     if (!user || !user.id) {
-      alert("Error: Usuario no autenticado.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'Usuario no autenticado.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
 
@@ -181,21 +196,39 @@ export default function PsychologistProfileSetup() {
         // MODO EDICIÓN
         console.log("Intentando llamar a updatePsychologistProfile...");
         newProfile = await updatePsychologistProfile(user.id, formData);
-        alert("Perfil actualizado con éxito.");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Actualizado!',
+          text: 'Perfil actualizado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate(`/profile/${newProfile.user_id}`);
+        });
       } else {
         // MODO CREACIÓN
         newProfile = await createPsychologistProfile(formData);
-        alert("Perfil creado con éxito.");
-      }
-
-      navigate(`/profile/${newProfile.user_id}`); // Ir al perfil público
+        Swal.fire({
+          icon: 'success',
+          title: '¡Perfil creado!',
+          text: 'Perfil creado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate(`/profile/${newProfile.user_id}`);// Ir al perfil público
+        });
+      } 
     } catch (e) {
       console.error("Error DENTRO del try/catch de onSubmit:", e);
-      alert(
-        e?.response?.data?.message ||
-          e.message ||
-          "No se pudo guardar el perfil. Revisa la consola."
-      );
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar',
+        text: e?.response?.data?.message || e.message || "No se pudo guardar el perfil. Revisa la consola.",
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 

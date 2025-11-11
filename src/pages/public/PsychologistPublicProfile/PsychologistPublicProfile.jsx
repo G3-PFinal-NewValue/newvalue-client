@@ -6,6 +6,7 @@ import {
   createAppointment,
 } from "../../../services/appointmentService";
 import { useAuth } from "../../../context/AuthContext";
+import Swal from 'sweetalert2';
 import styles from "./PsychologistPublicProfile.module.css";
 
 // Importaciones de react-big-calendar y date-fns
@@ -76,6 +77,13 @@ export default function PsychologistPublicProfile() {
         console.error("Error cargando el perfil o las citas:", error);
         setProfile(null);
         setBookedAppointments([]);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar el perfil del psicólogo',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#ef4444'
+        });
       } finally {
         setLoading(false);
       }
@@ -254,20 +262,39 @@ export default function PsychologistPublicProfile() {
   // --- Manejador de clics en slots ---
   const handleSlotSelect = (event) => {
     if (!event.isAvailable) {
-      alert("Este horario ya está reservado.");
+      Swal.fire({
+        icon: 'info',
+        title: 'Horario no disponible',
+        text: 'Este horario ya está reservado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
 
     // Verificar que el usuario esté logueado
     if (!user) {
-      alert("Debes iniciar sesión para reservar una cita.");
-      navigate("/login");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Inicio de sesión requerido',
+        text: 'Debes iniciar sesión para reservar una cita',
+        confirmButtonText: 'Ir a login',
+        confirmButtonColor: '#3b82f6'
+      }).then(() => {
+        navigate("/login");
+      });
       return;
     }
 
     // Verificar que el usuario sea un paciente
     if (user.role !== "patient") {
-      alert("Solo los pacientes pueden reservar citas.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Acceso restringido',
+        text: 'Solo los pacientes pueden reservar citas',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
 
@@ -301,12 +328,23 @@ export default function PsychologistPublicProfile() {
       // Cerrar modal y mostrar mensaje de éxito
       setShowBookingModal(false);
       setSelectedSlot(null);
-      alert(
-        "¡Cita reservada exitosamente! Te contactaremos pronto para confirmar."
-      );
+      Swal.fire({
+        icon: 'success',
+        title: '¡Cita reservada!',
+        text: 'Te contactaremos pronto para confirmar la cita',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      });
     } catch (error) {
       console.error("Error al reservar la cita:", error);
-      alert("Error al reservar la cita. Por favor, inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al reservar',
+        text: 'No se pudo reservar la cita. Por favor, inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setBookingLoading(false);
     }

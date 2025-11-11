@@ -6,6 +6,7 @@ import BlogArticleForm from "../../../components/ArticleForm.jsx";
 import Navbar from "../../../components/common/Navbar/Navbar.jsx"
 import Footer from "../../../components/common/Footer/Footer.jsx"
 import "./EditArticlePage.css"
+import Swal from 'sweetalert2';
 
 export default function EditArticlePage() {
   const { id } = useParams();
@@ -29,18 +30,33 @@ export default function EditArticlePage() {
       } catch (err) {
         console.error(err);
         setError("Error al cargar artículo");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar el artículo',
+          confirmButtonText: 'Volver',
+          confirmButtonColor: '#ef4444'
+        }).then(() => {
+          navigate("/blog");
+        });
       } finally {
         setFetchLoading(false);
       }
     };
     fetchArticle();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleSubmit = async (formData) => {
     const authToken = token || getToken();
 
     if (!authToken) {
-      alert("No estás autenticado o el token no está disponible.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'No estás autenticado o el token no está disponible.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
 
@@ -73,12 +89,26 @@ export default function EditArticlePage() {
       console.log("📝 Datos enviados al backend:", payloadToSend);
 
       await updateArticle(id, payloadToSend, authToken);
-      alert("Artículo actualizado exitosamente ✅");
-      navigate("/blog");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'Artículo actualizado exitosamente',
+        confirmButtonText: 'Ver blog',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      }).then(() => {
+        navigate("/blog");
+      });
     } catch (err) {
       console.error(err);
       setError(err.message || "Error al actualizar artículo");
-      alert("Error al actualizar artículo: " + err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar',
+        text: err.message || 'Ha ocurrido un error inesperado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setLoading(false);
     }

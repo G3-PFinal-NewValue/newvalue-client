@@ -228,7 +228,7 @@
 
   /*
   Alert Colors
-   Assign colors for various alerts, such as informational messages, warnings,  success notifications,
+  Assign colors for various alerts, such as informational messages, warnings,  success notifications,
 and errors.
      */
   --cometchat-info-color: #0B7BEA;
@@ -239,7 +239,7 @@ and errors.
 
   /*
     Static colors
-     Assign colors for various alerts, such as informational messages, warnings,  success notifications,
+    Assign colors for various alerts, such as informational messages, warnings,  success notifications,
   and errors.
        */
 
@@ -248,7 +248,7 @@ and errors.
 
   /*
   Background Colors
-   Specify background colors derived from the neutral palette for different sections of the application.
+  Specify background colors derived from the neutral palette for different sections of the application.
      */
   --cometchat-background-color-01: var(--cometchat-neutral-color-50);
   --cometchat-background-color-02: var(--cometchat-neutral-color-100);
