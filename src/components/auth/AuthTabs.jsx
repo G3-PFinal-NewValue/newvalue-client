@@ -11,11 +11,15 @@ export default function AuthTabs() {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <div className={styles.logo}>
-          <img
-            className={styles.logo}
-            src="/images/LongLogo.png"
-            alt="Cora Mind Logo"
-          />
+
+          {/* <Link to="/">
+            <img
+              className={styles.logo}
+              src="/images/LongLogo.png"
+              alt="Cora Mind Logo"
+            />
+          </Link> */}
+
         </div>
       </div>
 

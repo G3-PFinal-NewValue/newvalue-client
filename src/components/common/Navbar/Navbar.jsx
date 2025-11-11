@@ -13,9 +13,6 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Ocultar Navbar en login/register
-  if (pathname === "/login" || pathname === "/register") return null;
-
   // Cerrar menú móvil al cambiar de ruta
   useEffect(() => {
     setOpen(false);

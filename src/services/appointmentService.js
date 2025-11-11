@@ -47,6 +47,16 @@ export async function cancelAppointment(appointmentId) {
   }
 }
 
+export async function rescheduleAppointment(appointmentId, payload) {
+  try {
+    const response = await api.put(`/appointment/${appointmentId}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error al reprogramar la cita:", error);
+    throw error;
+  }
+}
+
 /**
  * Obtiene todas las citas para un psicólogo específico (incluyendo pendientes).
  * @param {string|number} psychologistId ID del psicólogo (user_id)

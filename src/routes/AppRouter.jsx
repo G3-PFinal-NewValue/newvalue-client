@@ -18,6 +18,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
 import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
 import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile";
+import PatientProfileView from "../pages/private/PatientProfile/PatientProfileView";
 import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard";
 import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
 import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
@@ -112,6 +113,14 @@ export default function AppRouter() {
               <ProtectedRoute>
                 {" "}
                 <MyPatientProfile />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/patients/:id"
+            element={
+              <ProtectedRoute allowedRoles={["psychologist", "admin"]}>
+                <PatientProfileView />
               </ProtectedRoute>
             }
           />
