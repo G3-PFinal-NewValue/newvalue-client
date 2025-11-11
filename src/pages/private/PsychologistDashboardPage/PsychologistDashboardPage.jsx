@@ -252,6 +252,16 @@ export default function PsychologistDashboardPage() {
                     </span>
                     <span className={styles.status}>✅ Confirmada</span>
                   </div>
+                  <div className={styles.appointmentActions}>
+                    <a
+                      href={`/consulta/${app.id}`}
+                      className={styles.joinButton}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Entrar a la consulta
+                    </a>
+                  </div>
                 </li>
               ))}
             </ul>

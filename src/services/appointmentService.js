@@ -139,3 +139,19 @@ export async function getBookedSlotsForPsychologist(psychologistId) {
     throw error;
   }
 }
+
+/**
+ * Obtiene los detalles de una cita específica por su ID.
+ * @param {string|number} appointmentId ID de la cita
+ * @returns {Promise<object>} Los datos de la cita (esperamos que la respuesta sea { data: { ... } })
+ */
+export async function getAppointmentDetails(appointmentId) {
+  try {
+    // Asumimos que tu backend tiene una ruta: GET /api/appointment/:id
+    const response = await api.get(`/appointment/${appointmentId}`);
+    return response.data; // Esto debería devolver el objeto de la cita
+  } catch (error) {
+    console.error("Error al obtener los detalles de la cita:", error);
+    throw error;
+  }
+}
