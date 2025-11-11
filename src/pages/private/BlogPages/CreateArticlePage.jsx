@@ -5,6 +5,7 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 import BlogArticleForm from "../../../components/ArticleForm.jsx";
 import Navbar from "../../../components/common/Navbar/Navbar.jsx"
 import Footer from "../../../components/common/Footer/Footer.jsx"
+import "./CreateArticlePage.css"
 
 export default function CreateArticlePage() {
   const { user, getToken } = useAuth();
