@@ -183,6 +183,60 @@
   border-color: #ef4444;
 }
 
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  width: min(520px, 90vw);
+  box-shadow: var(--shadow-2);
+}
+
+.modalSubtitle {
+  margin-top: var(--space-2);
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.slotList {
+  margin: var(--space-4) 0;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.slotButton {
+  border: 1px solid var(--color-brand-secondary);
+  background: #fff;
+  color: var(--color-brand-secondary);
+  padding: var(--space-3);
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.slotButton:hover {
+  background: var(--color-brand-secondary);
+  color: #fff;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .pageTitle { font-size: 30px; }

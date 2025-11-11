@@ -13,6 +13,7 @@ import { loginRequest } from "../../../services/authService";
 
 import styles from "./LoginPage.module.css";
 import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
+import Swal from "sweetalert2";
 
 const schema = z.object({
   email: z.string().email("Correo inválido"),
@@ -33,14 +34,19 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (values) => {
-    try {
-      const user = await loginRequest(values); // Mock temporal
-      login(user);
-      navigate("/");
-    } catch {
-      alert("Error al iniciar sesión");
-    }
-  };
+  try {
+    const authData = await loginRequest(values);
+    login(authData);
+    navigate("/");
+  } catch {
+    Swal.fire({
+      icon: "error",
+      title: "Error al iniciar sesión",
+      text: "Verifica tus credenciales e intenta nuevamente.",
+      confirmButtonText: "Aceptar",
+    });
+  }
+};
 
   return (
     <div className={styles.page}>

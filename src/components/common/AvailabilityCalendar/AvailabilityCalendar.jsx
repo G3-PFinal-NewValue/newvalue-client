@@ -135,7 +135,6 @@ export default function AvailabilityCalendar({
     setCurrentEvent(null);
   }, [value, onChange, currentEvent]);
 
-  // Funciones eliminadas - El profesional gestiona todo manualmente
 
   // Mensajes en español
   const messages = {
@@ -237,8 +236,7 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
     notes: event?.notes || ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => { // CA: controlar envío manualmente para evitar usar un <form>
     
     // Validaciones básicas
     if (!formData.specific_date || !formData.start_time || !formData.end_time) {
@@ -276,7 +274,7 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
           <button type="button" onClick={onCancel} className={styles.closeBtn}>×</button>
         </div>
         
-        <form onSubmit={handleSubmit} className={styles.modalForm}>
+        <div className={styles.modalForm}> {/* CA: reemplazar <form> para evitar formularios anidados */}
           <div className={styles.formGroup}>
             <label>Fecha:</label>
             <input
@@ -347,11 +345,11 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
             <button type="button" onClick={onCancel} className={styles.cancelBtn}>
               Cancelar
             </button>
-            <button type="submit" className={styles.saveBtn}>
+            <button type="button" onClick={handleSubmit} className={styles.saveBtn}> {/* CA: disparar guardado sin formulario */}
               {event?.id ? 'Actualizar' : 'Guardar'}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
