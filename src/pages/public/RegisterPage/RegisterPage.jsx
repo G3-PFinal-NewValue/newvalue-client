@@ -70,8 +70,8 @@ export default function RegisterPage() {
   } catch (err) {
     Swal.fire({
       icon: "error",
-      title: "Error",
-      text: `Error al registrarse: ${err.message || "Error desconocido"}`,
+      title: "Error al registrar la cuenta",
+      text: `${err.message || "Error desconocido"}.`,
       confirmButtonText: "Aceptar",
     });
   }
