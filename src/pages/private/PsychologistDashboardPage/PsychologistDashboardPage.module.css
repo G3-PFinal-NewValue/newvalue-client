@@ -218,6 +218,13 @@
   font-size: 0.85rem;
 }
 
+.patientLink {
+  font-size: 0.85rem;
+  color: var(--color-brand-secondary);
+  text-decoration: underline;
+  margin-left: var(--space-3);
+}
+
 .patientItem {
   display: flex; /* Simple flex para nombre y botón opcional */
   justify-content: space-between;

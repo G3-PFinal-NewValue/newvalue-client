@@ -5,11 +5,10 @@ export async function loginRequest({ email, password }) {
   try {
     const response = await api.post("/auth/login", { email, password });
     const { token, user } = response.data;
-
-    localStorage.setItem("cm_auth", JSON.stringify({ token, user }));
-    console.log("Login exitoso. Usuario:", user.role);
-
-    return user; 
+    
+    console.log("Login exitoso. Usuario:", user.role); // CA: mantener log informativo
+    
+    return { token, user }; // CA: devolver datos completos para AuthContext
   } catch (error) {
     console.error("Error en loginRequest:", error);
     throw error;
@@ -21,9 +20,8 @@ export async function registerRequest(userData) {
   try {
     const response = await api.post("/auth/register", userData);
     const { token, user } = response.data; 
-    localStorage.setItem("cm_auth", JSON.stringify({ token, user }));
-    console.log("Registro exitoso. Usuario:", user.role);
-    return user; 
+    console.log("Registro exitoso. Usuario:", user.role); // CA: mantener log
+    return { token, user }; // CA: devolver estructura compatible con login()
   } catch (error) {
     console.error("Error en registerRequest:", error);
     throw error;
@@ -31,21 +29,21 @@ export async function registerRequest(userData) {
 }
 
 export async function getMe() {
-   const rawAuth = localStorage.getItem("cm_auth");
-   if (rawAuth) {
-     try {
-       const authData = JSON.parse(rawAuth);
-       if (authData?.user) {
-         console.log("getMe devuelve usuario de localStorage:", authData.user.role);
-         return authData.user;
-       }
-     } catch(e) {
-        console.error("Error al parsear cm_auth en getMe:", e);
-        localStorage.removeItem("cm_auth");
-     }
-   }
-   console.log("getMe: No hay usuario válido en localStorage");
-   throw new Error("No autenticado");
+  const rawAuth = localStorage.getItem("cm_auth");
+  if (rawAuth) {
+    try {
+      const authData = JSON.parse(rawAuth);
+      if (authData?.user) {
+        console.log("getMe devuelve usuario de localStorage:", authData.user.role);
+        return authData.user;
+      }
+    } catch (e) {
+      console.error("Error al parsear cm_auth en getMe:", e);
+      localStorage.removeItem("cm_auth");
+    }
+  }
+  console.log("getMe: No hay usuario válido en localStorage");
+  throw new Error("No autenticado");
 }
 
 export async function logoutRequest() {
@@ -57,11 +55,11 @@ export async function logoutRequest() {
 export async function googleLoginRequest(token) {
   try {
     console.log('Enviando token de Google al backend...');
-    
+
     const response = await api.post("/auth/google", { token });
-    
+
     console.log('Respuesta del backend:', response.data);
-    
+
     const { token: jwt, user } = response.data;
 
     if (!user) {
@@ -72,14 +70,13 @@ export async function googleLoginRequest(token) {
       throw new Error('El servidor no devolvió un token válido');
     }
 
-    localStorage.setItem("cm_auth", JSON.stringify({ token: jwt, user }));
     console.log("Login con Google exitoso. Usuario:", user.email, "Rol:", user.role);
-    
+
     // Devolver el objeto completo con token para que el frontend lo maneje
-    return { ...user, token: jwt };
+    return { token: jwt, user }; // CA: misma forma que login/register
   } catch (error) {
     console.error("Error en googleLoginRequest:", error);
-    
+
     // Mejorar el mensaje de error
     if (error?.response?.data?.message) {
       throw new Error(error.response.data.message);
@@ -89,4 +86,14 @@ export async function googleLoginRequest(token) {
       throw new Error('Error desconocido al iniciar sesión con Google');
     }
   }
+}
+
+export async function setUserPassword(token, password) {
+  console.log({ token, password })
+  const response = await api.post(`/auth/set-password/${token}`, { token, password }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
 }

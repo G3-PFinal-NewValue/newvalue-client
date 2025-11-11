@@ -1,9 +1,8 @@
 .page {
-  min-height: 100vh;
   display: grid;
   place-items: center;
   background: var(--color-bg);
-  padding: var(--space-6) var(--space-4); /* Usar variables */
+  padding: var(--space-6) var(--space-4);
 }
 
 .wrap {
