@@ -5,6 +5,7 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 import BlogArticleForm from "../../../components/ArticleForm.jsx";
 import Navbar from "../../../components/common/Navbar/Navbar.jsx"
 import Footer from "../../../components/common/Footer/Footer.jsx"
+import "./CreateArticlePage.css"
 
 export default function CreateArticlePage() {
   const { user, getToken } = useAuth();
@@ -46,7 +47,8 @@ export default function CreateArticlePage() {
         payloadToSend.append("title", formData.title);
         payloadToSend.append("content", formData.content);
         payloadToSend.append("category_id", Number(formData.category_id));
-        payloadToSend.append("author_id", user.id);
+       payloadToSend.append("author", formData.author);
+
         payloadToSend.append("image", formData.image);
         console.log("📸 Enviando con imagen (FormData)");
       } else {
@@ -54,7 +56,6 @@ export default function CreateArticlePage() {
         payloadToSend = {
           ...formData,
           category_id: Number(formData.category_id),
-          author_id: user.id,
         };
         console.log("📄 Enviando sin imagen (JSON)");
       }

@@ -194,3 +194,12 @@ display: inline-block;
     .actionsCell { white-space: normal; text-align: left; } /* Permitir que botones se apilen */
     .actionButton { margin: var(--space-1) 0; display: block; width: 100%; text-align: center;} /* Botones apilados */
 }
+
+.usersGrid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    justify-items: center;
+    align-items: center;
+    box-shadow: var(--shadow-1);
+}

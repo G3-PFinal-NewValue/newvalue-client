@@ -13,6 +13,7 @@ import PsychologistListPage from "../pages/public/PsychologistListPage/Psycholog
 import ContactPage from "../pages/public/ContactPage/ContactPage";
 import TreatmentsPage from "../pages/public/Treatments/TreatmentsPage.jsx";
 import FirstSessionForm from "../pages/public/FirstSessionForm/FirstSessionForm.jsx";
+import SetPassword from "../pages/public/AdminCreateUser/SetPassword.jsx";
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
@@ -26,6 +27,7 @@ import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
 import CreateArticlePage from "../pages/private/BlogPages/CreateArticlePage.jsx";
 import EditArticlePage from "../pages/private/BlogPages/EditArticlePage.jsx";
 import VideoCallPage from '../pages/private/VideoCallPage/VideoCallPage';
+import CreateUserForm from "../pages/private/AdminDashboard/CreateUserForm.jsx";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -62,6 +64,7 @@ export default function AppRouter() {
           <Route path="/contacto" element={<ContactPage />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
           <Route path="/first-session" element={<FirstSessionForm />} />
+          <Route path="/set-password/:token" element={<SetPassword />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}

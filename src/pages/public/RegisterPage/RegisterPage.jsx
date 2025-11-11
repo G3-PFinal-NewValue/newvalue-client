@@ -11,6 +11,7 @@ import { registerRequest } from "../../../services/authService";
 
 import styles from "./RegisterPage.module.css";
 import GoogleSignInButton from "../../../components/auth/GoogleSignInButton.jsx";
+import Swal from "sweetalert2";
 
 // Esquema específico para pacientes
 const patientSchema = z
@@ -62,15 +63,19 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (values) => {
-    try {
-      const authData = await registerRequest(values); // CA: recibir token + usuario
-      login(authData); // CA: setear contexto sin refrescar
-      // Los pacientes siempre van al setup de paciente
-      navigate("/app/profile-setup/patient");
-    } catch (err) {
-      alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
-    }
-  };
+  try {
+    const authData = await registerRequest(values);
+    login(authData); 
+    navigate("/app/profile-setup/patient");
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Error al registrar la cuenta",
+      text: `${err.message || "Error desconocido"}.`,
+      confirmButtonText: "Aceptar",
+    });
+  }
+};
 
   return (
     <div className={styles.page}>
