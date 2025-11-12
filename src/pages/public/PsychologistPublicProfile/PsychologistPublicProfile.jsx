@@ -6,6 +6,7 @@ import {
   createAppointment,
 } from "../../../services/appointmentService";
 import { useAuth } from "../../../context/AuthContext";
+import Swal from 'sweetalert2';
 import styles from "./PsychologistPublicProfile.module.css";
 
 // Importaciones de react-big-calendar y date-fns
@@ -76,6 +77,13 @@ export default function PsychologistPublicProfile() {
         console.error("Error cargando el perfil o las citas:", error);
         setProfile(null);
         setBookedAppointments([]);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar el perfil del psicólogo',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#ef4444'
+        });
       } finally {
         setLoading(false);
       }
@@ -101,14 +109,101 @@ export default function PsychologistPublicProfile() {
   const maxTime = useMemo(() => setHours(setMinutes(new Date(), 0), 22), []);
   // --- FIN CAMBIO ---
 
+  const SLOT_DURATION = 45; // CA: mantener duración estándar por slot
+
+  const buildSlotsForAvailability = (
+    availability,
+    baseDate,
+    realBookedSlots
+  ) => { // CA: genera bloques de 45 minutos a partir de una disponibilidad
+    if (!availability?.is_available) return []; // CA: saltar bloques desactivados
+
+    const { hours: startHour, minutes: startMinute } = parseTime(
+      availability.start_time
+    );
+    const { hours: endHour, minutes: endMinute } = parseTime(
+      availability.end_time
+    );
+
+    if (
+      isNaN(startHour) ||
+      isNaN(startMinute) ||
+      isNaN(endHour) ||
+      isNaN(endMinute)
+    ) {
+      return [];
+    }
+
+    const startDate = setSeconds(
+      setMinutes(setHours(new Date(baseDate), startHour), startMinute),
+      0
+    );
+    const endLimit = setSeconds(
+      setMinutes(setHours(new Date(baseDate), endHour), endMinute),
+      0
+    );
+
+    const slots = [];
+    let slotStart = new Date(startDate);
+
+    while (slotStart < endLimit) {
+      const slotEnd = addMinutes(slotStart, SLOT_DURATION);
+
+      if (slotEnd <= today) {
+        slotStart = slotEnd;
+        continue;
+      }
+
+      if (slotEnd > endLimit) break;
+
+      const isBooked = realBookedSlots.some(
+        (booked) => slotStart < booked.end && slotEnd > booked.start
+      );
+
+      slots.push({
+        title: isBooked ? "Reservado" : "Disponible",
+        start: new Date(slotStart),
+        end: new Date(slotEnd),
+        isAvailable: !isBooked,
+        availabilityId: availability.id,
+        resourceId: profile?.id,
+      });
+
+      slotStart = slotEnd;
+    }
+
+    return slots;
+  };
+
+  const buildBlockedEvent = (availability, baseDate) => {
+    const { hours: startHour, minutes: startMinute } = parseTime(
+      availability.start_time
+    );
+    const { hours: endHour, minutes: endMinute } = parseTime(
+      availability.end_time
+    );
+
+    const blockStart = setSeconds(
+      setMinutes(setHours(new Date(baseDate), startHour), startMinute),
+      0
+    );
+    const blockEnd = setSeconds(
+      setMinutes(setHours(new Date(baseDate), endHour), endMinute),
+      0
+    );
+
+    return {
+      title: "No disponible",
+      start: blockStart,
+      end: blockEnd,
+      isAvailable: false,
+      availabilityId: availability.id,
+      resourceId: profile?.id,
+    };
+  };
+
   const calendarEvents = useMemo(() => {
     if (!profile?.availabilities) return [];
-
-    const events = [];
-    // Usamos minNavigationDate como punto de partida (hoy a las 00:00)
-    const startOfToday = minNavigationDate;
-    // Usamos maxNavigationDate como límite (28 días desde hoy)
-    const futureLimit = maxNavigationDate;
 
     const realBookedSlots = bookedAppointments.map((app) => {
       const startDate = new Date(app.date); // El backend envía un string ISO
@@ -116,79 +211,45 @@ export default function PsychologistPublicProfile() {
       return { start: startDate, end: endDate };
     });
 
-    let currentDate = startOfToday;
-    while (currentDate < futureLimit) {
-      const jsDay = getDay(currentDate); // 0=Domingo, 1=Lunes,...
-      // Convertimos el día de JS (0=Dom) al formato de BD (7=Dom)
-      const dbWeekday = jsDay === 0 ? 7 : jsDay;
+    const events = [];
 
-      const dayAvailabilities = profile.availabilities.filter(
-        (a) => a.weekday === dbWeekday // Lógica de filtro restaurada
-      );
-
-      dayAvailabilities.forEach((availability) => {
-        // Lógica de parseTime restaurada
-        const { hours: startHour, minutes: startMinute } = parseTime(
-          availability.start_time
-        );
-        const { hours: endHour, minutes: endMinute } = parseTime(
-          availability.end_time
-        );
-
-        // Lógica de isNaN restaurada
-        if (
-          isNaN(startHour) ||
-          isNaN(startMinute) ||
-          isNaN(endHour) ||
-          isNaN(endMinute)
-        )
-          return;
-
-        // Lógica de slotStart restaurada
-        let slotStart = setSeconds(
-          setMinutes(setHours(currentDate, startHour), startMinute),
-          0
-        );
-        // Lógica de slotEndLimit restaurada
-        const slotEndLimit = setSeconds(
-          setMinutes(setHours(currentDate, endHour), endMinute),
-          0
-        );
-
-        const slotDuration = 45;
-
-        while (slotStart < slotEndLimit) {
-          const slotEnd = addMinutes(slotStart, slotDuration);
-
-          // Comparamos contra 'today' (que tiene la hora actual)
-          if (slotEnd <= today) {
-            slotStart = slotEnd;
-            continue;
-          }
-
-          if (slotEnd > slotEndLimit) {
-            break;
-          }
-
-          // Lógica de isBooked restaurada
-          const isBooked = realBookedSlots.some(
-            (booked) => slotStart < booked.end && slotEnd > booked.start
+    profile.availabilities.forEach((availability) => {
+      if (availability.specific_date) {
+        const baseDate = new Date(`${availability.specific_date}T00:00:00`);
+        if (availability.is_available) {
+          events.push(
+            ...buildSlotsForAvailability(availability, baseDate, realBookedSlots)
           );
-
-          // Lógica de push restaurada
-          events.push({
-            title: isBooked ? "Reservado" : "Disponible",
-            start: slotStart,
-            end: slotEnd,
-            isAvailable: !isBooked,
-            resourceId: profile.id,
-          });
-
-          slotStart = slotEnd;
+        } else {
+          events.push(buildBlockedEvent(availability, baseDate));
         }
-      });
-      currentDate = addDays(currentDate, 1);
-    }
+        return;
+      }
+
+      let cursor = minNavigationDate;
+      while (cursor < maxNavigationDate) {
+        const jsDay = getDay(cursor);
+        const dbWeekday = jsDay === 0 ? 7 : jsDay;
+
+        if (availability.weekday === dbWeekday) {
+          const baseDate = new Date(cursor);
+          if (availability.is_available) {
+            events.push(
+              ...buildSlotsForAvailability(
+                availability,
+                baseDate,
+                realBookedSlots
+              )
+            );
+          } else {
+            events.push(buildBlockedEvent(availability, baseDate));
+          }
+        }
+
+        cursor = addDays(cursor, 1);
+      }
+    });
+
     return events;
   }, [
     profile,
@@ -201,20 +262,39 @@ export default function PsychologistPublicProfile() {
   // --- Manejador de clics en slots ---
   const handleSlotSelect = (event) => {
     if (!event.isAvailable) {
-      alert("Este horario ya está reservado.");
+      Swal.fire({
+        icon: 'info',
+        title: 'Horario no disponible',
+        text: 'Este horario ya está reservado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
 
     // Verificar que el usuario esté logueado
     if (!user) {
-      alert("Debes iniciar sesión para reservar una cita.");
-      navigate("/login");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Inicio de sesión requerido',
+        text: 'Debes iniciar sesión para reservar una cita',
+        confirmButtonText: 'Ir a login',
+        confirmButtonColor: '#3b82f6'
+      }).then(() => {
+        navigate("/login");
+      });
       return;
     }
 
     // Verificar que el usuario sea un paciente
     if (user.role !== "patient") {
-      alert("Solo los pacientes pueden reservar citas.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Acceso restringido',
+        text: 'Solo los pacientes pueden reservar citas',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
 
@@ -232,6 +312,8 @@ export default function PsychologistPublicProfile() {
       const appointmentData = {
         patient_id: user.id,
         psychologist_id: profile.user_id,
+        availability_id:
+          selectedSlot.availabilityId || selectedSlot.resourceId, // CA: enviar ID de disponibilidad requerido por backend
         date: selectedSlot.start.toISOString(),
         duration_minutes: 45, // Duración fija de 45 minutos
         status: "pending",
@@ -246,12 +328,23 @@ export default function PsychologistPublicProfile() {
       // Cerrar modal y mostrar mensaje de éxito
       setShowBookingModal(false);
       setSelectedSlot(null);
-      alert(
-        "¡Cita reservada exitosamente! Te contactaremos pronto para confirmar."
-      );
+      Swal.fire({
+        icon: 'success',
+        title: '¡Cita reservada!',
+        text: 'Te contactaremos pronto para confirmar la cita',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      });
     } catch (error) {
       console.error("Error al reservar la cita:", error);
-      alert("Error al reservar la cita. Por favor, inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al reservar',
+        text: 'No se pudo reservar la cita. Por favor, inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setBookingLoading(false);
     }

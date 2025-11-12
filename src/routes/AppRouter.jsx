@@ -13,17 +13,21 @@ import PsychologistListPage from "../pages/public/PsychologistListPage/Psycholog
 import ContactPage from "../pages/public/ContactPage/ContactPage";
 import TreatmentsPage from "../pages/public/Treatments/TreatmentsPage.jsx";
 import FirstSessionForm from "../pages/public/FirstSessionForm/FirstSessionForm.jsx";
+import SetPassword from "../pages/public/AdminCreateUser/SetPassword.jsx";
 // Protegidas
 import ProtectedRoute from "./ProtectedRoute";
 import PsychologistProfileSetup from "../pages/private/PsychologistProfile/PsychologistProfileSetup";
 import PatientProfileSetup from "../pages/private/PatientProfile/PatientProfileSetup";
 import MyPatientProfile from "../pages/private/PatientProfile/MyPatientProfile";
+import PatientProfileView from "../pages/private/PatientProfile/PatientProfileView";
 import AdminDashboard from "../pages/private/AdminDashboard/AdminDashboard";
 import PatientAppointmentsPage from "../pages/private/PatientAppointmentsPage/PatientAppointmentsPage";
 import PsychologistDashboardPage from "../pages/private/PsychologistDashboardPage/PsychologistDashboardPage";
 import ChooseRolePage from "../pages/public/ChooseRolePage/ChooseRolePage.jsx";
 import CreateArticlePage from "../pages/private/BlogPages/CreateArticlePage.jsx";
 import EditArticlePage from "../pages/private/BlogPages/EditArticlePage.jsx";
+import VideoCallPage from '../pages/private/VideoCallPage/VideoCallPage';
+import CreateUserForm from "../pages/private/AdminDashboard/CreateUserForm.jsx";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -60,6 +64,7 @@ export default function AppRouter() {
           <Route path="/contacto" element={<ContactPage />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
           <Route path="/first-session" element={<FirstSessionForm />} />
+          <Route path="/set-password/:token" element={<SetPassword />} />
         </Route>
 
         {/* Rutas privadas con Layout (Navbar visible) */}
@@ -116,6 +121,14 @@ export default function AppRouter() {
             }
           />
           <Route
+            path="/app/patients/:id"
+            element={
+              <ProtectedRoute allowedRoles={["psychologist", "admin"]}>
+                <PatientProfileView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/app/my-appointments"
             element={
               <ProtectedRoute allowedRoles={["patient"]}>
@@ -132,11 +145,20 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+          
+          
         </Route>
         <Route path="/blog/:id" element={<BlogArticlePage />} />
         <Route path="/admin/article/create" element={<CreateArticlePage />} />
         <Route path="/admin/article/edit/:id" element={<EditArticlePage />} />
-
+        <Route
+          path="/consulta/:appointmentId"
+          element={
+            <ProtectedRoute allowedRoles={['patient', 'psychologist']}>
+              <VideoCallPage />
+            </ProtectedRoute>
+          }
+        />
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

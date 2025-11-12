@@ -2,14 +2,11 @@ import axios from "axios";
 
 const API_URL = "http://localhost:4000/article";
 
-/**
- * Maneja errores de Axios y mensajes claros
- */
 function handleAxiosError(error) {
-  console.error('Error completo:', error); // 👈 Debugging
+  console.error('Error completo:', error); 
   
   if (error.response) {
-    console.error('Response data:', error.response.data); // 👈 Ver detalles
+    console.error('Response data:', error.response.data);
     console.error('Response status:', error.response.status);
     
     if (error.response.status === 401 || error.response.status === 403) {
@@ -27,7 +24,6 @@ function handleAxiosError(error) {
   }
 }
 
-// Función auxiliar para obtener headers
 const getAuthHeaders = (token, isFormData = false) => {
   if (!token) {
     throw new Error("No hay token de autenticación disponible");
@@ -37,8 +33,7 @@ const getAuthHeaders = (token, isFormData = false) => {
     Authorization: `Bearer ${token}`,
   };
 
-  // 🔹 Si NO es FormData, establecemos Content-Type como JSON
-  // Si ES FormData, axios lo maneja automáticamente con el boundary correcto
+
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
@@ -46,16 +41,15 @@ const getAuthHeaders = (token, isFormData = false) => {
   return headers;
 };
 
-// ✅ Crear un artículo
+// Crear un artículo
 export const createArticle = async (articleData, token) => {
   try {
-    console.log('Creando artículo con token:', token ? 'Sí existe' : 'NO EXISTE'); // 👈 Debug
+    console.log('Creando artículo con token:', token ? 'Sí existe' : 'NO EXISTE'); 
     
-    // 🔹 Detectar si es FormData (con imagen) o JSON
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
     
-    const { data } = await axios.post(API_URL, articleData, {
+    const { data } = await axios.post(BASE_URL, articleData, {
       headers: getAuthHeaders(token, isFormData),
     });
     return data;
@@ -64,32 +58,31 @@ export const createArticle = async (articleData, token) => {
   }
 };
 
-// ✅ Obtener todos los artículos
+// Obtener todos los artículos
 export const getArticles = async () => {
   try {
-    const { data } = await axios.get(API_URL);
+    const { data } = await axios.get(`${API_URL}/blog`);
     return data;
   } catch (error) {
     handleAxiosError(error);
   }
 };
 
-// ✅ Obtener artículo por ID
+//  Obtener artículo por ID
 export const getArticleById = async (id) => {
   try {
-    const { data } = await axios.get(`${API_URL}/${id}`);
+    const { data } = await axios.get(`${API_URL}/blog/${id}`);
     return data;
   } catch (error) {
     handleAxiosError(error);
   }
 };
 
-// ✅ Editar (actualizar) artículo
+// Editar (actualizar) artículo
 export const updateArticle = async (id, articleData, token) => {
   try {
     console.log('Actualizando artículo con token:', token ? 'Sí existe' : 'NO EXISTE');
     
-    // 🔹 Detectar si es FormData (con imagen) o JSON
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
 
@@ -102,7 +95,7 @@ export const updateArticle = async (id, articleData, token) => {
   }
 };
 
-// ✅ Eliminar artículo
+//  Eliminar artículo
 export const deleteArticle = async (id, token) => {
   try {
     console.log('🗑️ Intentando eliminar artículo:', id);

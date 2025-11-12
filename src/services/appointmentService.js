@@ -47,6 +47,16 @@ export async function cancelAppointment(appointmentId) {
   }
 }
 
+export async function rescheduleAppointment(appointmentId, payload) {
+  try {
+    const response = await api.put(`/appointment/${appointmentId}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error al reprogramar la cita:", error);
+    throw error;
+  }
+}
+
 /**
  * Obtiene todas las citas para un psicólogo específico (incluyendo pendientes).
  * @param {string|number} psychologistId ID del psicólogo (user_id)
@@ -126,6 +136,22 @@ export async function getBookedSlotsForPsychologist(psychologistId) {
     return response.data;
   } catch (error) {
     console.error("Error al obtener citas reservadas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Obtiene los detalles de una cita específica por su ID.
+ * @param {string|number} appointmentId ID de la cita
+ * @returns {Promise<object>} Los datos de la cita (esperamos que la respuesta sea { data: { ... } })
+ */
+export async function getAppointmentDetails(appointmentId) {
+  try {
+    // Asumimos que tu backend tiene una ruta: GET /api/appointment/:id
+    const response = await api.get(`/appointment/${appointmentId}`);
+    return response.data; // Esto debería devolver el objeto de la cita
+  } catch (error) {
+    console.error("Error al obtener los detalles de la cita:", error);
     throw error;
   }
 }

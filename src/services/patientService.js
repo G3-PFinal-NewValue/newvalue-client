@@ -111,8 +111,8 @@ export async function getPatientsByPsychologist(psychologistId) {
   if (!psychologistId) return [];
 
   try {
-    // Intentar obtener pacientes específicos del psicólogo
-    const response = await api.get(`/psychologist/${psychologistId}/patients`);
+    // CA: backend ya filtra por psicólogo autenticado vía GET /patient
+    const response = await api.get(`/patient`);
     return response.data || [];
   } catch (error) {
     console.error("Error al obtener pacientes del psicólogo:", error);

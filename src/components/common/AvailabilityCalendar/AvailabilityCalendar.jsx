@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
@@ -5,6 +6,15 @@ import { format, parse, startOfWeek, getDay, parseISO } from "date-fns";
 import esLocale from "date-fns/locale/es";
 import styles from "./AvailabilityCalendar.module.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+=======
+import { useState, useCallback, useMemo } from 'react';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import moment from 'moment';
+import 'moment/locale/es';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import styles from './AvailabilityCalendar.module.css';
+import Swal from 'sweetalert2';
+>>>>>>> develop
 
 const locales = { es: esLocale };
 const localizer = dateFnsLocalizer({
@@ -119,6 +129,41 @@ export default function AvailabilityCalendar({
     if (typeof onChange === "function") {
       onChange(nextSlots);
     }
+<<<<<<< HEAD
+=======
+    
+    onChange?.(newAvailabilities);
+    setShowEventModal(false);
+    setCurrentEvent(null);
+  }, [value, onChange]);
+
+  // Eliminar evento
+  const handleDeleteEvent = useCallback(() => {
+    if (!currentEvent?.id) return;
+    
+    const newAvailabilities = value.filter(a => a.id !== currentEvent.id);
+    onChange?.(newAvailabilities);
+    setShowEventModal(false);
+    setCurrentEvent(null);
+  }, [value, onChange, currentEvent]);
+
+
+  // Mensajes en español
+  const messages = {
+    allDay: 'Todo el día',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    today: 'Hoy',
+    month: 'Mes',
+    week: 'Semana', 
+    day: 'Día',
+    agenda: 'Agenda',
+    date: 'Fecha',
+    time: 'Hora',
+    event: 'Evento',
+    noEventsInRange: 'No hay eventos en este rango',
+    showMore: total => `+ Ver más (${total})`
+>>>>>>> develop
   };
 
   const handleFieldChange = (targetIndex, field, newValue) => {
@@ -325,23 +370,58 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
     notes: event?.notes || ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => { // CA: controlar envío manualmente para evitar usar un <form>
     
     // Validaciones básicas
     if (!formData.specific_date || !formData.start_time || !formData.end_time) {
-      alert('Por favor completa todos los campos requeridos');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor completa todos los campos requeridos',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
     
     if (formData.start_time >= formData.end_time) {
-      alert('La hora de inicio debe ser anterior a la hora de fin');
+      Swal.fire({
+        icon: 'error',
+        title: 'Horario inválido',
+        text: 'La hora de inicio debe ser anterior a la hora de fin',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
     
     onSave({
       ...event,
       ...formData
+    });
+  };
+
+  const handleDelete = () => {
+    Swal.fire({
+      icon: 'warning',
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onDelete();
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'La disponibilidad ha sido eliminada',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
     });
   };
 
@@ -364,7 +444,7 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
           <button type="button" onClick={onCancel} className={styles.closeBtn}>×</button>
         </div>
         
-        <form onSubmit={handleSubmit} className={styles.modalForm}>
+        <div className={styles.modalForm}> {/* CA: reemplazar <form> para evitar formularios anidados */}
           <div className={styles.formGroup}>
             <label>Fecha:</label>
             <input
@@ -435,11 +515,11 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
             <button type="button" onClick={onCancel} className={styles.cancelBtn}>
               Cancelar
             </button>
-            <button type="submit" className={styles.saveBtn}>
+            <button type="button" onClick={handleSubmit} className={styles.saveBtn}> {/* CA: disparar guardado sin formulario */}
               {event?.id ? 'Actualizar' : 'Guardar'}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

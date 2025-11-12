@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
-// 1. Importar los servicios del admin
+import Button from '../../../components/button';
+import Swal from 'sweetalert2'; 
 import {
   adminGetAllUsers,
   adminGetAllPatients,
@@ -10,14 +11,14 @@ import {
   adminRejectPsychologist,
   adminDeactivateUser,
   adminActivateUser
-} from '../../../services/adminService'; // Ajusta la ruta si es necesario
+} from '../../../services/adminService';
 import styles from './AdminDashboard.module.css';
 import AdminExportExcel from '../../../components/AdminExportExcel';
+import UserSearchFilter from './UserSearchFilter';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
 
-  // Estados para los datos reales
   const [users, setUsers] = useState([]);
   const [patients, setPatients] = useState([]);
   const [psychologists, setPsychologists] = useState([]);
@@ -26,28 +27,23 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- 3. Función para cargar y procesar datos ---
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Cargar todos los datos en paralelo
       const [usersData, patientsData, psychologistsData] = await Promise.all([
         adminGetAllUsers(),
         adminGetAllPatients(),
         adminGetAllPsychologists(),
       ]);
 
-      // Procesar y actualizar estados
       setUsers(usersData);
       setPatients(patientsData);
       setPsychologists(psychologistsData);
 
-      // Filtrar psicólogos pendientes
       const pending = psychologistsData.filter(p => !p.validated);
       setPendingPsychologists(pending);
 
-      // Calcular estadísticas
       setStats({
         totalUsers: usersData.length,
         pending: pending.length,
@@ -62,54 +58,85 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- 4. useEffect ahora llama a fetchData ---
   useEffect(() => {
     fetchData();
-  }, []); // Se ejecuta solo una vez al montar
+  }, []);
 
-  // --- 5. Handlers de acciones reales ---
   const handleValidate = async (psychologistId) => {
     try {
       await adminValidatePsychologist(psychologistId);
-      // Actualizar estado local (optimista)
+
       setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
-      
-      // Actualizamos la lista principal
+
       const newPsychologists = psychologists.map(p =>
         p.user_id === psychologistId ? { ...p, validated: true } : p
       );
       setPsychologists(newPsychologists);
 
-      // Recalcular stats
       setStats(prev => ({
         ...prev,
         pending: prev.pending - 1,
         activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
       }));
 
+      Swal.fire({
+        icon: 'success',
+        title: 'Validación completada',
+        text: 'El psicólogo ha sido validado correctamente.',
+        confirmButtonColor: '#3085d6'
+      });
+
     } catch (err) {
-      alert(`Error al validar: ${err.message}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al validar',
+        text: err.message,
+        confirmButtonColor: '#d33'
+      });
     }
   };
 
   const handleReject = async (psychologistId) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este perfil? Esta acción también eliminará al usuario asociado.")) {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción también eliminará al usuario asociado.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (result.isConfirmed) {
       try {
         await adminRejectPsychologist(psychologistId);
-        
+
         setUsers(prev => prev.filter(u => u.id !== psychologistId));
         setPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
         setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
 
         const newPsychologists = psychologists.filter(p => p.user_id !== psychologistId);
         setStats(prev => ({
-            totalUsers: prev.totalUsers - 1,
-            pending: newPsychologists.filter(p => !p.validated).length,
-            activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
+          totalUsers: prev.totalUsers - 1,
+          pending: newPsychologists.filter(p => !p.validated).length,
+          activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
         }));
 
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'El perfil ha sido eliminado correctamente.',
+          confirmButtonColor: '#3085d6'
+        });
+
       } catch (err) {
-        alert(`Error al rechazar: ${err.message}`);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al rechazar',
+          text: err.message,
+          confirmButtonColor: '#d33'
+        });
       }
     }
   };
@@ -117,8 +144,18 @@ export default function AdminDashboard() {
   const handleToggleUserStatus = async (userToToggle) => {
     const isActivating = userToToggle.status !== 'active';
     const actionText = isActivating ? "activar" : "desactivar";
-    
-    if (window.confirm(`¿Estás seguro de que deseas ${actionText} a este usuario?`)) {
+
+    const result = await Swal.fire({
+      title: `¿Deseas ${actionText} a este usuario?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: `Sí, ${actionText}`,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#aaa'
+    });
+
+    if (result.isConfirmed) {
       try {
         if (isActivating) {
           await adminActivateUser(userToToggle.id);
@@ -126,31 +163,51 @@ export default function AdminDashboard() {
           await adminDeactivateUser(userToToggle.id);
         }
 
-        // Actualizar el estado local (optimista)
-        setUsers(prevUsers => 
-          prevUsers.map(u => 
-            u.id === userToToggle.id 
-              ? { ...u, status: isActivating ? 'active' : 'inactive' } 
+        setUsers(prevUsers =>
+          prevUsers.map(u =>
+            u.id === userToToggle.id
+              ? { ...u, status: isActivating ? 'active' : 'inactive' }
               : u
           )
         );
 
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: `El usuario ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,
+          confirmButtonColor: '#3085d6'
+        });
+
       } catch (err) {
-        alert(`Error al ${actionText} al usuario: ${err.message}`);
+        Swal.fire({
+          icon: 'error',
+          title: `Error al ${actionText}`,
+          text: err.message,
+          confirmButtonColor: '#d33'
+        });
       }
     }
   };
 
   if (loading) {
-    return <div className={styles.page}><p className={styles.loadingMessage}>Cargando dashboard...</p></div>;
-  }
-  if (error) {
-    return <div className={styles.page}><p className={`${styles.card} ${styles.errorMessage}`}>{error}</p></div>;
+    return (
+      <div className={styles.page}>
+        <p className={styles.loadingMessage}>Cargando dashboard...</p>
+      </div>
+    );
   }
 
-   return (
+  if (error) {
+    return (
       <div className={styles.page}>
-         <h1 className={styles.mainTitle}>Panel de Administración</h1>
+        <p className={`${styles.card} ${styles.errorMessage}`}>{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.page}>
+      <h1 className={styles.mainTitle}>Panel de Administración</h1>
 
       {/* --- Sección Estadísticas --- */}
       <section className={styles.statsGrid}>
@@ -170,41 +227,46 @@ export default function AdminDashboard() {
 
       {/* --- Sección Psicólogos Pendientes (Tabla) --- */}
       <section className={styles.card}>
-        <h2 className={styles.sectionTitle}>Psicólogos Pendientes de Validación ({pendingPsychologists.length})</h2>
+        <h2 className={styles.sectionTitle}>
+          Psicólogos Pendientes de Validación ({pendingPsychologists.length})
+        </h2>
         {pendingPsychologists.length === 0 ? (
           <p className={styles.emptyMessage}>No hay psicólogos pendientes.</p>
         ) : (
+
           <table className={styles.dataTable}>
             <thead>
-<tr>
+              <tr>
                 <th>Nombre</th>
                 <th>Email (Usuario)</th>
                 <th>Especialidades</th>
                 <th>Licencia</th>
-                <th>Enviado</th> {/* <-- DESCOMENTA/AÑADE ESTE ENCABEZADO */}
+                <th>Enviado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {pendingPsychologists.map(p => {
-                // Buscamos el usuario correspondiente para obtener nombre y email
                 const userInfo = users.find(u => u.id === p.user_id);
                 return (
                   <tr key={p.user_id}>
-                    <td>{userInfo ? `${userInfo.first_name} ${userInfo.last_name}` : 'Usuario no encontrado'}</td>
+                    <td>
+                      {userInfo
+                        ? `${userInfo.first_name} ${userInfo.last_name}`
+                        : 'Usuario no encontrado'}
+                    </td>
                     <td>{userInfo ? userInfo.email : 'N/A'}</td>
                     <td>
-                      {/* El backend entrega un array 'specialities' */}
                       {p.specialities && p.specialities.length > 0
                         ? p.specialities.map(s => s.name).join(', ')
                         : 'No especificada'}
                     </td>
                     <td>{p.license_number}</td>
-                    <td>{new Date(p.created_at).toLocaleDateString()}</td> 
+                    <td>{new Date(p.created_at).toLocaleDateString()}</td>
                     <td className={styles.actionsCell}>
                       <Link
                         to={`/profile/${p.user_id}`}
-                        target="_blank" // Abre en una nueva pestaña
+                        target="_blank"
                         rel="noopener noreferrer"
                         className={`${styles.actionButton} ${styles.viewButton}`}
                       >
@@ -224,7 +286,7 @@ export default function AdminDashboard() {
                       </button>
                     </td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -233,16 +295,35 @@ export default function AdminDashboard() {
 
       {/* --- Sección Últimos Usuarios (Tabla) --- */}
       <section className={styles.card}>
-        <h2 className={styles.sectionTitle}>Últimos Usuarios Registrados ({users.length})</h2>
+        <h2 className={styles.sectionTitle}>
+          Últimos Usuarios Registrados ({users.length})
+        </h2>
+        <div className={styles.usersGrid}>
+        <Link to="/admin/create-user">
+          <Button>Crear Nuevo Usuario</Button>
+        </Link>
+        {/* --- FILTRO DE BÚSQUEDA Y ROL --- */}
+        <UserSearchFilter
+          onFilter={async ({ search, role }) => {
+            try {
+              const query = new URLSearchParams();
+              if (search) query.append('search', search);
+              if (role) query.append('role', role);
+              const filtered = await adminGetAllUsers(`?${query.toString()}`);
+              setUsers(filtered);
+            } catch (err) {
+              console.error('Error filtrando usuarios:', err);
+            }
+          }}
+        /></div>
         <table className={styles.dataTable}>
           <thead>
-<tr>
+            <tr>
               <th>Nombre</th>
               <th>Email</th>
               <th>Rol</th>
-              {/* <th>Fecha Registro</th> */} {/* Sigue comentado, ¡está bien! */}
-              <th>Estado</th> 
-              <th>Acciones</th> 
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -255,9 +336,8 @@ export default function AdminDashboard() {
                     {u.role?.name || 'N/A'}
                   </span>
                 </td>
-                <td>{u.status}</td> { /* <-- Nuevo Campo */ }
+                <td>{u.status}</td>
                 <td className={styles.actionsCell}>
-                  {/* Solo mostrar "Ver Perfil" si es psicólogo */}
                   {u.role?.name === 'psychologist' && (
                     <Link
                       to={`/profile/${u.id}`}
@@ -268,7 +348,6 @@ export default function AdminDashboard() {
                       Ver Perfil
                     </Link>
                   )}
-                  {/* No permitir que el admin se desactive a sí mismo */}
                   {user.id !== u.id && u.role?.name !== 'admin' && (
                     <button
                       className={`${styles.actionButton} ${u.status === 'active' ? styles.deactivateButton : styles.activateButton}`}
@@ -283,7 +362,6 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </section>
-
 
       {/* --- Exportar Excel --- */}
       <AdminExportExcel

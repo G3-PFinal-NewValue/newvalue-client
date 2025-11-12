@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
-import { createPatientProfile } from "../../../services/patientService"; 
+import {
+  createPatientProfile,
+  getPatientProfileById,
+  updatePatientProfile,
+} from "../../../services/patientService";
 
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
 import styles from "./PatientProfileSetup.module.css";
+import Swal from 'sweetalert2';
 
 
 const schema = z.object({
@@ -24,21 +29,67 @@ export default function PatientProfileSetup() {
   const navigate = useNavigate();
 
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [photoFile, setPhotoFile] = useState(null); 
+  const [photoFile, setPhotoFile] = useState(null);
+  const [existingProfile, setExistingProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       birth_date: "",
-      gender: "", 
+      gender: "",
       therapy_goals: "",
       medical_history: "",
     },
   });
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user?.id) {
+        setLoadingProfile(false);
+        return;
+      }
+      try {
+        const profile = await getPatientProfileById(user.id);
+        if (profile) {
+          setExistingProfile(profile);
+          reset({
+            birth_date: profile.birth_date?.slice(0, 10) || "",
+            gender: profile.gender || "",
+            therapy_goals: profile.therapy_goals || "",
+            medical_history: profile.medical_history || "",
+          });
+          if (profile.photo) setPhotoPreview(profile.photo);
+        } else {
+          setExistingProfile(null);
+          reset({
+            birth_date: "",
+            gender: "",
+            therapy_goals: "",
+            medical_history: "",
+          });
+        }
+      } catch (err) {
+        console.error("Error al cargar perfil de paciente:", err);
+      Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar tu perfil. Por favor, intenta de nuevo.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#ef4444'
+        });
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    loadProfile();
+  }, [user, reset]);
 
   const onPhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -53,18 +104,21 @@ export default function PatientProfileSetup() {
     return () => URL.revokeObjectURL(previewUrl);
   };
 
- 
+
   const onSubmit = async (values) => {
     if (!user || !user.id) {
-      alert("Error: Usuario no autenticado.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'Usuario no autenticado.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
 
-   
     const formData = new FormData();
 
-    
-    formData.append('user_id', user.id);
     formData.append('birth_date', values.birth_date);
     formData.append('gender', values.gender); 
     formData.append('therapy_goals', values.therapy_goals);
@@ -80,32 +134,76 @@ export default function PatientProfileSetup() {
     console.log("Enviando FormData para crear perfil paciente:");
     for (let [key, value] of formData.entries()) {
         if (value instanceof File) {
-             console.log(`FormData entry: ${key}`, { name: value.name, type: value.type });
+            console.log(`FormData entry: ${key}`, { name: value.name, type: value.type });
         } else {
-             console.log(`FormData entry: ${key}`, value);
+            console.log(`FormData entry: ${key}`, value);
         }
     }
 
 
     try {
-     
-      await createPatientProfile(formData);
-      alert("Perfil de paciente guardado con éxito.");
-      navigate("/app/my-profile"); 
+      if (existingProfile) {
+        await updatePatientProfile(user.id, formData);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Actualizado!',
+          text: 'Perfil de paciente actualizado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate("/app/my-profile");
+        });
+      } else {
+        formData.append('user_id', user.id);
+        await createPatientProfile(formData);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Perfil creado!',
+          text: 'Perfil de paciente guardado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate("/app/my-profile");
+        });
+      }
 
     } catch (e) {
       console.error("Error en onSubmit PatientProfileSetup:", e);
-      alert(e?.response?.data?.message || e.message || "No se pudo guardar el perfil.");
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar',
+        text: e?.response?.data?.message || e.message || "No se pudo guardar el perfil",
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
+
+  if (loadingProfile) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.wrap}>
+          <div className={styles.card}>
+            <p style={{ textAlign: "center" }}>Cargando perfil...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
       <div className={styles.wrap}>
         <div className={styles.card}>
-          <h1 className={styles.title}>Completa tu perfil</h1>
+          <h1 className={styles.title}>
+            {existingProfile ? "Editar tu perfil" : "Completa tu perfil"}
+          </h1>
           <p className={styles.subtitle}>
-            Ayúdanos a conocerte un poco mejor.
+            {existingProfile
+              ? "Actualiza tu información personal cuando lo necesites."
+              : "Ayúdanos a conocerte un poco mejor."}
           </p>
 
           

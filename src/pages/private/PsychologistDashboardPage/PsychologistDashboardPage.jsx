@@ -1,5 +1,6 @@
 // src/pages/private/PsychologistDashboardPage/PsychologistDashboardPage.jsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import {
   getPsychologistAppointments,
@@ -8,6 +9,7 @@ import {
 } from "../../../services/appointmentService";
 import { getPatientsByPsychologist } from "../../../services/patientService";
 import styles from "./PsychologistDashboardPage.module.css";
+import Swal from 'sweetalert2';
 
 export default function PsychologistDashboardPage() {
   const { user } = useAuth();
@@ -60,7 +62,19 @@ export default function PsychologistDashboardPage() {
 
         // Procesar pacientes
         if (patientsData.status === "fulfilled") {
-          setPatients(patientsData.value || []);
+          const formattedPatients = (patientsData.value || []).map(
+            (patient) => ({
+              id: patient.user_id || patient.id,
+              firstName:
+                patient.user?.first_name ||
+                patient.first_name ||
+                "Paciente",
+              lastName:
+                patient.user?.last_name || patient.last_name || "",
+              email: patient.user?.email || patient.email || "Sin correo",
+            })
+          );
+          setPatients(formattedPatients);
         } else {
           console.error("Error cargando pacientes:", patientsData.reason);
           setPatients([]);
@@ -99,17 +113,41 @@ export default function PsychologistDashboardPage() {
         };
       });
 
-      alert("Cita confirmada exitosamente");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Confirmada!',
+        text: 'Cita confirmada exitosamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (error) {
       console.error("Error al confirmar cita:", error);
-      alert("Error al confirmar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al confirmar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setProcessingAppointment(null);
     }
   };
 
   const handleRejectAppointment = async (appointmentId) => {
-    if (!confirm("¿Estás seguro de que quieres rechazar esta cita?")) return;
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Rechazar cita?',
+      text: '¿Estás seguro de que quieres rechazar esta cita?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, rechazar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
 
     setProcessingAppointment(appointmentId);
     try {
@@ -121,10 +159,23 @@ export default function PsychologistDashboardPage() {
         confirmed: prev.confirmed.filter((app) => app.id !== appointmentId),
       }));
 
-      alert("Cita rechazada");
+      Swal.fire({
+        icon: 'success',
+        title: 'Rechazada',
+        text: 'Cita rechazada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (error) {
       console.error("Error al rechazar cita:", error);
-      alert("Error al rechazar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al rechazar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setProcessingAppointment(null);
     }
@@ -239,6 +290,16 @@ export default function PsychologistDashboardPage() {
                     </span>
                     <span className={styles.status}>✅ Confirmada</span>
                   </div>
+                  <div className={styles.appointmentActions}>
+                    <a
+                      href={`/consulta/${app.id}`}
+                      className={styles.joinButton}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Entrar a la consulta
+                    </a>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -257,11 +318,20 @@ export default function PsychologistDashboardPage() {
           {patients.length > 0 ? (
             <ul className={styles.patientsList}>
               {patients.map((patient) => (
-                <li key={patient.id} className={styles.patientItem}>
+                <li
+                  key={patient.id || `${patient.firstName}-${patient.email}`}
+                  className={styles.patientItem}
+                >
                   <span className={styles.patientName}>
-                    {patient.first_name} {patient.last_name}
+                    {patient.firstName} {patient.lastName}
                   </span>
                   <span className={styles.patientEmail}>{patient.email}</span>
+                  <Link
+                    to={`/app/patients/${patient.id}`}
+                    className={styles.patientLink}
+                  >
+                    Ver perfil
+                  </Link>
                 </li>
               ))}
             </ul>

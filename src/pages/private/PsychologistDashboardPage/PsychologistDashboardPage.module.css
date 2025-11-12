@@ -187,6 +187,26 @@
   cursor: not-allowed;
 }
 
+.joinButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-primary);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 10px 22px rgba(238, 146, 113, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.joinButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(238, 146, 113, 0.4);
+}
+
 .appointmentItem:last-child {
   border-bottom: none; /* Sin borde en el último */
 }
@@ -216,6 +236,13 @@
 .patientEmail {
   color: var(--color-text-secondary);
   font-size: 0.85rem;
+}
+
+.patientLink {
+  font-size: 0.85rem;
+  color: var(--color-brand-secondary);
+  text-decoration: underline;
+  margin-left: var(--space-3);
 }
 
 .patientItem {
