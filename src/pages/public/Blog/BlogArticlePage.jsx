@@ -48,18 +48,6 @@ export default function BlogArticlePage() {
       });
       return;
     }
-    
-    const result = await Swal.fire({
-      icon: 'warning',
-      title: '¿Eliminar artículo?',
-      text: '¿Estás seguro de que quieres eliminar este artículo? Esta acción no se puede deshacer.',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
-      reverseButtons: true
-    });
 
     if (!result.isConfirmed) return;
 

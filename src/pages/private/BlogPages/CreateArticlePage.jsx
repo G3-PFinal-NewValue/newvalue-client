@@ -7,7 +7,6 @@ import BlogArticleForm from "../../../components/ArticleForm.jsx";
 import Navbar from "../../../components/common/Navbar/Navbar.jsx"
 import Footer from "../../../components/common/Footer/Footer.jsx"
 import "./CreateArticlePage.css"
-import Swal from 'sweetalert2';
 
 export default function CreateArticlePage() {
   const { user, getToken } = useAuth();

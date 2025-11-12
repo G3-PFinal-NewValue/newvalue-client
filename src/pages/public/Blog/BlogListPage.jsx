@@ -77,19 +77,6 @@ export default function BlogCardList() {
 
     if (!result.isConfirmed) return;
 
-    const result = await Swal.fire({
-      title: "¿Eliminar artículo?",
-      text: "Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!result.isConfirmed) return;
-
     try {
       await deleteArticle(id, token);
       setArticles((prev) => prev.filter((a) => a.id !== id));
