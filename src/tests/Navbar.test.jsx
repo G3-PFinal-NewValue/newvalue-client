@@ -4,10 +4,15 @@ import { MemoryRouter } from "react-router-dom";
 import Navbar from "../components/common/Navbar/Navbar.jsx";
 import { describe, it, expect, vi } from "vitest";
 
-// Mock directo de useAuth
-const mockLogout = vi.fn();
+// Mock useAuth
 vi.mock("../context/AuthContext", () => ({
-  useAuth: () => ({ user: { id: 1, role: "patient" }, logout: mockLogout }),
+  useAuth: () => ({ user: { id: 1, role: "patient" } }),
+}));
+
+// Mock useLogout
+const mockLogout = vi.fn();
+vi.mock("../hooks/useLogout", () => ({
+  useLogout: () => mockLogout,
 }));
 
 describe("Navbar", () => {

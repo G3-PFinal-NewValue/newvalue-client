@@ -66,6 +66,7 @@ export default function AdminDashboard() {
     try {
       await adminValidatePsychologist(psychologistId);
 
+      // Actualizar el estado local inmediatamente para mejor UX
       setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
 
       const newPsychologists = psychologists.map(p =>
@@ -78,6 +79,9 @@ export default function AdminDashboard() {
         pending: prev.pending - 1,
         activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
       }));
+
+      // Refrescar los datos del servidor para asegurar sincronización
+      await fetchData();
 
       Swal.fire({
         icon: 'success',
@@ -112,6 +116,7 @@ export default function AdminDashboard() {
       try {
         await adminRejectPsychologist(psychologistId);
 
+        // Actualizar el estado local inmediatamente para mejor UX
         setUsers(prev => prev.filter(u => u.id !== psychologistId));
         setPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
         setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
@@ -122,6 +127,9 @@ export default function AdminDashboard() {
           pending: newPsychologists.filter(p => !p.validated).length,
           activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
         }));
+
+        // Refrescar los datos del servidor para asegurar sincronización
+        await fetchData();
 
         Swal.fire({
           icon: 'success',
@@ -163,6 +171,7 @@ export default function AdminDashboard() {
           await adminDeactivateUser(userToToggle.id);
         }
 
+        // Actualizar el estado local inmediatamente para mejor UX
         setUsers(prevUsers =>
           prevUsers.map(u =>
             u.id === userToToggle.id
@@ -170,6 +179,9 @@ export default function AdminDashboard() {
               : u
           )
         );
+
+        // Refrescar los datos del servidor para asegurar sincronización
+        await fetchData();
 
         Swal.fire({
           icon: 'success',

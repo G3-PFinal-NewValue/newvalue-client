@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { logoutRequest } from "../services/authService";
-import { CometChat } from '@cometchat/chat-sdk-javascript';
-import apiClient from '../services/apiClient';
+import { CometChat } from "@cometchat/chat-sdk-javascript";
+import apiClient from "../services/apiClient";
 
 const AuthContext = createContext();
 
@@ -17,20 +17,26 @@ export function AuthProvider({ children }) {
       const loggedUser = await CometChat.getLoggedinUser();
       if (loggedUser) {
         if (!cometChatReady) {
-          console.log('CometChat ya tenía una sesión activa para:', loggedUser.getUid());
+          console.log(
+            "CometChat ya tenía una sesión activa para:",
+            loggedUser.getUid()
+          );
           setCometChatReady(true);
         }
         return loggedUser;
       }
 
-      const chatTokenResponse = await apiClient.get('/api/chat/token');
+      const chatTokenResponse = await apiClient.get("/api/chat/token");
       const { authToken } = chatTokenResponse.data;
       const loggedInUser = await CometChat.login(authToken);
-      console.log('Inicio de sesión en CometChat exitoso:', loggedInUser.getName());
+      console.log(
+        "Inicio de sesión en CometChat exitoso:",
+        loggedInUser.getName()
+      );
       setCometChatReady(true);
       return loggedInUser;
     } catch (chatError) {
-      console.error('Error al iniciar sesión en CometChat:', chatError);
+      console.error("Error al iniciar sesión en CometChat:", chatError);
       setCometChatReady(false);
       throw chatError;
     }
@@ -42,7 +48,9 @@ export function AuthProvider({ children }) {
       try {
         const authData = JSON.parse(rawAuth);
         if (authData?.user && authData?.token) {
-          apiClient.defaults.headers.common['Authorization'] = `Bearer ${authData.token}`;
+          apiClient.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${authData.token}`;
           setUser(authData.user);
           setToken(authData.token);
           connectCometChat().catch(() => {});
@@ -62,7 +70,9 @@ export function AuthProvider({ children }) {
     localStorage.setItem("cm_auth", JSON.stringify(authData));
 
     // Configurar apiClient con el NUEVO token para futuras peticiones
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${authData.token}`;
+    apiClient.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${authData.token}`;
 
     connectCometChat().catch(() => {
       // No romper el login de la app si CometChat falla
@@ -73,14 +83,12 @@ export function AuthProvider({ children }) {
     try {
       // --- LÓGICA DE COMETCHAT AÑADIDA (antes de limpiar) ---
       await CometChat.logout();
-      console.log('Sesión de CometChat cerrada');
+      console.log("Sesión de CometChat cerrada");
       // --- FIN DE LÓGICA AÑADIDA ---
-      
+
       await logoutRequest(); // Tu logout del backend
-    
     } catch (error) {
       console.error("Error durante el logout:", error);
-    
     } finally {
       // Esto se ejecuta siempre, incluso si hay error
       setUser(null);
@@ -88,7 +96,7 @@ export function AuthProvider({ children }) {
       localStorage.removeItem("cm_auth");
 
       // --- LÓGICA AÑADIDA (limpiar header) ---
-      delete apiClient.defaults.headers.common['Authorization'];
+      delete apiClient.defaults.headers.common["Authorization"];
       // --- FIN DE LÓGICA AÑADIDA ---
     }
   };
