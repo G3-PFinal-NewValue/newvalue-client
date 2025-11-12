@@ -10,6 +10,7 @@ import {
 import { getPsychologistProfileById } from "../../../services/psychologistsService";
 import addDays from "date-fns/addDays";
 import startOfDay from "date-fns/startOfDay";
+import Swal from 'sweetalert2';
 
 export default function PatientAppointmentsPage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
@@ -149,13 +150,30 @@ export default function PatientAppointmentsPage() {
       const data = await getMyAppointments();
       const allAppointments = data.appointments || [];
 
+      const normalizeStatus = (status) => {
+        const normalized = (status || "").toLowerCase();
+        if (normalized === "confirmed") return "confirmada";
+        if (normalized === "pending") return "pendiente";
+        if (normalized === "completed") return "completada";
+        if (normalized === "cancelled") return "cancelada";
+        return normalized || "sin estado";
+      };
+
+      const isConfirmedStatus = (status) =>
+        ["confirmed", "confirmada"].includes((status || "").toLowerCase());
+      const isPendingStatus = (status) =>
+        ["pending", "pendiente"].includes((status || "").toLowerCase());
+
       const parsedAppointments = allAppointments.map((app) => ({
         id: app.id,
         psychologistName: app.psychologist
           ? `${app.psychologist.first_name} ${app.psychologist.last_name}`
           : "Psicólogo no asignado",
         dateTime: new Date(app.date),
-        status: app.status,
+        statusRaw: app.status,
+        statusLabel: normalizeStatus(app.status),
+        isConfirmed: isConfirmedStatus(app.status),
+        isPending: isPendingStatus(app.status),
         psychologistId: app.psychologist_id,
       }));
 
@@ -164,7 +182,7 @@ export default function PatientAppointmentsPage() {
         .filter(
           (a) =>
             a.dateTime >= now &&
-            (a.status === "confirmada" || a.status === "pending")
+            (a.isConfirmed || a.isPending)
         )
         .sort((a, b) => a.dateTime - b.dateTime);
 
@@ -172,8 +190,9 @@ export default function PatientAppointmentsPage() {
         .filter(
           (a) =>
             a.dateTime < now ||
-            a.status === "completada" ||
-            a.status === "cancelled"
+            ["completada", "completed", "cancelled", "cancelada"].includes(
+              (a.statusRaw || "").toLowerCase()
+            )
         )
         .sort((a, b) => b.dateTime - a.dateTime);
 
@@ -189,28 +208,60 @@ export default function PatientAppointmentsPage() {
     }
   }, []);
 
+  const openCallWindow = (appointmentId) => {
+    if (!appointmentId) return;
+    window.open(`/consulta/${appointmentId}`, "_blank", "noopener,noreferrer");
+  };
+
   useEffect(() => {
     loadAppointments();
   }, [loadAppointments]);
 
   const handleCancelAppointment = async (appointmentId) => {
-    const confirmed = window.confirm(
-      "¿Estás seguro de que quieres cancelar esta cita?"
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Cancelar cita?',
+      text: '¿Estás seguro de que quieres cancelar esta cita?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, mantener',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
     try {
       await cancelAppointment(appointmentId);
       await loadAppointments();
-      alert("Cita cancelada correctamente.");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Cancelada!',
+        text: 'Cita cancelada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (err) {
       console.error("Error al cancelar cita:", err);
-      alert("No se pudo cancelar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo cancelar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 
   const handleRescheduleAppointment = async (appointment) => {
     if (!appointment?.psychologistId) {
-      alert("No se puede reprogramar esta cita.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se puede reprogramar esta cita.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
     setRescheduleModal({
@@ -250,10 +301,18 @@ export default function PatientAppointmentsPage() {
     if (!slot || !rescheduleModal.appointment) return;
 
     const readableSlot = slot.start.toLocaleString(undefined, DATETIME_FORMAT); // CA: informar fecha amigable
-    const confirmed = window.confirm(
-      `¿Confirmas reprogramar la cita para ${readableSlot}?`
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      icon: 'question',
+      title: 'Confirmar reprogramación',
+      html: `¿Confirmas reprogramar la cita para<br><strong>${readableSlot}</strong>?`,
+      showCancelButton: true,
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       setRescheduleModal((prev) => ({ ...prev, loading: true, error: null }));
@@ -270,7 +329,14 @@ export default function PatientAppointmentsPage() {
         error: null,
       });
       await loadAppointments();
-      alert("Cita reprogramada correctamente.");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Reprogramada!',
+        text: 'Cita reprogramada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (err) {
       console.error("Error al reprogramar:", err);
       setRescheduleModal((prev) => ({
@@ -281,6 +347,13 @@ export default function PatientAppointmentsPage() {
           err?.message ||
           "No se pudo reprogramar la cita.",
       }));
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al reprogramar',
+        text: err?.response?.data?.message || err?.message || "No se pudo reprogramar la cita.",
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 
@@ -323,13 +396,21 @@ export default function PatientAppointmentsPage() {
                       </span>
                       <span
                         className={`${styles.statusBadge} ${
-                          styles[app.status]
+                          styles[app.statusLabel.replace(/\s+/g, "")]
                         }`}
                       >
-                        {app.status}
+                        {app.statusLabel}
                       </span>
                     </div>
                     <div className={styles.actionButtons}>
+                      {app.isConfirmed && (
+                        <button
+                          onClick={() => openCallWindow(app.id)}
+                          className={`${styles.actionButton} ${styles.joinButton}`}
+                        >
+                          Entrar a la consulta
+                        </button>
+                      )}
                       <button
                         onClick={() => handleRescheduleAppointment(app)}
                         className={`${styles.actionButton} ${styles.rescheduleButton}`}
@@ -377,10 +458,10 @@ export default function PatientAppointmentsPage() {
                       </span>
                       <span
                         className={`${styles.statusBadge} ${
-                          styles[app.status]
+                          styles[app.statusLabel.replace(/\s+/g, "")]
                         }`}
                       >
-                        {app.status}
+                        {app.statusLabel}
                       </span>
                     </div>
                   </li>

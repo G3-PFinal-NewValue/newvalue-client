@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import Button from '../../../components/button';
-// 1. Importar los servicios del admin
+import Swal from 'sweetalert2'; 
 import {
   adminGetAllUsers,
   adminGetAllPatients,
@@ -11,7 +11,7 @@ import {
   adminRejectPsychologist,
   adminDeactivateUser,
   adminActivateUser
-} from '../../../services/adminService'; // Ajusta la ruta si es necesario
+} from '../../../services/adminService';
 import styles from './AdminDashboard.module.css';
 import AdminExportExcel from '../../../components/AdminExportExcel';
 import UserSearchFilter from './UserSearchFilter';
@@ -19,7 +19,6 @@ import UserSearchFilter from './UserSearchFilter';
 export default function AdminDashboard() {
   const { user } = useAuth();
 
-  // Estados para los datos reales
   const [users, setUsers] = useState([]);
   const [patients, setPatients] = useState([]);
   const [psychologists, setPsychologists] = useState([]);
@@ -28,28 +27,23 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- 3. Función para cargar y procesar datos ---
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Cargar todos los datos en paralelo
       const [usersData, patientsData, psychologistsData] = await Promise.all([
         adminGetAllUsers(),
         adminGetAllPatients(),
         adminGetAllPsychologists(),
       ]);
 
-      // Procesar y actualizar estados
       setUsers(usersData);
       setPatients(patientsData);
       setPsychologists(psychologistsData);
 
-      // Filtrar psicólogos pendientes
       const pending = psychologistsData.filter(p => !p.validated);
       setPendingPsychologists(pending);
 
-      // Calcular estadísticas
       setStats({
         totalUsers: usersData.length,
         pending: pending.length,
@@ -64,41 +58,65 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- 4. useEffect ahora llama a fetchData ---
   useEffect(() => {
     fetchData();
-  }, []); // Se ejecuta solo una vez al montar
+  }, []);
 
-  // --- 5. Handlers de acciones reales ---
   const handleValidate = async (psychologistId) => {
     try {
       await adminValidatePsychologist(psychologistId);
-      // Actualizar estado local (optimista)
+
+      // Actualizar el estado local inmediatamente para mejor UX
       setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
 
-      // Actualizamos la lista principal
       const newPsychologists = psychologists.map(p =>
         p.user_id === psychologistId ? { ...p, validated: true } : p
       );
       setPsychologists(newPsychologists);
 
-      // Recalcular stats
       setStats(prev => ({
         ...prev,
         pending: prev.pending - 1,
         activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
       }));
 
+      // Refrescar los datos del servidor para asegurar sincronización
+      await fetchData();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Validación completada',
+        text: 'El psicólogo ha sido validado correctamente.',
+        confirmButtonColor: '#3085d6'
+      });
+
     } catch (err) {
-      alert(`Error al validar: ${err.message}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al validar',
+        text: err.message,
+        confirmButtonColor: '#d33'
+      });
     }
   };
 
   const handleReject = async (psychologistId) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este perfil? Esta acción también eliminará al usuario asociado.")) {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción también eliminará al usuario asociado.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (result.isConfirmed) {
       try {
         await adminRejectPsychologist(psychologistId);
 
+        // Actualizar el estado local inmediatamente para mejor UX
         setUsers(prev => prev.filter(u => u.id !== psychologistId));
         setPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
         setPendingPsychologists(prev => prev.filter(p => p.user_id !== psychologistId));
@@ -110,8 +128,23 @@ export default function AdminDashboard() {
           activePsy: newPsychologists.filter(p => p.validated && p.status === 'active').length
         }));
 
+        // Refrescar los datos del servidor para asegurar sincronización
+        await fetchData();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'El perfil ha sido eliminado correctamente.',
+          confirmButtonColor: '#3085d6'
+        });
+
       } catch (err) {
-        alert(`Error al rechazar: ${err.message}`);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al rechazar',
+          text: err.message,
+          confirmButtonColor: '#d33'
+        });
       }
     }
   };
@@ -120,7 +153,17 @@ export default function AdminDashboard() {
     const isActivating = userToToggle.status !== 'active';
     const actionText = isActivating ? "activar" : "desactivar";
 
-    if (window.confirm(`¿Estás seguro de que deseas ${actionText} a este usuario?`)) {
+    const result = await Swal.fire({
+      title: `¿Deseas ${actionText} a este usuario?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: `Sí, ${actionText}`,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#aaa'
+    });
+
+    if (result.isConfirmed) {
       try {
         if (isActivating) {
           await adminActivateUser(userToToggle.id);
@@ -128,7 +171,7 @@ export default function AdminDashboard() {
           await adminDeactivateUser(userToToggle.id);
         }
 
-        // Actualizar el estado local (optimista)
+        // Actualizar el estado local inmediatamente para mejor UX
         setUsers(prevUsers =>
           prevUsers.map(u =>
             u.id === userToToggle.id
@@ -137,8 +180,23 @@ export default function AdminDashboard() {
           )
         );
 
+        // Refrescar los datos del servidor para asegurar sincronización
+        await fetchData();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: `El usuario ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,
+          confirmButtonColor: '#3085d6'
+        });
+
       } catch (err) {
-        alert(`Error al ${actionText} al usuario: ${err.message}`);
+        Swal.fire({
+          icon: 'error',
+          title: `Error al ${actionText}`,
+          text: err.message,
+          confirmButtonColor: '#d33'
+        });
       }
     }
   };

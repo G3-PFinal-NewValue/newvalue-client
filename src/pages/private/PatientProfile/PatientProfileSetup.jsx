@@ -13,6 +13,7 @@ import {
 
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
 import styles from "./PatientProfileSetup.module.css";
+import Swal from 'sweetalert2';
 
 
 const schema = z.object({
@@ -75,6 +76,13 @@ export default function PatientProfileSetup() {
         }
       } catch (err) {
         console.error("Error al cargar perfil de paciente:", err);
+      Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar tu perfil. Por favor, intenta de nuevo.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#ef4444'
+        });
       } finally {
         setLoadingProfile(false);
       }
@@ -99,11 +107,16 @@ export default function PatientProfileSetup() {
 
   const onSubmit = async (values) => {
     if (!user || !user.id) {
-      alert("Error: Usuario no autenticado.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'Usuario no autenticado.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
 
-   
     const formData = new FormData();
 
     formData.append('birth_date', values.birth_date);
@@ -121,9 +134,9 @@ export default function PatientProfileSetup() {
     console.log("Enviando FormData para crear perfil paciente:");
     for (let [key, value] of formData.entries()) {
         if (value instanceof File) {
-             console.log(`FormData entry: ${key}`, { name: value.name, type: value.type });
+            console.log(`FormData entry: ${key}`, { name: value.name, type: value.type });
         } else {
-             console.log(`FormData entry: ${key}`, value);
+            console.log(`FormData entry: ${key}`, value);
         }
     }
 
@@ -131,17 +144,40 @@ export default function PatientProfileSetup() {
     try {
       if (existingProfile) {
         await updatePatientProfile(user.id, formData);
-        alert("Perfil de paciente actualizado con éxito.");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Actualizado!',
+          text: 'Perfil de paciente actualizado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate("/app/my-profile");
+        });
       } else {
         formData.append('user_id', user.id);
         await createPatientProfile(formData);
-        alert("Perfil de paciente guardado con éxito.");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Perfil creado!',
+          text: 'Perfil de paciente guardado con éxito',
+          confirmButtonText: 'Ver perfil',
+          confirmButtonColor: '#10b981',
+          timer: 3000
+        }).then(() => {
+          navigate("/app/my-profile");
+        });
       }
-      navigate("/app/my-profile");
 
     } catch (e) {
       console.error("Error en onSubmit PatientProfileSetup:", e);
-      alert(e?.response?.data?.message || e.message || "No se pudo guardar el perfil.");
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar',
+        text: e?.response?.data?.message || e.message || "No se pudo guardar el perfil",
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 

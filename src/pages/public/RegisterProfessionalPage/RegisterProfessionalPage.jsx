@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 import TextInput from "../../../components/common/TextInput/TextInput.jsx";
 import PasswordInput from "../../../components/common/PasswordInput/PasswordInput.jsx";
@@ -66,9 +67,24 @@ export default function RegisterProfessionalPage() {
       const authData = await registerRequest(values); // CA: recibir token + usuario
       login(authData); // CA: iniciar sesión de inmediato
       // Los profesionales siempre van al setup de perfil profesional
-      navigate("/app/profile");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Bienvenido/a!',
+        text: 'Registro exitoso. Ahora completa tu perfil profesional',
+        confirmButtonText: 'Continuar',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      }).then(() => {
+        navigate("/app/profile");
+      });
     } catch (err) {
-      alert(`Error al registrarse: ${err.message || "Error desconocido"}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al registrarse',
+        text: err.message || 'Error desconocido. Por favor, inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 
