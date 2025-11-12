@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getArticleById, deleteArticle } from "../../../services/articleService.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 import "./BlogArticlePage.css";
 
 export default function BlogArticlePage() {
@@ -20,28 +20,48 @@ export default function BlogArticlePage() {
       } catch (error) {
         console.error("Error al cargar artículo:", error);
         Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudo cargar el artículo.",
-          confirmButtonColor: "#3085d6",
+          icon: 'error',
+          title: 'Error al cargar',
+          text: 'No se pudo cargar el artículo',
+          confirmButtonText: 'Volver al blog',
+          confirmButtonColor: '#ef4444'
+        }).then(() => {
+          navigate("/blog");
         });
       } finally {
         setLoading(false);
       }
     };
     fetchArticle();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleDelete = async () => {
     if (!token) {
       Swal.fire({
-        icon: "warning",
-        title: "No autenticado",
-        text: "Por favor, inicia sesión para eliminar artículos.",
-        confirmButtonColor: "#3085d6",
-      }).then(() => navigate("/login"));
+        icon: 'warning',
+        title: 'Sin autenticación',
+        text: 'No estás autenticado. Por favor, inicia sesión.',
+        confirmButtonText: 'Ir a login',
+        confirmButtonColor: '#3b82f6'
+      }).then(() => {
+        navigate("/login");
+      });
       return;
     }
+    
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Eliminar artículo?',
+      text: '¿Estás seguro de que quieres eliminar este artículo? Esta acción no se puede deshacer.',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
 
     const result = await Swal.fire({
       title: "¿Eliminar artículo?",
@@ -58,20 +78,24 @@ export default function BlogArticlePage() {
 
     try {
       await deleteArticle(article.id, token);
-      await Swal.fire({
-        icon: "success",
-        title: "Artículo eliminado",
-        text: "El artículo fue eliminado correctamente.",
-        confirmButtonColor: "#3085d6",
-      });
-      navigate("/blog");
-    } catch (error) {
-      console.error("❌ Error al eliminar artículo:", error);
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.message || "No se pudo eliminar el artículo.",
-        confirmButtonColor: "#3085d6",
+        icon: 'success',
+        title: '¡Eliminado!',
+        text: 'Artículo eliminado exitosamente',
+        confirmButtonText: 'Ir al blog',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      }).then(() => {
+        navigate("/blog");
+      });
+    } catch (error) {
+      console.error('❌ Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al eliminar',
+        text: error.message || 'No se pudo eliminar el artículo',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
       });
     }
   };

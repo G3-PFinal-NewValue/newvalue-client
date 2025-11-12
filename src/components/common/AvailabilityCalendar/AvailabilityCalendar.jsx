@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './AvailabilityCalendar.module.css';
+import Swal from 'sweetalert2';
 
 // Configurar moment en español
 moment.locale('es');
@@ -240,18 +241,54 @@ function EventModal({ event, onSave, onDelete, onCancel }) {
     
     // Validaciones básicas
     if (!formData.specific_date || !formData.start_time || !formData.end_time) {
-      alert('Por favor completa todos los campos requeridos');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor completa todos los campos requeridos',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
     
     if (formData.start_time >= formData.end_time) {
-      alert('La hora de inicio debe ser anterior a la hora de fin');
+      Swal.fire({
+        icon: 'error',
+        title: 'Horario inválido',
+        text: 'La hora de inicio debe ser anterior a la hora de fin',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
+      });
       return;
     }
     
     onSave({
       ...event,
       ...formData
+    });
+  };
+
+  const handleDelete = () => {
+    Swal.fire({
+      icon: 'warning',
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onDelete();
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'La disponibilidad ha sido eliminada',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
     });
   };
 

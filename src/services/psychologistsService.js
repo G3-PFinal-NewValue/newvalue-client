@@ -11,12 +11,12 @@ export async function getAllPsychologistProfiles(specialtyId = null) {
     if (specialtyId) {
       url += `?specialities=${specialtyId}`;
     }
-    
+
     console.log(`Llamando a la API para obtener psicólogos: GET ${url}`);
-    
+
     // 3. Realiza la llamada con la URL construida
-    const response = await api.get(url); 
-    
+    const response = await api.get(url);
+
     console.log("Psicólogos recibidos:", response.data);
     return response.data;
   } catch (error) {
@@ -26,22 +26,22 @@ export async function getAllPsychologistProfiles(specialtyId = null) {
 }
 // --- OBTENER UN PERFIL POR ID ---
 export async function getPsychologistProfileById(id) {
- 
+
   if (!id) {
-     console.error("getPsychologistProfileById: ID inválido proporcionado");
-     throw new Error("ID de psicólogo no válido");
+    console.error("getPsychologistProfileById: ID inválido proporcionado");
+    throw new Error("ID de psicólogo no válido");
   }
   try {
     console.log(`Llamando a la API para obtener el psicólogo con ID: ${id}...`);
     const response = await api.get(`/psychologist/${id}`);
     console.log(`Perfil recibido para ID ${id}:`, response.data);
-    return response.data; 
+    return response.data;
   } catch (error) {
-     console.error(`Error al obtener el perfil del psicólogo ${id}:`, error);
-     if (error.status === 404) {
-       console.warn(`Perfil no encontrado para ID ${id}`);
-       return null; 
-     }
+    console.error(`Error al obtener el perfil del psicólogo ${id}:`, error);
+    if (error.status === 404) {
+      console.warn(`Perfil no encontrado para ID ${id}`);
+      return null;
+    }
     throw error;
   }
 }
@@ -57,14 +57,14 @@ export async function createPsychologistProfile(formData) {
     return response.data.profile; // Asume que el backend devuelve { message: '...', profile: {...} }
   } catch (error) {
     console.error("Error al crear el perfil del psicólogo:", error);
-    throw error; 
+    throw error;
   }
 }
 
 export async function updatePsychologistProfile(id, formData) {
-   if (!id) {
-     console.error("updatePsychologistProfile: ID inválido");
-     throw new Error("ID de psicólogo no válido");
+  if (!id) {
+    console.error("updatePsychologistProfile: ID inválido");
+    throw new Error("ID de psicólogo no válido");
   }
   try {
     console.log(`Enviando datos actualizados (FormData) a PUT /psychologist/${id}...`);

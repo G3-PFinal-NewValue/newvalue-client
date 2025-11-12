@@ -4,9 +4,10 @@ import Swal from "sweetalert2";
 import { createArticle } from "../../../services/articleService.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import BlogArticleForm from "../../../components/ArticleForm.jsx";
-import Navbar from "../../../components/common/Navbar/Navbar.jsx";
-import Footer from "../../../components/common/Footer/Footer.jsx";
-import "./CreateArticlePage.css";
+import Navbar from "../../../components/common/Navbar/Navbar.jsx"
+import Footer from "../../../components/common/Footer/Footer.jsx"
+import "./CreateArticlePage.css"
+import Swal from 'sweetalert2';
 
 export default function CreateArticlePage() {
   const { user, getToken } = useAuth();
@@ -19,10 +20,11 @@ export default function CreateArticlePage() {
 
     if (!token) {
       Swal.fire({
-        icon: "warning",
-        title: "No autenticado",
-        text: "No estás autenticado o el token no está disponible.",
-        confirmButtonColor: "#3085d6",
+        icon: 'error',
+        title: 'Sin autenticación',
+        text: 'No estás autenticado o el token no está disponible.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3b82f6'
       });
       return;
     }
@@ -33,11 +35,14 @@ export default function CreateArticlePage() {
       const payload = JSON.parse(atob(tokenParts[1]));
       if (payload.exp * 1000 < Date.now()) {
         Swal.fire({
-          icon: "warning",
-          title: "Sesión expirada",
-          text: "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
-          confirmButtonColor: "#3085d6",
-        }).then(() => navigate("/login"));
+          icon: 'warning',
+          title: 'Sesión expirada',
+          text: 'El token ha expirado. Por favor, inicia sesión nuevamente.',
+          confirmButtonText: 'Ir a login',
+          confirmButtonColor: '#3b82f6'
+        }).then(() => {
+          navigate("/login");
+        });
         return;
       }
     } catch (decodeError) {
@@ -65,24 +70,25 @@ export default function CreateArticlePage() {
       }
 
       const response = await createArticle(payloadToSend, token);
-
-      await Swal.fire({
-        icon: "success",
-        title: "Artículo creado",
-        text: "El artículo ha sido creado exitosamente.",
-        confirmButtonColor: "#3085d6",
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Artículo creado exitosamente',
+        confirmButtonText: 'Ver blog',
+        confirmButtonColor: '#10b981',
+        timer: 3000
+      }).then(() => {
+        navigate("/blog");
       });
-
-      navigate("/blog");
     } catch (err) {
       console.error("Error al crear artículo:", err);
       setError(err.message || "Error al crear artículo");
-
       Swal.fire({
-        icon: "error",
-        title: "Error al crear",
-        text: err.message || "No se pudo crear el artículo.",
-        confirmButtonColor: "#d33",
+        icon: 'error',
+        title: 'Error al crear artículo',
+        text: err.message || 'Ha ocurrido un error inesperado',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
       });
     } finally {
       setLoading(false);

@@ -76,6 +76,42 @@
   opacity: 0.85;
 }
 
+.viewProfile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.2s ease;
+}
+
+.cardLink:hover .viewProfile,
+.cardLink:focus .viewProfile {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.viewProfileText {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--color-brand-primary);
+  transition: transform 0.2s ease;
+}
+
+.cardLink:hover .arrow,
+.cardLink:focus .arrow {
+  transform: translateX(2px);
+}
+
 /* --- Responsive (Opcional, si es necesario ajustar en móviles) --- */
 @media (max-width: 480px) {
   .card {
@@ -89,4 +125,6 @@
   }
   .name { font-size: 16px; }
   .specialty { font-size: 13px; }
+  .viewProfileText { font-size: 11px; }
+  .arrow { width: 14px; height: 14px; }
 }

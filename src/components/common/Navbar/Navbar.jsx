@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useLogout } from "../../../hooks/useLogout";
 import styles from "./Navbar.module.css";
 
 // Importa los iconos que necesites
@@ -9,7 +10,8 @@ import { ImProfile } from "react-icons/im"; // Para perfil psicólogo
 import { LuLayoutDashboard, LuUserCog, LuCalendarClock } from "react-icons/lu"; // Para admin, perfil paciente, citas paciente
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const logout = useLogout();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
