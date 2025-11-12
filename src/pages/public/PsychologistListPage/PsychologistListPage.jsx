@@ -9,7 +9,6 @@ const ITEMS_PER_PAGE = 6;
 
 export default function PsychologistListPage() {
   const [displayedPsychologists, setDisplayedPsychologists] = useState([]); // Lista filtrada por la API
-  const [allPsychologists, setAllPsychologists] = useState([]); // Lista original
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allSpecialties, setAllSpecialties] = useState([]); // Para poblar el dropdown
@@ -83,16 +82,6 @@ const paginationData = useMemo(() => {
     setSelectedSpecialty(event.target.value);
   };
 
-  const goToNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, paginationData.totalPages));
-  };
-  const goToPreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-  const goToPage = (pageNumber) => {
-    setCurrentPage(Math.max(1, Math.min(pageNumber, paginationData.totalPages)));
-  };
-
   // --- Renderizado ---
   if (loading) {
     return <div className={styles.pageContainer}><p className={styles.loadingMessage}>Cargando psicólogos...</p></div>;
@@ -103,7 +92,19 @@ const paginationData = useMemo(() => {
 
 return (
     <div className={styles.pageContainer}>
-      <h1 className={styles.pageTitle}>Encuentra a tu psicólogo</h1>
+      {/* Sección de introducción */}
+      <div className={styles.introSection}>
+        <h1 className={styles.pageTitle}>Conoce a nuestro equipo profesional</h1>
+        <p className={styles.introText}>
+          Nuestros psicólogos están altamente cualificados y comprometidos con tu bienestar. 
+          Cada profesional cuenta con experiencia especializada para brindarte la mejor atención 
+          personalizada. Explora nuestro equipo y descubre quién puede acompañarte en tu proceso 
+          de crecimiento personal.
+        </p>
+        <p className={styles.callToAction}>
+          💡 Haz clic en cualquier profesional para conocer más sobre su experiencia y especialidades
+        </p>
+      </div>
 
       <div className={styles.filtersContainer}>
         <label htmlFor="specialtyFilter" className={styles.filterLabel}>Filtrar por especialidad:</label>
