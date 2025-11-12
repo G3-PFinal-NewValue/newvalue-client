@@ -10,6 +10,7 @@ import {
 import { getPsychologistProfileById } from "../../../services/psychologistsService";
 import addDays from "date-fns/addDays";
 import startOfDay from "date-fns/startOfDay";
+import Swal from 'sweetalert2';
 
 export default function PatientAppointmentsPage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
@@ -217,23 +218,50 @@ export default function PatientAppointmentsPage() {
   }, [loadAppointments]);
 
   const handleCancelAppointment = async (appointmentId) => {
-    const confirmed = window.confirm(
-      "¿Estás seguro de que quieres cancelar esta cita?"
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '¿Cancelar cita?',
+      text: '¿Estás seguro de que quieres cancelar esta cita?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, mantener',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
     try {
       await cancelAppointment(appointmentId);
       await loadAppointments();
-      alert("Cita cancelada correctamente.");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Cancelada!',
+        text: 'Cita cancelada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (err) {
       console.error("Error al cancelar cita:", err);
-      alert("No se pudo cancelar la cita. Inténtalo de nuevo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo cancelar la cita. Inténtalo de nuevo.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 
   const handleRescheduleAppointment = async (appointment) => {
     if (!appointment?.psychologistId) {
-      alert("No se puede reprogramar esta cita.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se puede reprogramar esta cita.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
       return;
     }
     setRescheduleModal({
@@ -273,10 +301,18 @@ export default function PatientAppointmentsPage() {
     if (!slot || !rescheduleModal.appointment) return;
 
     const readableSlot = slot.start.toLocaleString(undefined, DATETIME_FORMAT); // CA: informar fecha amigable
-    const confirmed = window.confirm(
-      `¿Confirmas reprogramar la cita para ${readableSlot}?`
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      icon: 'question',
+      title: 'Confirmar reprogramación',
+      html: `¿Confirmas reprogramar la cita para<br><strong>${readableSlot}</strong>?`,
+      showCancelButton: true,
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       setRescheduleModal((prev) => ({ ...prev, loading: true, error: null }));
@@ -293,7 +329,14 @@ export default function PatientAppointmentsPage() {
         error: null,
       });
       await loadAppointments();
-      alert("Cita reprogramada correctamente.");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Reprogramada!',
+        text: 'Cita reprogramada correctamente',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#10b981',
+        timer: 2000
+      });
     } catch (err) {
       console.error("Error al reprogramar:", err);
       setRescheduleModal((prev) => ({
@@ -304,6 +347,13 @@ export default function PatientAppointmentsPage() {
           err?.message ||
           "No se pudo reprogramar la cita.",
       }));
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al reprogramar',
+        text: err?.response?.data?.message || err?.message || "No se pudo reprogramar la cita.",
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 
