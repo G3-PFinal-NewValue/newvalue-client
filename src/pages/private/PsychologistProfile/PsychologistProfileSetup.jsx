@@ -19,7 +19,7 @@ import { getAllLanguages } from "../../../services/languageService.js";
 // --- Schemas y Constantes ---
 const availabilitySchema = z
   .object({
-    id: z.string().optional(),
+    id: z.union([z.string(), z.number()]).optional(),
     specific_date: z.string().min(1, "Fecha es requerida"),
     start_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:MM"),
     end_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:MM"),
