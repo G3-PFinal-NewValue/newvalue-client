@@ -49,7 +49,7 @@ export const createArticle = async (articleData, token) => {
     const isFormData = articleData instanceof FormData;
     console.log('📦 Tipo de datos:', isFormData ? 'FormData (con imagen)' : 'JSON');
     
-    const { data } = await axios.post(BASE_URL, articleData, {
+    const { data } = await axios.post(API_URL, articleData, {
       headers: getAuthHeaders(token, isFormData),
     });
     return data;

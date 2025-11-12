@@ -104,7 +104,7 @@ export default function BlogCardList() {
   const filteredByCategory =
     selectedCategory === "Todos"
       ? articles
-      : articles.filter((a) => 
+      : articles.filter((a) =>
           a.category?.name?.toLowerCase() === selectedCategory.toLowerCase()
         );
 
@@ -149,8 +149,8 @@ export default function BlogCardList() {
 
       <div className="blog-main">
         <div className="blog-dropdown">
-          <button 
-            className="dropdown-toggle" 
+          <button
+            className="dropdown-toggle"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {selectedCategory} ▼
@@ -189,12 +189,12 @@ export default function BlogCardList() {
                 />
                 {user?.role === "admin" && (
                   <div className="admin-article-actions">
-                    <button 
+                    <button
                       onClick={() => navigate(`/admin/article/edit/${a.id}`)}
                     >
                       Editar
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteArticle(a.id)}
                       className="delete-btn"
                     >

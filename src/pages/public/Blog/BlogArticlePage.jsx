@@ -48,23 +48,23 @@ export default function BlogArticlePage() {
       });
       return;
     }
-    
+
+    if (!result.isConfirmed) return;
+
     const result = await Swal.fire({
-      icon: 'warning',
-      title: '¿Eliminar artículo?',
-      text: '¿Estás seguro de que quieres eliminar este artículo? Esta acción no se puede deshacer.',
+      title: "¿Eliminar artículo?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
-      reverseButtons: true
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      console.log('🗑️ Eliminando artículo:', article.id);
       await deleteArticle(article.id, token);
       Swal.fire({
         icon: 'success',
@@ -88,41 +88,39 @@ export default function BlogArticlePage() {
     }
   };
 
-  if (loading) return (
-    <div className="article-loading">
-      <div className="spinner"></div>
-      <p>Cargando artículo...</p>
-    </div>
-  );
-  
-  if (!article) return (
-    <div className="article-error">
-      <p>Artículo no encontrado.</p>
-      <Link to="/blog" className="back-link">
-        ← Volver al blog
-      </Link>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="article-loading">
+        <div className="spinner"></div>
+        <p>Cargando artículo...</p>
+      </div>
+    );
+
+  if (!article)
+    return (
+      <div className="article-error">
+        <p>Artículo no encontrado.</p>
+        <Link to="/blog" className="back-link">
+          ← Volver al blog
+        </Link>
+      </div>
+    );
 
   return (
     <main className="article-container">
       <article className="article-card">
-        {/* Header con navegación */}
         <Link to="/blog" className="back-link">
           ← Volver al blog
         </Link>
 
-        {/* Imagen del artículo */}
         {article.image && (
           <div className="article-image-container">
             <img src={article.image} alt={article.title} className="article-image" />
           </div>
         )}
 
-        {/* Título */}
         <h1 className="article-title">{article.title}</h1>
 
-        {/* Metadatos */}
         <div className="article-meta">
           <span className="meta-item">
             <strong>Categoría:</strong> {article.category?.name || "Sin categoría"}
@@ -133,22 +131,20 @@ export default function BlogArticlePage() {
           </span>
         </div>
 
-        {/* Contenido */}
         <div className="article-content">
           <p>{article.content}</p>
         </div>
 
-        {/* Acciones de admin */}
         {user?.role === "admin" && (
           <div className="admin-actions">
-            <button 
+            <button
               onClick={() => navigate(`/admin/article/edit/${article.id}`)}
               className="btn btn-edit"
               title="Editar artículo"
             >
               ✏️ Editar
             </button>
-            <button 
+            <button
               onClick={handleDelete}
               className="btn btn-delete"
               title="Eliminar artículo"
