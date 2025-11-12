@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getArticleById, deleteArticle } from "../../../services/articleService.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
+import Swal from "sweetalert2";
 import "./BlogArticlePage.css";
 
 export default function BlogArticlePage() {
@@ -18,6 +19,12 @@ export default function BlogArticlePage() {
         setArticle(data);
       } catch (error) {
         console.error("Error al cargar artículo:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo cargar el artículo.",
+          confirmButtonColor: "#3085d6",
+        });
       } finally {
         setLoading(false);
       }
@@ -27,61 +34,81 @@ export default function BlogArticlePage() {
 
   const handleDelete = async () => {
     if (!token) {
-      alert("No estás autenticado. Por favor, inicia sesión.");
-      navigate("/login");
-      return;
-    }
-    
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este artículo?")) {
+      Swal.fire({
+        icon: "warning",
+        title: "No autenticado",
+        text: "Por favor, inicia sesión para eliminar artículos.",
+        confirmButtonColor: "#3085d6",
+      }).then(() => navigate("/login"));
       return;
     }
 
+    const result = await Swal.fire({
+      title: "¿Eliminar artículo?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      console.log('🗑️ Eliminando artículo:', article.id);
       await deleteArticle(article.id, token);
-      alert("Artículo eliminado exitosamente");
+      await Swal.fire({
+        icon: "success",
+        title: "Artículo eliminado",
+        text: "El artículo fue eliminado correctamente.",
+        confirmButtonColor: "#3085d6",
+      });
       navigate("/blog");
     } catch (error) {
-      console.error('❌ Error:', error);
-      alert("Error al eliminar artículo: " + error.message);
+      console.error("❌ Error al eliminar artículo:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "No se pudo eliminar el artículo.",
+        confirmButtonColor: "#3085d6",
+      });
     }
   };
 
-  if (loading) return (
-    <div className="article-loading">
-      <div className="spinner"></div>
-      <p>Cargando artículo...</p>
-    </div>
-  );
-  
-  if (!article) return (
-    <div className="article-error">
-      <p>Artículo no encontrado.</p>
-      <Link to="/blog" className="back-link">
-        ← Volver al blog
-      </Link>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="article-loading">
+        <div className="spinner"></div>
+        <p>Cargando artículo...</p>
+      </div>
+    );
+
+  if (!article)
+    return (
+      <div className="article-error">
+        <p>Artículo no encontrado.</p>
+        <Link to="/blog" className="back-link">
+          ← Volver al blog
+        </Link>
+      </div>
+    );
 
   return (
     <main className="article-container">
       <article className="article-card">
-        {/* Header con navegación */}
         <Link to="/blog" className="back-link">
           ← Volver al blog
         </Link>
 
-        {/* Imagen del artículo */}
         {article.image && (
           <div className="article-image-container">
             <img src={article.image} alt={article.title} className="article-image" />
           </div>
         )}
 
-        {/* Título */}
         <h1 className="article-title">{article.title}</h1>
 
-        {/* Metadatos */}
         <div className="article-meta">
           <span className="meta-item">
             <strong>Categoría:</strong> {article.category?.name || "Sin categoría"}
@@ -92,22 +119,20 @@ export default function BlogArticlePage() {
           </span>
         </div>
 
-        {/* Contenido */}
         <div className="article-content">
           <p>{article.content}</p>
         </div>
 
-        {/* Acciones de admin */}
         {user?.role === "admin" && (
           <div className="admin-actions">
-            <button 
+            <button
               onClick={() => navigate(`/admin/article/edit/${article.id}`)}
               className="btn btn-edit"
               title="Editar artículo"
             >
               ✏️ Editar
             </button>
-            <button 
+            <button
               onClick={handleDelete}
               className="btn btn-delete"
               title="Eliminar artículo"

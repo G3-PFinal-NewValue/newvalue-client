@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import BlogCard from "../../..//components/blogcard.jsx";
-import {  getArticles,
-  getArticleById,
-  createArticle,
-  updateArticle,
-  deleteArticle, } from "../../../services/articleService.js";
+import Swal from "sweetalert2";
+import BlogCard from "../../../components/blogcard.jsx";
+import {
+  getArticles,
+  deleteArticle,
+} from "../../../services/articleService.js";
 import "../Blog/BlogListPage.css";
 
 const categories = [
@@ -33,6 +33,12 @@ export default function BlogCardList() {
       setArticles(data);
     } catch (err) {
       setError(err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error al cargar artículos",
+        text: err.message || "No se pudieron obtener los artículos.",
+        confirmButtonColor: "#3085d6",
+      });
     } finally {
       setLoading(false);
     }
@@ -45,21 +51,45 @@ export default function BlogCardList() {
   // --- Función para eliminar artículo ---
   const handleDeleteArticle = async (id) => {
     if (!token) {
-      alert("No estás autenticado");
+      Swal.fire({
+        icon: "warning",
+        title: "No autenticado",
+        text: "Por favor, inicia sesión para eliminar artículos.",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
-    
-    if (!window.confirm("¿Seguro que quieres eliminar este artículo?")) {
-      return;
-    }
+
+    const result = await Swal.fire({
+      title: "¿Eliminar artículo?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteArticle(id, token);
       setArticles((prev) => prev.filter((a) => a.id !== id));
-      alert("Artículo eliminado exitosamente");
+      Swal.fire({
+        icon: "success",
+        title: "Eliminado",
+        text: "El artículo fue eliminado correctamente.",
+        confirmButtonColor: "#3085d6",
+      });
     } catch (err) {
       console.error(err);
-      alert("Error al eliminar artículo: " + err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error al eliminar",
+        text: err.message || "No se pudo eliminar el artículo.",
+        confirmButtonColor: "#3085d6",
+      });
     }
   };
 
@@ -67,7 +97,7 @@ export default function BlogCardList() {
   const filteredByCategory =
     selectedCategory === "Todos"
       ? articles
-      : articles.filter((a) => 
+      : articles.filter((a) =>
           a.category?.name?.toLowerCase() === selectedCategory.toLowerCase()
         );
 
@@ -112,8 +142,8 @@ export default function BlogCardList() {
 
       <div className="blog-main">
         <div className="blog-dropdown">
-          <button 
-            className="dropdown-toggle" 
+          <button
+            className="dropdown-toggle"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {selectedCategory} ▼
@@ -152,12 +182,12 @@ export default function BlogCardList() {
                 />
                 {user?.role === "admin" && (
                   <div className="admin-article-actions">
-                    <button 
+                    <button
                       onClick={() => navigate(`/admin/article/edit/${a.id}`)}
                     >
                       Editar
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteArticle(a.id)}
                       className="delete-btn"
                     >
