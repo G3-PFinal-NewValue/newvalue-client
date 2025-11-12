@@ -3,17 +3,45 @@
   width: 100%;
   max-width: 1200px; 
   margin: 0 auto; 
+  padding: var(--space-4);
+}
+
+/* Sección de introducción */
+.introSection {
+  text-align: center;
+  margin-bottom: var(--space-8);
+  padding: var(--space-6) var(--space-4);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-bg-alt);
 }
 
 .pageTitle {
-font-family: var(--font-title);
+  font-family: var(--font-title);
   font-size: var(--fs-title-lg);
   font-weight: 700;
   color: var(--color-brand-title);
   text-align: center;
-  margin: 0 auto var(--space-6);
-  border-bottom: 1px solid var(--color-bg-alt);
-  padding-bottom: var(--space-4);
+  margin: 0 auto var(--space-4);
+  line-height: 1.2;
+}
+
+.introText {
+  font-size: var(--fs-body-lg);
+  color: var(--color-text);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto var(--space-3);
+  opacity: 0.9;
+}
+
+.callToAction {
+  font-size: var(--fs-body);
+  color: var(--color-brand-primary);
+  font-weight: 500;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .listGrid {
@@ -133,9 +161,26 @@ color: #b91c1c;
 }
 /* --- Responsive --- */
 @media (max-width: 768px) {
+  .pageContainer {
+    padding: var(--space-2);
+  }
+
+  .introSection {
+    padding: var(--space-4) var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
   .pageTitle {
-    font-size: 30px; 
-    margin-bottom: var(--space-5);
+    font-size: 28px; 
+    margin-bottom: var(--space-3);
+  }
+
+  .introText {
+    font-size: var(--fs-body);
+  }
+
+  .callToAction {
+    font-size: var(--fs-sm);
   }
   .listGrid {
      
