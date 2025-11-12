@@ -18,13 +18,13 @@ vi.mock("../context/AuthContext", () => ({
 }));
 
 // Mock completo de patientService
-import * as patientService from "../services/patientService";
+import * as patientService from "../services/patientService.js";
 vi.mock("../services/patientService");
 
 describe("MyPatientProfile", () => {
   it("muestra el título y los datos del perfil si existen", async () => {
     // Mock del perfil existente
-    (patientService.getPatientProfileById as any).mockResolvedValueOnce({
+    (patientService.getPatientProfileById).mockResolvedValueOnce({
       user_id: 1,
       birth_date: "1990-01-01",
       gender: "Masculino",
@@ -54,7 +54,7 @@ describe("MyPatientProfile", () => {
 
   it("muestra el mensaje de completar perfil si no hay datos", async () => {
     // Mock de perfil no creado
-    (patientService.getPatientProfileById as any).mockResolvedValueOnce(null);
+    (patientService.getPatientProfileById).mockResolvedValueOnce(null);
 
     render(
       <MemoryRouter>
