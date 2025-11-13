@@ -145,7 +145,15 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
-          
+          <Route
+            path="/admin/create-user"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                {" "}
+                <CreateUserForm />{" "}
+              </ProtectedRoute>
+            }
+          />
           
         </Route>
         <Route path="/blog/:id" element={<BlogArticlePage />} />
